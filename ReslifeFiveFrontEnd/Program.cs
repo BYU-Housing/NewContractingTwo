@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using ReslifeFiveBackEnd.Context;
 using ReslifeFiveFrontEnd.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,6 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")),
+    ServiceLifetime.Scoped);
+
 
 var app = builder.Build();
 
