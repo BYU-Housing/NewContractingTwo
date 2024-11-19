@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ReslifeFiveBackEnd.Context;
 using ReslifeFiveBackEnd.Repository;
+using ReslifeFiveBusinessLayer.Service;
 using ReslifeFiveFrontEnd.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +14,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")),
     ServiceLifetime.Scoped);
 builder.Services.AddScoped<IGenRepository,GenRepository>();
-
+builder.Services.AddScoped<IGenService, GenService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
