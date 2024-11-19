@@ -26,6 +26,7 @@
             <th>Id</th>
             <th>Name</th>
             <th>Active</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -33,8 +34,37 @@
         {
             <tr>
                 <td>@block.Id</td>
-                <td>@block.Name</td>
-                <td>@(block.Active ? "Yes" : "No")</td>
+                <td>
+                    @if (EditingBlock?.Id == block.Id)
+                    {
+                        <input type="text" class="form-control" @bind="EditingBlock.Name" />
+                    }
+                    else
+                    {
+                        @block.Name
+                    }
+                </td>
+                <td>
+                    @if (EditingBlock?.Id == block.Id)
+                    {
+                        <input type="checkbox" class="form-check-input" @bind="EditingBlock.Active" />
+                    }
+                    else
+                    {
+                        @(block.Active ? "Yes" : "No")
+                    }
+                </td>
+                <td>
+                    @if (EditingBlock?.Id == block.Id)
+                    {
+                        <button class="btn btn-success btn-sm" @onclick="() => SaveEdit(block.Id)">Save</button>
+                        <button class="btn btn-secondary btn-sm" @onclick="CancelEdit">Cancel</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-primary btn-sm" @onclick="() => StartEdit(block)">Edit</button>
+                    }
+                </td>
             </tr>
         }
     </tbody>
@@ -43,6 +73,7 @@
 @code {
     private List<Block> Blocks = new();
     private Block NewBlock = new();
+    private Block? EditingBlock = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -59,5 +90,43 @@
         // Reset the form and refresh the block list
         NewBlock = new Block();
         Blocks = await GenService.GetModel<Block>().ToListAsync();
+    }
+
+    private void StartEdit(Block block)
+    {
+        // Start editing the selected block
+        EditingBlock = new Block
+            {
+                Id = block.Id,
+                Name = block.Name,
+                Active = block.Active
+            };
+    }
+
+    private void CancelEdit()
+    {
+        // Cancel editing
+        EditingBlock = null;
+    }
+
+    private async Task SaveEdit(int blockId)
+    {
+        if (EditingBlock != null)
+        {
+            // Find the original block in the database and update it
+            var blockToUpdate = Blocks.FirstOrDefault(b => b.Id == blockId);
+            if (blockToUpdate != null)
+            {
+                blockToUpdate.Name = EditingBlock.Name;
+                blockToUpdate.Active = EditingBlock.Active;
+
+                GenService.Update(blockToUpdate);
+                await GenService.SaveChangesAsync();
+
+                // Refresh the block list and exit edit mode
+                Blocks = await GenService.GetModel<Block>().ToListAsync();
+                EditingBlock = null;
+            }
+        }
     }
 }
