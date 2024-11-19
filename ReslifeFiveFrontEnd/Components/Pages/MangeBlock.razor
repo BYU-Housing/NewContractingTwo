@@ -1,5 +1,23 @@
-﻿<h3>MangeBlock</h3>
+﻿@page "/manageBlock"
+@using Microsoft.EntityFrameworkCore
+@inject IGenService GenService
+
+<h3>Manage Block</h3>
+
+<ul>
+    @foreach (var blockName in BlockNames)
+    {
+        <li>@blockName</li>
+    }
+</ul>
 
 @code {
+    private List<string> BlockNames = new();
 
+    protected override async Task OnInitializedAsync()
+    {
+        // Fetch all Block names from the database
+        var blocks = GenService.GetModel<Block>();
+        BlockNames = await blocks.Select(b => b.Name).ToListAsync();
+    }
 }
