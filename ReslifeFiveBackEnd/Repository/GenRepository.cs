@@ -35,7 +35,10 @@ namespace ReslifeFiveBackEnd.Repository
         { 
             _context.SaveChanges();
         }
-
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
         public IQueryable<T> Set<T>() where T : class
         {
             return _context.Set<T>();

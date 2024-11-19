@@ -96,6 +96,10 @@ namespace ReslifeFiveBusinessLayer.Service
         public void Remove<T>(T entity) where T : class => _repo.Remove(entity);
         public void Update<T>(T entity) where T : class => _repo.Update(entity);
         public void SaveChanges() => _repo.SaveChanges();
+        public async Task SaveChangesAsync()
+        {
+            await _repo.SaveChangesAsync();
+        }
 
     }
 }

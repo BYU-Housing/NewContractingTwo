@@ -14,5 +14,7 @@ namespace ReslifeFiveBackEnd.Repository
         void SaveChanges();
         IQueryable<T> Set<T>() where T : class;
         public Task AddAsync<T>(T entity) where T : class;
+        Task SaveChangesAsync();
+
     }
 }

@@ -16,5 +16,6 @@ namespace ReslifeFiveBusinessLayer.Service
         void Remove<T>(T entity) where T : class;
         void Update<T>(T entity) where T : class;
         void SaveChanges();
+        Task SaveChangesAsync();
     }
 }

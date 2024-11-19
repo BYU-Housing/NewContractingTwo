@@ -4,6 +4,22 @@
 
 <h3>Manage Block</h3>
 
+<!-- Form to Create a New Block -->
+<div class="mb-4">
+    <form @onsubmit="HandleSubmit">
+        <div class="mb-3">
+            <label for="blockName" class="form-label">Block Name</label>
+            <input id="blockName" type="text" class="form-control" @bind="NewBlock.Name" required />
+        </div>
+        <div class="form-check mb-3">
+            <input id="blockActive" type="checkbox" class="form-check-input" @bind="NewBlock.Active" />
+            <label for="blockActive" class="form-check-label">Active</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Create Block</button>
+    </form>
+</div>
+
+<!-- Table to Display Blocks -->
 <table class="table table-striped">
     <thead>
         <tr>
@@ -26,11 +42,22 @@
 
 @code {
     private List<Block> Blocks = new();
+    private Block NewBlock = new();
 
     protected override async Task OnInitializedAsync()
     {
         // Fetch all Block data from the database
         Blocks = await GenService.GetModel<Block>().ToListAsync();
     }
-}
 
+    private async Task HandleSubmit()
+    {
+        // Add the new block to the database
+        GenService.Add(NewBlock);
+        await GenService.SaveChangesAsync();
+
+        // Reset the form and refresh the block list
+        NewBlock = new Block();
+        Blocks = await GenService.GetModel<Block>().ToListAsync();
+    }
+}
