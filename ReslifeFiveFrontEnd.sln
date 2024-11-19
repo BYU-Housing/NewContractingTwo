@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReslifeFiveFrontEnd", "ReslifeFiveFrontEnd\ReslifeFiveFrontEnd.csproj", "{10800EA1-6CF6-4CD3-B7F0-41C74DCB73F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReslifeFiveFrontEnd", "ReslifeFiveFrontEnd\ReslifeFiveFrontEnd.csproj", "{10800EA1-6CF6-4CD3-B7F0-41C74DCB73F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReslifeFiveBusinessLayer", "ReslifeFiveBusinessLayer\ReslifeFiveBusinessLayer.csproj", "{03B4558C-5FFA-4A41-8D2A-DE8DBA1AE5D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReslifeFiveBusinessLayer", "ReslifeFiveBusinessLayer\ReslifeFiveBusinessLayer.csproj", "{03B4558C-5FFA-4A41-8D2A-DE8DBA1AE5D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReslifeFiveBackEnd", "ReslifeFiveBackEnd\ReslifeFiveBackEnd.csproj", "{5F491909-15B1-421A-B2C7-61AFE5B1080D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReslifeFiveBackEnd", "ReslifeFiveBackEnd\ReslifeFiveBackEnd.csproj", "{5F491909-15B1-421A-B2C7-61AFE5B1080D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
