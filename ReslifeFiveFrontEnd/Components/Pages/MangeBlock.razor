@@ -4,20 +4,33 @@
 
 <h3>Manage Block</h3>
 
-<ul>
-    @foreach (var blockName in BlockNames)
-    {
-        <li>@blockName</li>
-    }
-</ul>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Active</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var block in Blocks)
+        {
+            <tr>
+                <td>@block.Id</td>
+                <td>@block.Name</td>
+                <td>@(block.Active ? "Yes" : "No")</td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 @code {
-    private List<string> BlockNames = new();
+    private List<Block> Blocks = new();
 
     protected override async Task OnInitializedAsync()
     {
-        // Fetch all Block names from the database
-        var blocks = GenService.GetModel<Block>();
-        BlockNames = await blocks.Select(b => b.Name).ToListAsync();
+        // Fetch all Block data from the database
+        Blocks = await GenService.GetModel<Block>().ToListAsync();
     }
 }
+
