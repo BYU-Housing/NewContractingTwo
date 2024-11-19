@@ -63,6 +63,7 @@
                     else
                     {
                         <button class="btn btn-primary btn-sm" @onclick="() => StartEdit(block)">Edit</button>
+                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteBlock(block.Id)">Delete</button>
                     }
                 </td>
             </tr>
@@ -77,8 +78,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Fetch all Block data from the database
-        Blocks = await GenService.GetModel<Block>().ToListAsync();
+        // Fetch all Block data from the database, sorted by Id descending
+        Blocks = await GenService.GetModel<Block>()
+            .OrderByDescending(b => b.Id)
+            .ToListAsync();
     }
 
     private async Task HandleSubmit()
@@ -87,9 +90,11 @@
         GenService.Add(NewBlock);
         await GenService.SaveChangesAsync();
 
-        // Reset the form and refresh the block list
+        // Reset the form and refresh the block list in sorted order
         NewBlock = new Block();
-        Blocks = await GenService.GetModel<Block>().ToListAsync();
+        Blocks = await GenService.GetModel<Block>()
+            .OrderByDescending(b => b.Id)
+            .ToListAsync();
     }
 
     private void StartEdit(Block block)
@@ -123,10 +128,30 @@
                 GenService.Update(blockToUpdate);
                 await GenService.SaveChangesAsync();
 
-                // Refresh the block list and exit edit mode
-                Blocks = await GenService.GetModel<Block>().ToListAsync();
+                // Refresh the block list in sorted order and exit edit mode
+                Blocks = await GenService.GetModel<Block>()
+                    .OrderByDescending(b => b.Id)
+                    .ToListAsync();
                 EditingBlock = null;
             }
         }
     }
+
+    private async Task DeleteBlock(int blockId)
+    {
+        // Find the block to delete
+        var blockToDelete = Blocks.FirstOrDefault(b => b.Id == blockId);
+        if (blockToDelete != null)
+        {
+            // Remove the block from the database
+            GenService.Remove(blockToDelete);
+            await GenService.SaveChangesAsync();
+
+            // Refresh the block list in sorted order
+            Blocks = await GenService.GetModel<Block>()
+                .OrderByDescending(b => b.Id)
+                .ToListAsync();
+        }
+    }
 }
+
