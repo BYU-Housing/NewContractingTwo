@@ -15,6 +15,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     ServiceLifetime.Scoped);
 builder.Services.AddScoped<IGenRepository,GenRepository>();
 builder.Services.AddScoped<IGenService, GenService>();
+builder.Services.AddBlazorBootstrap();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
