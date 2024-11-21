@@ -35,6 +35,12 @@
             @context.RoomNumber
         </GridColumn>
         @* RoomNumber *@
+        
+        @* Dropdown *@
+        <GridColumn TItem="BlockTest" HeaderText="OccupantType">
+            @GetOccupantType(context.OccupantType)
+        </GridColumn>
+        @* Dropdown *@
 
 
         <GridColumn TItem="BlockTest" HeaderText="Action">
@@ -65,6 +71,18 @@
             <label for="roomNumberInput" class="my-3">Room Number:</label>
             <InputNumber @bind-Value="SelectedObject.RoomNumber" class="form-control mt-3" placeholder="Room Number" />
             @* Number Input *@
+
+           @*  Occupant Type *@
+           <label for="occupantTypeSelect" class="mt-3">Occupant Type:</label>
+           <select class="form-control mt-3" @bind="SelectedObject.OccupantType">
+                @* <option value="0">None</option> *@
+                <option value="1">Single</option>
+                <option value="2">Family</option>
+                <option value="3">Conference</option>
+                <option value="4">Closed For Maintenance</option>
+           </select>
+           @*  Occupant Type *@
+
 
             <label for="startDateInput" class="mt-3">Start Date:</label>
             <DateInput TValue="DateOnly" @bind-Value="StartDate" />
@@ -108,7 +126,7 @@
     {
         SelectedObject = new BlockTest
         {
-
+            OccupantType = 0
         };
         await OnShowModalClick();
     }
@@ -145,4 +163,23 @@
         GenService.SaveChanges();
         UpdateObjects();
     }
+
+    private string GetOccupantType(int? occupantType)
+    {
+        return occupantType switch
+        {
+           // 0 => "None",
+            1 => "Single",
+            2 => "Family",
+            3 => "Conference",
+            4 => "Closed For Maintenance",
+            _=> "Unknown"
+        };
+    }
+
+
+
+
+
+
 }
