@@ -1,0 +1,121 @@
+﻿@page "/manageBlockTest"
+@inject IGenService GenService
+
+<h3>ManageBlockTest</h3>
+<p>This is the Test Version of the Block Manager.</p>
+
+
+<Button @onclick="AddRow">Add New BlockTest</Button>
+
+<div class="container-fluid vh-100">
+    <Grid TItem="BlockTest"
+          Data="AllObjects"
+          Class="w-100 table table-hover table-bordered table-striped"
+          AllowPaging="true"
+          PageSize="10"
+          Responsive="true">
+        <GridColumn TItem="BlockTest" HeaderText="Id">
+            @context.Id
+        </GridColumn>
+        <GridColumn TItem="BlockTest" HeaderText="Name">
+            @context.Name
+        </GridColumn>
+        <GridColumn TItem="BlockTest" HeaderText="Start Date">
+            @(context.StartDate.ToString() ?? "Not Set")
+        </GridColumn>
+        <GridColumn TItem="BlockTest" HeaderText="Action">
+            <Button @onclick="() => EditObject(context)">
+                <Icon Name="IconName.Pencil" />
+            </Button>
+            <Button @onclick="() => DeleteObject(context)">
+                <Icon Name="IconName.Trash3" />
+            </Button>
+        </GridColumn>
+    </Grid>
+</div>
+
+<Modal @ref="ObjectAdditionModal" Title="Add/Edit BlockTest">
+    <BodyTemplate>
+        <div>
+            @if (SelectedObject.Id != 0)
+            {
+                <p>
+                    BlockTest ID: @SelectedObject.Id
+                </p>
+            }
+
+            <label for="nameInput">Name:</label>
+            <input type="text" @bind="SelectedObject.Name" />
+            <br />
+            <label for="startDateInput" class="mt-3">Start Date:</label>
+            <DateInput TValue="DateOnly" @bind-Value="StartDate" />
+            <TimeInput TValue="TimeOnly" @bind-Value="StartTime" />
+
+        </div>
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
+        <Button Color="ButtonColor.Primary" @onclick="UpsertObject">Save changes</Button>
+    </FooterTemplate>
+</Modal>
+
+@code {
+    private List<BlockTest> AllObjects = [];
+    private Modal ObjectAdditionModal = default!;
+    private BlockTest SelectedObject = new BlockTest();
+    private DateOnly StartDate = DateOnly.FromDateTime(DateTime.Now);
+    private TimeOnly StartTime = TimeOnly.FromDateTime(DateTime.Now);
+    private DateOnly EndDate = DateOnly.FromDateTime(DateTime.Now);
+    private TimeOnly EndTime = TimeOnly.FromDateTime(DateTime.Now);
+
+    protected override void OnInitialized()
+    {
+        AllObjects = GenService.GetModel<BlockTest>().ToList();
+    }
+
+    private void UpdateObjects()
+    {
+        AllObjects = GenService.GetModel<BlockTest>().ToList();
+    }
+
+    private async Task AddRow()
+    {
+        SelectedObject = new BlockTest
+        {
+
+        };
+        await OnShowModalClick();
+    }
+
+    private async Task OnShowModalClick()
+    {
+        await ObjectAdditionModal.ShowAsync();
+    }
+
+    private async Task OnHideModalClick()
+    {
+        await ObjectAdditionModal.HideAsync();
+    }
+
+    private async Task UpsertObject()
+    {
+        //SelectedObject.Start = selectedDateTime;
+        SelectedObject.StartDate = DateTime.SpecifyKind(StartDate.ToDateTime(StartTime), DateTimeKind.Utc);
+        GenService.Upsert<BlockTest>(SelectedObject);
+        await OnHideModalClick();
+        UpdateObjects();
+    }
+
+    private async Task EditObject(BlockTest varObject)
+    {
+        SelectedObject = varObject;
+        await OnShowModalClick();
+    }
+
+    private void DeleteObject(BlockTest varObject)
+    {
+        GenService.Remove<BlockTest>(varObject);
+        GenService.SaveChanges();
+        UpdateObjects();
+    }
+}
