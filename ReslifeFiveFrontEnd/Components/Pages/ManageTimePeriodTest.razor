@@ -42,7 +42,11 @@
         </GridColumn>
         @* Check Box *@
 
-
+        @*  Date Last Updaeted *@
+        <GridColumn TItem="TimePeriodTest" HeaderText="Date Last Updated">
+            @(context.DateLastUpdated.ToString() ?? "Not Set")
+        </GridColumn>
+        @*  Date Last Updated*@
 
 
         <GridColumn TItem="TimePeriodTest" HeaderText="Action">
@@ -110,7 +114,8 @@
     private TimeOnly StartTime = TimeOnly.FromDateTime(DateTime.Now);
     private DateOnly EndDate = DateOnly.FromDateTime(DateTime.Now);
     private TimeOnly EndTime = TimeOnly.FromDateTime(DateTime.Now);
-
+    private DateOnly DateLastUpdated = DateOnly.FromDateTime(DateTime.Now);
+    private TimeOnly TimeLastUpdated = TimeOnly.FromDateTime(DateTime.Now);
 
     protected override void OnInitialized()
     {
@@ -127,7 +132,8 @@
         SelectedObject = new TimePeriodTest
             {
                 PeriodType = 4,
-                Active = true
+                Active = true,
+                DateLastUpdated = DateTime.UtcNow
             };
         await OnShowModalClick();
     }
@@ -146,6 +152,7 @@
     {
         SelectedObject.StartDate = DateTime.SpecifyKind(StartDate.ToDateTime(StartTime), DateTimeKind.Utc);
         SelectedObject.EndDate = DateTime.SpecifyKind(EndDate.ToDateTime(EndTime), DateTimeKind.Utc);
+        SelectedObject.DateLastUpdated = DateTime.SpecifyKind(DateLastUpdated.ToDateTime(TimeLastUpdated), DateTimeKind.Utc);
         GenService.Upsert<TimePeriodTest>(SelectedObject);
         await OnHideModalClick();
         UpdateObjects();

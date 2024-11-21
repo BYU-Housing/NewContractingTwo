@@ -14,6 +14,7 @@ namespace ReslifeFiveBackEnd.Model
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public bool? Active { get; set; } = false;
+        public DateTime DateLastUpdated { get; set; }
 
     }
 }
