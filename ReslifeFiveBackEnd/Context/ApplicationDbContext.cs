@@ -17,6 +17,7 @@ namespace ReslifeFiveBackEnd.Context
         public DbSet<BlockTest> BlockTest { get; set; }
         public DbSet<Slot> Slot { get; set; }
         public DbSet<TestUnit> TestUnit { get; set; }
+        public DbSet<TimePeriodTest> TimePeriodTest { get; set; }
 
     }
 }
