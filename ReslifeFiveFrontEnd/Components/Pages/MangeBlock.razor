@@ -11,6 +11,10 @@
             <label for="blockName" class="form-label">Block Name</label>
             <input id="blockName" type="text" class="form-control" @bind="NewBlock.Name" required />
         </div>
+        <div class="mb-3">
+            <label for="blockEndDate" class="form-label">End Date</label>
+            <input id="blockEndDate" type="date" class="form-control" @bind="NewBlock.EndDate" />
+        </div>
         <div class="form-check mb-3">
             <input id="blockActive" type="checkbox" class="form-check-input" @bind="NewBlock.Active" />
             <label for="blockActive" class="form-check-label">Active</label>
@@ -26,6 +30,7 @@
             <th>Id</th>
             <th>Name</th>
             <th>Active</th>
+            <th>End Date</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -52,6 +57,16 @@
                     else
                     {
                         @(block.Active ? "Yes" : "No")
+                    }
+                </td>
+                <td>
+                    @if (EditingBlock?.Id == block.Id)
+                    {
+                        <input type="date" class="form-control" @bind="EditingBlock.EndDate" />
+                    }
+                    else
+                    {
+                        @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd") : "N/A")
                     }
                 </td>
                 <td>
@@ -104,7 +119,8 @@
             {
                 Id = block.Id,
                 Name = block.Name,
-                Active = block.Active
+                Active = block.Active,
+                EndDate = block.EndDate
             };
     }
 
@@ -124,6 +140,7 @@
             {
                 blockToUpdate.Name = EditingBlock.Name;
                 blockToUpdate.Active = EditingBlock.Active;
+                blockToUpdate.EndDate = EditingBlock.EndDate;
 
                 GenService.Update(blockToUpdate);
                 await GenService.SaveChangesAsync();
@@ -154,4 +171,3 @@
         }
     }
 }
-

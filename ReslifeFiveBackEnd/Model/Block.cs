@@ -13,5 +13,6 @@ namespace ReslifeFiveBackEnd.Model
 
         // Active will default to false in the database so that it is not null this way it will not fail in the database.
         public bool Active { get; set; } = false;
+        public DateOnly? EndDate { get; set; } // Nullable DateOnly for EndDate
     }
 }

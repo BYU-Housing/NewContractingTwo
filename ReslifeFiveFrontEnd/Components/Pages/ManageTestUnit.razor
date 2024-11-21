@@ -1,0 +1,110 @@
+﻿@page "/ManageTestUnit"
+@inject IGenService GenService
+
+
+<h3>ManageTestUnit</h3>
+
+<Button @onclick="AddRow">Add New Test Unit</Button>
+
+<div class="container-fluid vh-100">
+    <Grid TItem="TestUnit"
+          Data="AllObjects"
+          Class="w-100 table table-hover table-bordered table-striped"
+          AllowPaging="true"
+          PageSize="10"
+          Responsive="true">
+        <GridColumn TItem="TestUnit" HeaderText="Id">
+            @context.Id
+        </GridColumn>
+        <GridColumn TItem="TestUnit" HeaderText="Name">
+            @context.Name
+        </GridColumn>
+       
+        <GridColumn TItem="TestUnit" HeaderText="Action">
+            <Button @onclick="() => EditObject(context)">
+                <Icon Name="IconName.Pencil" />
+            </Button>
+            <Button @onclick="() => DeleteObject(context)">
+                <Icon Name="IconName.Trash3" />
+            </Button>
+        </GridColumn>
+    </Grid>
+</div>
+
+<Modal @ref="ObjectAdditionModal" Title="Add/Edit TestUnit">
+    <BodyTemplate>
+        <div>
+            @if (SelectedObject.Id != 0)
+            {
+                <p>
+                    TestUnit ID: @SelectedObject.Id
+                </p>
+            }
+
+            <label for="nameInput">Name:</label>
+            <input type="text" @bind="SelectedObject.Name" />
+            <br/>
+
+        </div>
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
+        <Button Color="ButtonColor.Primary" @onclick="UpsertObject">Save changes</Button>
+    </FooterTemplate>
+</Modal>
+
+@code {
+    private List<TestUnit> AllObjects = [];
+    private Modal ObjectAdditionModal = default!;
+    private TestUnit SelectedObject = new TestUnit();
+
+
+    protected override void OnInitialized()
+    {
+        AllObjects = GenService.GetModel<TestUnit>().ToList();
+    }
+
+    private void UpdateObjects()
+    {
+        AllObjects = GenService.GetModel<TestUnit>().ToList();
+    }
+
+    private async Task AddRow()
+    {
+        SelectedObject = new TestUnit
+        {
+
+        };
+        await OnShowModalClick();
+    }
+
+    private async Task OnShowModalClick()
+    {
+        await ObjectAdditionModal.ShowAsync();
+    }
+
+    private async Task OnHideModalClick()
+    {
+        await ObjectAdditionModal.HideAsync();
+    }
+
+    private async Task UpsertObject()
+    {
+        GenService.Upsert<TestUnit>(SelectedObject);
+        await OnHideModalClick();
+        UpdateObjects();
+    }
+
+    private async Task EditObject(TestUnit varObject)
+    {
+        SelectedObject = varObject;
+        await OnShowModalClick();
+    }
+
+    private void DeleteObject(TestUnit varObject)
+    {
+        GenService.Remove<TestUnit>(varObject);
+        GenService.SaveChanges();
+        UpdateObjects();
+    }
+}
