@@ -30,6 +30,13 @@
         </GridColumn>
         @*  End Date Time Stamp *@
 
+        @* RoomNumber *@
+        <GridColumn TItem="BlockTest" HeaderText="Room Number">
+            @context.RoomNumber
+        </GridColumn>
+        @* RoomNumber *@
+
+
         <GridColumn TItem="BlockTest" HeaderText="Action">
             <Button @onclick="() => EditObject(context)">
                 <Icon Name="IconName.Pencil" />
@@ -54,6 +61,11 @@
             <label for="nameInput">Name:</label>
             <input type="text" @bind="SelectedObject.Name" />
             <br />
+            @* Number Input *@
+            <label for="roomNumberInput" class="my-3">Room Number:</label>
+            <InputNumber @bind-Value="SelectedObject.RoomNumber" class="form-control mt-3" placeholder="Room Number" />
+            @* Number Input *@
+
             <label for="startDateInput" class="mt-3">Start Date:</label>
             <DateInput TValue="DateOnly" @bind-Value="StartDate" />
             <TimeInput TValue="TimeOnly" @bind-Value="StartTime" />
