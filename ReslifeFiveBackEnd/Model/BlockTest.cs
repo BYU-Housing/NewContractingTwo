@@ -14,5 +14,6 @@ namespace ReslifeFiveBackEnd.Model
         public DateTime EndDate { get; set; }
         public int? RoomNumber { get; set; }
         public int? OccupantType { get; set; }
+        public int? BedspaceCode { get; set; }
     }
 }

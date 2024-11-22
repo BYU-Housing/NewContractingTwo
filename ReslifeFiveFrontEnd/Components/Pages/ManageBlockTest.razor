@@ -42,6 +42,11 @@
         </GridColumn>
         @* Dropdown *@
 
+        @* BedspaceCode *@
+        <GridColumn TItem="BlockTest" HeaderText="BedspaceCode">
+            @context.BedspaceCode
+        </GridColumn>
+        @* BedspaceCode *@
 
         <GridColumn TItem="BlockTest" HeaderText="Action">
             <Button @onclick="() => EditObject(context)">
@@ -83,6 +88,10 @@
            </select>
            @*  Occupant Type *@
 
+            @* BedspaceCode Input *@
+            <label for="bedspaceCodeInput" class="my-3">Bedspace Code:</label>
+            <InputNumber @bind-Value="SelectedObject.BedspaceCode" class="form-control mt-3" placeholder="Bedspace Code" />
+            @* BedspaceCode Input *@
 
             <label for="startDateInput" class="mt-3">Start Date:</label>
             <DateInput TValue="DateOnly" @bind-Value="StartDate" />
