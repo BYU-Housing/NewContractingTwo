@@ -15,25 +15,28 @@
 
 @if (Columns != null && Columns.Any())
 {
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                @foreach (var column in Columns)
-                {
-                    <th>@column.ToString("MMM dd")</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                @foreach (var column in Columns)
-                {
-                    <td>Data for @column.ToString("MMM dd")</td>
-                }
-            </tr>
-        </tbody>
-    </table>
+    <div style="overflow-x: auto; white-space: nowrap;">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    @foreach (var column in Columns)
+                    {
+                        <th>@column.ToString("MMM dd")</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    @foreach (var column in Columns)
+                    {
+                        <td>Data for @column.ToString("MMM dd")</td>
+                    }
+                </tr>
+            </tbody>
+        </table>
+    </div>
 }
+
 
 @code {
     public DateTime? StartDate { get; set; }
