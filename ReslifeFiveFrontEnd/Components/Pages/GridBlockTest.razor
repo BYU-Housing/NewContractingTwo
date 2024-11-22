@@ -26,12 +26,21 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
+@*                 <tr>
                     @foreach (var column in Columns)
                     {
                         <td>Data for @column.ToString("MMM dd")</td>
                     }
+                </tr> *@
+        @for (int row = 0; row < 5; row++)
+            {
+                <tr>
+                    @foreach (var column in Columns)
+                    {
+                        <td></td>
+                    }
                 </tr>
+            }
             </tbody>
         </table>
     </div>
