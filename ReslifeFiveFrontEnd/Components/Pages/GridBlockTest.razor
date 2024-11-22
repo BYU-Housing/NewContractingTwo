@@ -37,11 +37,30 @@
     </div>
 }
 
+@if (AllObjects != null && AllObjects.Any())
+{
+    <div class="mt-4">
+        <h4>BlockTest Names:</h4>
+        <ul>
+            @foreach (var obj in AllObjects)
+            {
+                <li>@obj.Name</li>
+            }
+        </ul>
+    </div>
+}
+
 
 @code {
+    private List<BlockTest> AllObjects = [];
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public List<DateTime> Columns { get; set; }
+
+    protected override void OnInitialized()
+    {
+        AllObjects = GenService.GetModel<BlockTest>().ToList();
+    }
 
     private void GenerateColumns()
     {
