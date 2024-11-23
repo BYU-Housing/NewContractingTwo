@@ -70,8 +70,9 @@
                                 .Select(offset => StartDate.Value.AddDays(offset))
                                 .ToList();
 
-            // Fetch BlockTest data where BedspaceCode < 7
+            // Fetch BlockTest data where BedspaceCode < 7 directly from the database
             AllObjects = GenService.GetModel<BlockTest>()
+                                   .AsQueryable() // Ensure query is constructed for the database
                                    .Where(obj => obj.BedspaceCode < 7)
                                    .ToList();
         }
