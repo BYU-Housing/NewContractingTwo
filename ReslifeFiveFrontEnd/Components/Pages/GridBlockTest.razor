@@ -26,21 +26,15 @@
                 </tr>
             </thead>
             <tbody>
-@*                 <tr>
-                    @foreach (var column in Columns)
-                    {
-                        <td>Data for @column.ToString("MMM dd")</td>
-                    }
-                </tr> *@
-        @for (int row = 0; row < 5; row++)
-            {
-                <tr>
-                    @foreach (var column in Columns)
-                    {
-                        <td></td>
-                    }
-                </tr>
-            }
+                @for (int row = 0; row < 5; row++)
+                {
+                    <tr>
+                        @foreach (var column in Columns)
+                        {
+                            <td></td>
+                        }
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
@@ -53,7 +47,9 @@
         <ul>
             @foreach (var obj in AllObjects)
             {
-                <li>@obj.Name | @obj.StartDate | @obj.EndDate | Bedspace Code: @obj.BedspaceCode</li>
+                <li>
+                    @obj.Name | @obj.StartDate | @obj.EndDate | Bedspace Code: @obj.BedspaceCode
+                </li>
             }
         </ul>
     </div>
@@ -74,8 +70,10 @@
                                 .Select(offset => StartDate.Value.AddDays(offset))
                                 .ToList();
 
-            // Fetch BlockTest data from the database
-            AllObjects = GenService.GetModel<BlockTest>().ToList();
+            // Fetch BlockTest data where BedspaceCode < 7
+            AllObjects = GenService.GetModel<BlockTest>()
+                                   .Where(obj => obj.BedspaceCode < 7)
+                                   .ToList();
         }
         else
         {
