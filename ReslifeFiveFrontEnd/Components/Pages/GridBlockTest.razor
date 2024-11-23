@@ -70,10 +70,14 @@
                                 .Select(offset => StartDate.Value.AddDays(offset))
                                 .ToList();
 
-            // Fetch BlockTest data where BedspaceCode < 7 directly from the database
+            // Convert filter date to UTC
+            var filterDateUtc = new DateTime(2024, 11, 23, 0, 0, 0, DateTimeKind.Utc);
+
+            // Fetch BlockTest data where StartDate > November 23, 2024, UTC
             AllObjects = GenService.GetModel<BlockTest>()
-                                   .AsQueryable() // Ensure query is constructed for the database
-                                   .Where(obj => obj.BedspaceCode < 7)
+                                   .AsQueryable()
+                                   .Where(obj => obj.StartDate.HasValue
+                                              && obj.StartDate.Value.ToUniversalTime() > filterDateUtc)
                                    .ToList();
         }
         else
@@ -83,3 +87,4 @@
         }
     }
 }
+

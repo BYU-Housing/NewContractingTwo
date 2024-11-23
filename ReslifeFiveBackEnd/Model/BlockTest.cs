@@ -10,7 +10,7 @@ namespace ReslifeFiveBackEnd.Model
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public DateTime StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int? RoomNumber { get; set; }
         public int? OccupantType { get; set; }
