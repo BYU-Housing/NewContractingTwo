@@ -70,14 +70,16 @@
                                 .Select(offset => StartDate.Value.AddDays(offset))
                                 .ToList();
 
-            // Use the user-selected EndDate as the reference point for filtering
-            var filterDate = EndDate.Value.ToUniversalTime();
+            var filterStartDate = StartDate.Value.ToUniversalTime();
+            var filterEndDate = EndDate.Value.ToUniversalTime();
 
-            // Fetch BlockTest data where StartDate < selected EndDate
+            // Fetch BlockTest data with the new conditions
             AllObjects = GenService.GetModel<BlockTest>()
                                    .AsQueryable()
                                    .Where(obj => obj.StartDate.HasValue
-                                              && obj.StartDate.Value.ToUniversalTime() < filterDate)
+                                              && obj.StartDate.Value.ToUniversalTime() < filterEndDate
+                                              && obj.EndDate.HasValue
+                                              && obj.EndDate.Value.ToUniversalTime() > filterStartDate)
                                    .ToList();
         }
         else
@@ -86,5 +88,6 @@
             AllObjects.Clear();
         }
     }
+
 
 }
