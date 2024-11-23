@@ -70,14 +70,14 @@
                                 .Select(offset => StartDate.Value.AddDays(offset))
                                 .ToList();
 
-            // Convert filter date to UTC
-            var filterDateUtc = new DateTime(2024, 11, 23, 0, 0, 0, DateTimeKind.Utc);
+            // Use the user-selected StartDate as the reference point for filtering
+            var filterDate = StartDate.Value.ToUniversalTime();
 
-            // Fetch BlockTest data where StartDate > November 23, 2024, UTC
+            // Fetch BlockTest data where StartDate > selected StartDate
             AllObjects = GenService.GetModel<BlockTest>()
                                    .AsQueryable()
                                    .Where(obj => obj.StartDate.HasValue
-                                              && obj.StartDate.Value.ToUniversalTime() > filterDateUtc)
+                                              && obj.StartDate.Value.ToUniversalTime() > filterDate)
                                    .ToList();
         }
         else
