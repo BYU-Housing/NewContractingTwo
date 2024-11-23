@@ -50,8 +50,13 @@
                 <li>
                     @obj.Name | @obj.StartDate | @obj.EndDate | Bedspace Code: @obj.BedspaceCode
                 </li>
+
             }
         </ul>
+        <div class="mt-3">
+            <strong>Total Unique Bedspace Codes:</strong> @UniqueBedspaceCount
+        </div>
+
     </div>
 }
 
@@ -60,6 +65,8 @@
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public List<DateTime> Columns { get; set; } = new List<DateTime>();
+    private int UniqueBedspaceCount => AllObjects.Select(obj => obj.BedspaceCode).Distinct().Count();
+
 
     private void GenerateColumns()
     {
