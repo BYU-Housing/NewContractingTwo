@@ -26,12 +26,12 @@
                 </tr>
             </thead>
             <tbody>
-                @for (int row = 0; row < 5; row++)
+                @foreach (var bedspace in UniqueBedspaceCodes)
                 {
                     <tr>
                         @foreach (var column in Columns)
                         {
-                            <td>-</td> <!-- Placeholder for cells -->
+                            <td>@bedspace</td> <!-- Placeholder for cells -->
                         }
                     </tr>
                 }
