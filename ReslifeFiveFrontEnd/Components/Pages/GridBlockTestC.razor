@@ -1,7 +1,7 @@
 ﻿@page "/gridBlockTestC"
 @inject IGenService GenService
 
-<h3>This is the Block Test Grid C</h3>
+<h3>Block Test Grid</h3>
 
 <div class="mb-3">
     <label for="startDate">Start Date:</label>
@@ -31,12 +31,18 @@
                     <tr>
                         @foreach (var column in Columns)
                         {
-                            <td>@bedspace</td> <!-- Placeholder for cells -->
+                            <td>@column.ToString("MMM dd")</td> <!-- Replace placeholder text -->
                         }
                     </tr>
                 }
             </tbody>
         </table>
+    </div>
+}
+else if (Columns != null && !Columns.Any())
+{
+    <div class="alert alert-warning mt-3">
+        No matching data found for the selected date range.
     </div>
 }
 
@@ -73,21 +79,18 @@
     public DateTime? EndDate { get; set; }
     public List<DateTime> Columns { get; set; } = new List<DateTime>();
 
-    // Property to count the unique BedspaceCodes
     private int UniqueBedspaceCount => UniqueBedspaceCodes.Count;
 
-    // Property to get the unique BedspaceCodes (handles int?)
     private List<string> UniqueBedspaceCodes => AllObjects
-        .Where(obj => obj.BedspaceCode.HasValue) // Include only non-null values
-        .Select(obj => obj.BedspaceCode.Value.ToString()) // Convert to string for display
+        .Where(obj => obj.BedspaceCode.HasValue)
+        .Select(obj => obj.BedspaceCode.Value.ToString())
         .Distinct()
         .ToList();
 
     private void GenerateColumns()
     {
-        if (StartDate.HasValue && EndDate.HasValue && StartDate <= EndDate)
+        if (IsValidDateRange())
         {
-            // Generate a list of dates from StartDate to EndDate
             Columns = Enumerable.Range(0, (EndDate.Value - StartDate.Value).Days + 1)
                                 .Select(offset => StartDate.Value.AddDays(offset))
                                 .ToList();
@@ -95,7 +98,6 @@
             var filterStartDate = StartDate.Value.ToUniversalTime();
             var filterEndDate = EndDate.Value.ToUniversalTime();
 
-            // Fetch BlockTest data with the new conditions
             AllObjects = GenService.GetModel<BlockTest>()
                                    .AsQueryable()
                                    .Where(obj => obj.StartDate.HasValue
@@ -110,6 +112,9 @@
             AllObjects.Clear();
         }
     }
+
+    private bool IsValidDateRange()
+    {
+        return StartDate.HasValue && EndDate.HasValue && StartDate <= EndDate;
+    }
 }
-
-
