@@ -38,6 +38,7 @@
                             .ToList();
 
                             int currentColumnIndex = 0;
+                            DateTime? previousEndDate = null;
 
                             foreach (var block in blocksForBedspace)
                             {
@@ -47,7 +48,12 @@
 
                                 if (blockStartIndex >= 0 && blockEndIndex >= 0 && blockStartIndex <= blockEndIndex)
                                 {
-                                    int span = blockEndIndex - blockStartIndex + 1;
+                                    // Insert a transition cell if the block overlaps with the previous one
+                                    if (previousEndDate.HasValue && previousEndDate.Value.Date == block.StartDate?.Date)
+                                    {
+                                        <td class="bg-secondary text-white text-center">Transition</td>
+                                        currentColumnIndex++;
+                                    }
 
                                     // Fill gaps before this block
                                     while (currentColumnIndex < blockStartIndex)
@@ -57,8 +63,10 @@
                                     }
 
                                     // Render the merged cell
+                                    int span = blockEndIndex - blockStartIndex + 1;
                                     <td colspan="@span" class="text-center">@block.Name</td>
                                     currentColumnIndex = blockEndIndex + 1;
+                                    previousEndDate = block.EndDate; // Update previous end date
                                 }
                             }
 
