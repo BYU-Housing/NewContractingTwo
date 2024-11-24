@@ -19,6 +19,7 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
+                    <th>Bedspace Code</th> <!-- Header for the new column -->
                     @foreach (var column in Columns)
                     {
                         <th>@column.ToString("MMM dd")</th>
@@ -29,9 +30,25 @@
                 @foreach (var bedspace in UniqueBedspaceCodes)
                 {
                     <tr>
+                        <td><strong>@(bedspace.HasValue ? bedspace.Value.ToString() : "N/A")</strong></td> <!-- Display BedspaceCode as int? -->
                         @foreach (var column in Columns)
                         {
-                            <td>@column.ToString("MMM dd")</td> <!-- Replace placeholder text -->
+                            <td>
+                                @{
+                                    var objForDate = AllObjects
+                                    .FirstOrDefault(obj =>
+                                    obj.BedspaceCode == bedspace
+                                    && obj.StartDate.HasValue
+                                    && obj.EndDate.HasValue
+                                    && obj.StartDate.Value.Date <= column.Date
+                                    && obj.EndDate.Value.Date >= column.Date);
+
+                                    if (objForDate != null)
+                                    {
+                                        <span>@objForDate.Name</span>
+                                    }
+                                }
+                            </td>
                         }
                     </tr>
                 }
@@ -54,7 +71,7 @@ else if (Columns != null && !Columns.Any())
             @foreach (var obj in AllObjects)
             {
                 <li>
-                    @obj.Name | @obj.StartDate | @obj.EndDate | Bedspace Code: @obj.BedspaceCode
+                    @obj.Name | @obj.StartDate | @obj.EndDate | Bedspace Code: @(obj.BedspaceCode.HasValue ? obj.BedspaceCode.Value.ToString() : "N/A")
                 </li>
             }
         </ul>
@@ -66,7 +83,7 @@ else if (Columns != null && !Columns.Any())
             <ul>
                 @foreach (var bedspace in UniqueBedspaceCodes)
                 {
-                    <li>@bedspace</li>
+                    <li>@(bedspace.HasValue ? bedspace.Value.ToString() : "N/A")</li>
                 }
             </ul>
         </div>
@@ -81,9 +98,9 @@ else if (Columns != null && !Columns.Any())
 
     private int UniqueBedspaceCount => UniqueBedspaceCodes.Count;
 
-    private List<string> UniqueBedspaceCodes => AllObjects
+    private List<int?> UniqueBedspaceCodes => AllObjects
         .Where(obj => obj.BedspaceCode.HasValue)
-        .Select(obj => obj.BedspaceCode.Value.ToString())
+        .Select(obj => obj.BedspaceCode)
         .Distinct()
         .ToList();
 
