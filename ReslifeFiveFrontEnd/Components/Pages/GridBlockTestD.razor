@@ -19,7 +19,7 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Bedspace Code</th> <!-- Header for the new column -->
+                    <th>Bedspace Code</th>
                     @foreach (var column in Columns)
                     {
                         <th>@column.ToString("MMM dd")</th>
@@ -30,25 +30,44 @@
                 @foreach (var bedspace in UniqueBedspaceCodes)
                 {
                     <tr>
-                        <td><strong>@(bedspace.HasValue ? bedspace.Value.ToString() : "N/A")</strong></td> <!-- Display BedspaceCode as int? -->
-                        @foreach (var column in Columns)
-                        {
-                            <td>
-                                @{
-                                    var objForDate = AllObjects
-                                    .FirstOrDefault(obj =>
-                                    obj.BedspaceCode == bedspace
-                                    && obj.StartDate.HasValue
-                                    && obj.EndDate.HasValue
-                                    && obj.StartDate.Value.Date <= column.Date
-                                    && obj.EndDate.Value.Date >= column.Date);
+                        <td><strong>@(bedspace.HasValue ? bedspace.Value.ToString() : "N/A")</strong></td>
+                        @{
+                            var blocksForBedspace = AllObjects
+                            .Where(obj => obj.BedspaceCode == bedspace)
+                            .OrderBy(obj => obj.StartDate)
+                            .ToList();
 
-                                    if (objForDate != null)
+                            int currentColumnIndex = 0;
+
+                            foreach (var block in blocksForBedspace)
+                            {
+                                // Calculate the starting and ending indices
+                                var blockStartIndex = Columns.FindIndex(c => c.Date == block.StartDate?.Date);
+                                var blockEndIndex = Columns.FindIndex(c => c.Date == block.EndDate?.Date);
+
+                                if (blockStartIndex >= 0 && blockEndIndex >= 0 && blockStartIndex <= blockEndIndex)
+                                {
+                                    int span = blockEndIndex - blockStartIndex + 1;
+
+                                    // Fill gaps before this block
+                                    while (currentColumnIndex < blockStartIndex)
                                     {
-                                        <span>@objForDate.Name</span>
+                                        <td></td>
+                                        currentColumnIndex++;
                                     }
+
+                                    // Render the merged cell
+                                    <td colspan="@span" class="text-center">@block.Name</td>
+                                    currentColumnIndex = blockEndIndex + 1;
                                 }
-                            </td>
+                            }
+
+                            // Fill remaining empty cells
+                            while (currentColumnIndex < Columns.Count)
+                            {
+                                <td></td>
+                                currentColumnIndex++;
+                            }
                         }
                     </tr>
                 }
@@ -115,12 +134,13 @@ else if (Columns != null && !Columns.Any())
             var filterStartDate = StartDate.Value.ToUniversalTime();
             var filterEndDate = EndDate.Value.ToUniversalTime();
 
+            // Fetch only relevant objects
             AllObjects = GenService.GetModel<BlockTest>()
                                    .AsQueryable()
                                    .Where(obj => obj.StartDate.HasValue
-                                              && obj.StartDate.Value.ToUniversalTime() < filterEndDate
+                                              && obj.StartDate.Value.ToUniversalTime() <= filterEndDate
                                               && obj.EndDate.HasValue
-                                              && obj.EndDate.Value.ToUniversalTime() > filterStartDate)
+                                              && obj.EndDate.Value.ToUniversalTime() >= filterStartDate)
                                    .ToList();
         }
         else
