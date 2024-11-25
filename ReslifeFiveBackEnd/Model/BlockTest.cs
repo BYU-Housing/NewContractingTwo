@@ -19,5 +19,9 @@ namespace ReslifeFiveBackEnd.Model
         public int? Sex { get; set; }
         public int? Community { get; set; }
         public int? Building { get; set; }
+        public int? Floor { get; set; }
+        public int? Wing { get; set; }
+        public int? StairWell { get; set; }
+        public int? ApartmentUnit { get; set; }
     }
 }

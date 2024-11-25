@@ -54,6 +54,46 @@
         </GridColumn>
         @* Dropdown *@
 
+        @* Floor *@
+        <GridColumn TItem="BlockTest" HeaderText="Floor">
+            @context.Floor
+        </GridColumn>
+        @* Floor *@
+
+        @* Wing *@
+        <GridColumn TItem="BlockTest" HeaderText="Wing">
+            @context.Wing
+        </GridColumn>
+        @* Wing *@
+
+        @* StairWell *@
+        <GridColumn TItem="BlockTest" HeaderText="StairWell">
+            @context.StairWell
+        </GridColumn>
+        @* StaiWell *@
+
+        @* ApartmentUnit *@
+        <GridColumn TItem="BlockTest" HeaderText="ApartmentUnit">
+            @context.ApartmentUnit
+        </GridColumn>
+        @* ApartmentUnit *@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         @* Dropdown *@
         <GridColumn TItem="BlockTest" HeaderText="Sex">
             @GetSex(context.Sex)
@@ -98,6 +138,33 @@
             <label for="roomNumberInput" class="my-3">Room Number:</label>
             <InputNumber @bind-Value="SelectedObject.RoomNumber" class="form-control mt-3" placeholder="Room Number" />
             @* Number Input *@
+
+            @* Number Input *@
+            <label for="floorInput" class="my-3">Floor :</label>
+            <InputNumber @bind-Value="SelectedObject.Floor" class="form-control mt-3" placeholder="Floor" />
+            @* Number Input *@
+
+            @* Number Input *@
+            <label for="wingInput" class="my-3">Wing :</label>
+            <InputNumber @bind-Value="SelectedObject.Wing" class="form-control mt-3" placeholder="Wing" />
+            @* Number Input *@
+
+            @* Number Input *@
+            <label for="stairWellInput" class="my-3">StairWell :</label>
+            <InputNumber @bind-Value="SelectedObject.StairWell" class="form-control mt-3" placeholder="StairWell" />
+            @* Number Input *@
+
+            @* Number Input *@
+            <label for="appartmentUnitInput" class="my-3">AppartmentUnit :</label>
+            <InputNumber @bind-Value="SelectedObject.ApartmentUnit" class="form-control mt-3" placeholder="AppartmentUnit" />
+            @* Number Input *@
+
+
+
+
+
+
+
 
            @*  Occupant Type *@
            <label for="occupantTypeSelect" class="mt-3">Occupant Type:</label>
