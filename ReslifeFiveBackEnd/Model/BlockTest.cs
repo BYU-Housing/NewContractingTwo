@@ -16,5 +16,6 @@ namespace ReslifeFiveBackEnd.Model
         public int? OccupantType { get; set; }
         public int? BedspaceCode { get; set; }
         public int? Area {  get; set; }
+        public int? Sex { get; set; }
     }
 }

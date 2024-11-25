@@ -48,6 +48,12 @@
         </GridColumn>
         @* Dropdown *@
 
+        @* Dropdown *@
+        <GridColumn TItem="BlockTest" HeaderText="Sex">
+            @GetSex(context.Sex)
+        </GridColumn>
+        @* Dropdown *@
+
         @* BedspaceCode *@
         <GridColumn TItem="BlockTest" HeaderText="BedspaceCode">
             @context.BedspaceCode
@@ -104,6 +110,16 @@
                 <option value="4">WYVIEW</option>
             </select>
             @*  Area *@
+            @*  Sex *@
+            <label for="sexSelect" class="mt-3">Sex:</label>
+            <select class="form-control mt-3" @bind="SelectedObject.Sex">
+                @* <option value="0">None</option> *@
+                <option value="1">M</option>
+                <option value="2">F</option>
+                <option value="3">NA</option>
+
+            </select>
+            @*  Sex *@
 
             @* BedspaceCode Input *@
             <label for="bedspaceCodeInput" class="my-3">Bedspace Code:</label>
@@ -153,7 +169,8 @@
         SelectedObject = new BlockTest
         {
             OccupantType = 0,
-            Area = 0
+            Area = 0,
+            Sex = 0
         };
         await OnShowModalClick();
     }
@@ -195,7 +212,7 @@
     {
         return occupantType switch
         {
-           // 0 => "None",
+            // 0 => "None",
             1 => "Single",
             2 => "Family",
             3 => "Conference",
@@ -216,6 +233,38 @@
             _ => "Unknown"
         };
     }
+
+    private string GetSex(int? sex)
+    {
+        return sex switch
+        {
+            1 => "M",
+            2 => "F",
+            3 => "NA",
+            _=> "NA"
+        };
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
