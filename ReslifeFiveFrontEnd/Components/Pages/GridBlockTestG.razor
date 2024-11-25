@@ -64,7 +64,27 @@
 
                                     // Render the merged cell
                                     int span = blockEndIndex - blockStartIndex + 1;
-                                    <td colspan="@span" class="text-center">@block.Name</td>
+                                    <td colspan="@span" class="text-center">
+                                       BedspaceCode: @block.Name |
+                                            @{
+                                                var areaDisplay = block.Area switch
+                                                {
+                                                    1 => "HELA",
+                                                    2 => "HERI",
+                                                    3 => "RIV",
+                                                    4 => "WYVIEW",
+                                                    _ => "UNKNOWN"
+                                                };
+                                            }
+                                       Area:     @areaDisplay |
+                       
+                                    
+                                    </td>
+                                    
+
+
+
+
                                     currentColumnIndex = blockEndIndex + 1;
                                     previousEndDate = block.EndDate; // Update previous end date
                                 }
