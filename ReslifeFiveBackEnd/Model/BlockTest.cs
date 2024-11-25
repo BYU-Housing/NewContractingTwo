@@ -18,5 +18,6 @@ namespace ReslifeFiveBackEnd.Model
         public int? Area {  get; set; }
         public int? Sex { get; set; }
         public int? Community { get; set; }
+        public int? Building { get; set; }
     }
 }

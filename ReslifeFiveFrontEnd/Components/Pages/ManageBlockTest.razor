@@ -49,6 +49,12 @@
         @* Dropdown *@
 
         @* Dropdown *@
+        <GridColumn TItem="BlockTest" HeaderText="Building">
+            @GetBuilding(context.Building)
+        </GridColumn>
+        @* Dropdown *@
+
+        @* Dropdown *@
         <GridColumn TItem="BlockTest" HeaderText="Sex">
             @GetSex(context.Sex)
         </GridColumn>
@@ -114,6 +120,19 @@
                 <option value="4">WYVIEW</option>
             </select>
             @*  Area *@
+
+            @*  Building *@
+            <label for="buildingSelect" class="mt-3">Building:</label>
+            <select class="form-control mt-3" @bind="SelectedObject.Building">
+                @* <option value="0">None</option> *@
+                <option value="1">Hinckley</option>
+                <option value="2">Chipman</option>
+                <option value="3">DavidJohn</option>
+                <option value="4">Taylor</option>
+            </select>
+            @*  Building *@
+
+
             @*  Sex *@
             <label for="sexSelect" class="mt-3">Sex:</label>
             <select class="form-control mt-3" @bind="SelectedObject.Sex">
@@ -184,6 +203,7 @@
         {
             OccupantType = 0,
             Area = 0,
+            Building = 1,
             Sex = 0
         };
         await OnShowModalClick();
@@ -266,6 +286,18 @@
             1 => "18-",
             2 => "19+",
             3 => "Either",
+            _ => "NA"
+        };
+    }
+
+    private string GetBuilding(int? building)
+    {
+        return building switch
+        {
+            1 => "Hinckley",
+            2 => "Chipman",
+            3 => "David John",
+            4 => "Taylor",
             _ => "NA"
         };
     }

@@ -90,7 +90,23 @@
                                                     _ => "UNKNOWN"
                                                 };
                                             }
-                                       Area:     @areaDisplay | Room: @block.RoomNumber
+                                       Area:     @areaDisplay |
+                                        @{
+                                            var buildingDisplay = block.Building switch
+                                            {
+                                                1 => "HINCKLEY",
+                                                2 => "CHIPMAN",
+                                                3 => "DAVIDJOHN",
+                                                4 => "TAYLOR",
+                                                _ => "UNKNOWN"
+                                            };
+                                        }
+                                        Bldg:     @buildingDisplay | Room: @block.RoomNumber
+
+
+
+
+
                                         <br /> @block.StartDate - @block.EndDate 
                                         <br />
                                         
