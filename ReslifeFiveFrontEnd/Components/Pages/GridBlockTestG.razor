@@ -64,7 +64,7 @@
 
                                     // Render the merged cell
                                     int span = blockEndIndex - blockStartIndex + 1;
-                                    <td colspan="@span" class="text-center">
+                                    <td colspan="@span" class="text-start">
                                        BedspaceCode: @block.Name |
                                             @{
                                                 var areaDisplay = block.Area switch
@@ -76,7 +76,7 @@
                                                     _ => "UNKNOWN"
                                                 };
                                             }
-                                       Area:     @areaDisplay |
+                                       Area:     @areaDisplay | <br /> @block.StartDate - @block.EndDate
                        
                                     
                                     </td>
