@@ -104,7 +104,17 @@
                                                 };
                                             }
                                         <button type="button" class="btn btn-primary">@sexDisplay</button>
-                                          
+
+                                                    @{
+                                                var communityDisplay = block.Community switch
+                                                {
+                                                    1 => "18-",
+                                                    2 => "19+",
+                                                    3 => "Either",
+                                                    _ => "NA"
+                                                };
+                                            }
+                                        <button type="button" class="btn btn-primary">@communityDisplay</button>                                  
                                     
                                     </td>
                                     

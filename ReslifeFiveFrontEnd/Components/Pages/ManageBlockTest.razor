@@ -53,7 +53,11 @@
             @GetSex(context.Sex)
         </GridColumn>
         @* Dropdown *@
-
+        @* Dropdown *@
+        <GridColumn TItem="BlockTest" HeaderText="Community">
+            @GetCommunity(context.Community)
+        </GridColumn>
+        @* Dropdown *@
         @* BedspaceCode *@
         <GridColumn TItem="BlockTest" HeaderText="BedspaceCode">
             @context.BedspaceCode
@@ -120,6 +124,16 @@
 
             </select>
             @*  Sex *@
+            @*  Community *@
+            <label for="communitySelect" class="mt-3">Community:</label>
+            <select class="form-control mt-3" @bind="SelectedObject.Community">
+                @* <option value="0">None</option> *@
+                <option value="1">18-</option>
+                <option value="2">19+</option>
+                <option value="3">Either</option>
+
+            </select>
+            @*  Community *@
 
             @* BedspaceCode Input *@
             <label for="bedspaceCodeInput" class="my-3">Bedspace Code:</label>
@@ -242,6 +256,17 @@
             2 => "F",
             3 => "NA",
             _=> "NA"
+        };
+    }
+
+    private string GetCommunity(int? community)
+    {
+        return community switch
+        {
+            1 => "18-",
+            2 => "19+",
+            3 => "Either",
+            _ => "NA"
         };
     }
 
