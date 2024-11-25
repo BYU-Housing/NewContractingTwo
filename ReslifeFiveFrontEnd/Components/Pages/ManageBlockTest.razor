@@ -42,6 +42,12 @@
         </GridColumn>
         @* Dropdown *@
 
+        @* Dropdown *@
+        <GridColumn TItem="BlockTest" HeaderText="Area">
+            @GetArea(context.Area)
+        </GridColumn>
+        @* Dropdown *@
+
         @* BedspaceCode *@
         <GridColumn TItem="BlockTest" HeaderText="BedspaceCode">
             @context.BedspaceCode
@@ -87,6 +93,17 @@
                 <option value="4">Closed For Maintenance</option>
            </select>
            @*  Occupant Type *@
+
+            @*  Area *@
+            <label for="areaSelect" class="mt-3">Area:</label>
+            <select class="form-control mt-3" @bind="SelectedObject.Area">
+                @* <option value="0">None</option> *@
+                <option value="1">HELA</option>
+                <option value="2">HERI</option>
+                <option value="3">RIV</option>
+                <option value="4">WYVIEW</option>
+            </select>
+            @*  Area *@
 
             @* BedspaceCode Input *@
             <label for="bedspaceCodeInput" class="my-3">Bedspace Code:</label>
@@ -135,7 +152,8 @@
     {
         SelectedObject = new BlockTest
         {
-            OccupantType = 0
+            OccupantType = 0,
+            Area = 0
         };
         await OnShowModalClick();
     }
@@ -186,7 +204,18 @@
         };
     }
 
-
+    private string GetArea(int? area)
+    {
+        return area switch
+        {
+            // 0 => "None",
+            1 => "HELA",
+            2 => "HERI",
+            3 => "RIV",
+            4 => "WYVIEW",
+            _ => "Unknown"
+        };
+    }
 
 
 
