@@ -92,7 +92,19 @@
                                             }
                                        Area:     @areaDisplay | Room: @block.RoomNumber
                                         <br /> @block.StartDate - @block.EndDate 
-                       
+                                        <br />
+                                        
+                                            @{
+                                                var sexDisplay = block.Sex switch
+                                                {
+                                                    1 => "M",
+                                                    2 => "F",
+                                                    3 => "NA",
+                                                    _ => "Unspecified"
+                                                };
+                                            }
+                                        <button type="button" class="btn btn-primary">@sexDisplay</button>
+                                          
                                     
                                     </td>
                                     
