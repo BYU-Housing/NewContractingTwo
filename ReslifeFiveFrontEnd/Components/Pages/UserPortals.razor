@@ -1,7 +1,22 @@
 ﻿@page "/userPortals"
 @inject IGenService GenService
+@inject NavigationManager NavigationManager
+
 <h3>UserPortals</h3>
 
-@code {
+<!-- Navigation using a link -->
+<p>
+    <a href="/portalOne">Go to PortalOne</a>
+</p>
 
+<!-- Navigation using a button -->
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToPortalOne">Go to PortalOne</button>
+</p>
+
+@code {
+    private void NavigateToPortalOne()
+    {
+        NavigationManager.NavigateTo("/portalOne");
+    }
 }
