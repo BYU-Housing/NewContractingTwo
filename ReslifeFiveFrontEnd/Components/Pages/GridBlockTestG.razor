@@ -65,7 +65,19 @@
                                     // Render the merged cell
                                     int span = blockEndIndex - blockStartIndex + 1;
                                     <td colspan="@span" class="text-start">
-                                       @block.Name | Occupant: @block.OccupantType
+                                       @block.Name | Occupant: 
+                                        @{ 
+                                        var occupantDisplay = block.OccupantType switch
+                                        {
+                                                    1 => "Single Student",
+                                                    2 => "Family",
+                                                    3 => "Conference Guest",
+                                                    4 => "Closed For Maintenance",
+                                                    _=> "Unknown"
+                                        };
+                                        }
+                                        @occupantDisplay
+                                        
                                         <br />
 
                                             @{
