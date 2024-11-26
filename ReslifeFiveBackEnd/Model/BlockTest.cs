@@ -23,5 +23,6 @@ namespace ReslifeFiveBackEnd.Model
         public int? Wing { get; set; }
         public int? StairWell { get; set; }
         public int? ApartmentUnit { get; set; }
+        public bool? Active { get; set; } = false;
     }
 }
