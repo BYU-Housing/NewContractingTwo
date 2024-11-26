@@ -130,7 +130,11 @@
                     <td><input type="text" @bind="SelectedObject.Name" /></td>
                 </tr>
                 <tr>
-                    <td colspan="2"><b>Location Properties</b></td>
+                    <td><br /></td>
+                    <td><br /></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><b>Location Properties</b></td>
                 </tr>
                 <tr>
                     <td><label for="areaSelect" class="mt-3">Area:</label></td>
@@ -176,43 +180,26 @@
                     <td><label for="appartmentUnitInput" class="my-3">AppartmentUnit :</label></td>
                     <td><InputNumber @bind-Value="SelectedObject.ApartmentUnit" class="form-control mt-3" placeholder="AppartmentUnit" /></td>
                 </tr>
+                <tr>
+                    <td><br /></td>
+                    <td><br /></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><b>Bedspace Setup</b></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
             </table>
-
-
-@*             <label for="nameInput">Name:</label>
-            <input type="text" @bind="SelectedObject.Name" />
-            <br /> *@
-            @* Number Input *@
-@*             <label for="roomNumberInput" class="my-3">Room Number:</label>
-            <InputNumber @bind-Value="SelectedObject.RoomNumber" class="form-control mt-3" placeholder="Room Number" /> *@
-            @* Number Input *@
-
-            @* Number Input *@
-@*             <label for="floorInput" class="my-3">Floor :</label>
-            <InputNumber @bind-Value="SelectedObject.Floor" class="form-control mt-3" placeholder="Floor" /> *@
-            @* Number Input *@
-
-            @* Number Input *@
-@*             <label for="wingInput" class="my-3">Wing :</label>
-            <InputNumber @bind-Value="SelectedObject.Wing" class="form-control mt-3" placeholder="Wing" /> *@
-            @* Number Input *@
-
-            @* Number Input *@
-    @*         <label for="stairWellInput" class="my-3">StairWell :</label>
-            <InputNumber @bind-Value="SelectedObject.StairWell" class="form-control mt-3" placeholder="StairWell" /> *@
-            @* Number Input *@
-
-            @* Number Input *@
-@*             <label for="appartmentUnitInput" class="my-3">AppartmentUnit :</label>
-            <InputNumber @bind-Value="SelectedObject.ApartmentUnit" class="form-control mt-3" placeholder="AppartmentUnit" /> *@
-            @* Number Input *@
-
-
-
-
-
-
-
 
            @*  Occupant Type *@
            <label for="occupantTypeSelect" class="mt-3">Occupant Type:</label>
@@ -225,26 +212,6 @@
            </select>
            @*  Occupant Type *@
 
-            @*  Area *@
-            @* <label for="areaSelect" class="mt-3">Area:</label> *@
-@*             <select class="form-control mt-3" @bind="SelectedObject.Area">
-                <option value="1">HELA</option>
-                <option value="2">HERI</option>
-                <option value="3">RIV</option>
-                <option value="4">WYVIEW</option>
-            </select> *@
-            @*  Area *@
-
-            @*  Building *@
-            @* <label for="buildingSelect" class="mt-3">Building:</label> *@
-@*             <select class="form-control mt-3" @bind="SelectedObject.Building">
-
-                <option value="1">Hinckley</option>
-                <option value="2">Chipman</option>
-                <option value="3">DavidJohn</option>
-                <option value="4">Taylor</option>
-            </select> *@
-            @*  Building *@
 
 
             @*  Sex *@
