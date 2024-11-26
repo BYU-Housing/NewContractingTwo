@@ -188,6 +188,39 @@
                     <td colspan="2" align="center"><b>Bedspace Setup</b></td>
                 </tr>
                 <tr>
+                    <td><label for="startDateInput" class="mt-3">Start Date:</label></td>
+                    <td>
+                        <DateInput TValue="DateOnly" @bind-Value="StartDate" />
+                        <TimeInput TValue="TimeOnly" @bind-Value="StartTime" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="endDateInput" class="mt-3">End Date:</label></td>
+                    <td>
+                        <DateInput TValue="DateOnly" @bind-Value="EndDate" />
+                        <TimeInput TValue="TimeOnly" @bind-Value="EndTime" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><br /></td>
+                    <td><br /></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><b>Bedspace Flags</b></td>
+                </tr>
+                <tr>
+                    <td><label for="occupantTypeSelect" class="mt-3">Occupant Type:</label></td>
+                    <td>
+                        <select class="form-control mt-3" @bind="SelectedObject.OccupantType">
+                            @* <option value="0">None</option> *@
+                            <option value="1">Single</option>
+                            <option value="2">Family</option>
+                            <option value="3">Conference</option>
+                            <option value="4">Closed For Maintenance</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
                     <td></td>
                     <td></td>
                 </tr>
@@ -200,17 +233,6 @@
                     <td></td>
                 </tr>
             </table>
-
-           @*  Occupant Type *@
-           <label for="occupantTypeSelect" class="mt-3">Occupant Type:</label>
-           <select class="form-control mt-3" @bind="SelectedObject.OccupantType">
-                @* <option value="0">None</option> *@
-                <option value="1">Single</option>
-                <option value="2">Family</option>
-                <option value="3">Conference</option>
-                <option value="4">Closed For Maintenance</option>
-           </select>
-           @*  Occupant Type *@
 
 
 
@@ -250,13 +272,11 @@
 
 
 
-            <label for="startDateInput" class="mt-3">Start Date:</label>
-            <DateInput TValue="DateOnly" @bind-Value="StartDate" />
-            <TimeInput TValue="TimeOnly" @bind-Value="StartTime" />
+            
+
             <br />
-            <label for="endDateInput" class="mt-3">End Date:</label>
-            <DateInput TValue="DateOnly" @bind-Value="EndDate" />
-            <TimeInput TValue="TimeOnly" @bind-Value="EndTime" />
+            
+
 
         </div>
     </BodyTemplate>
