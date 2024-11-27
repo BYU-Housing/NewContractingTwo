@@ -112,6 +112,28 @@
         </GridColumn>
         @*Checkbox Bool*@
 
+        @*Checkbox Bool*@
+        <GridColumn TItem="BlockTest" HeaderText="ADA">
+            @GetADAText(context.ADA)
+        </GridColumn>
+        @*Checkbox Bool*@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -303,6 +325,33 @@
                         </div>
                     </td>
                 </tr>
+                <tr>
+                    <td> <label class="mt-3">ADA</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="isADA" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -380,7 +429,9 @@
             Building = 1,
             Sex = 0,
             Active = false,
-            ESA = false
+            ESA = false,
+            Athlete = false,
+            ADA = false
         };
         await OnShowModalClick();
     }
@@ -525,6 +576,62 @@
             null => "Unknown"
         };
     }
+    private bool isADA
+    {
+        get => SelectedObject.ADA ?? false;
+        set => SelectedObject.ADA = value;
+    }
+
+    private string GetADAText(bool? ada)
+    {
+        return ada switch
+        {
+            true => "Yes",
+            false => "No",
+            null => "Unknown"
+        };
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
 
