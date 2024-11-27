@@ -118,6 +118,12 @@
         </GridColumn>
         @*Checkbox Bool*@
 
+        @*Checkbox Bool*@
+        <GridColumn TItem="BlockTest" HeaderText="InternationalScholarship">
+            @GetInternationalScholarshipText(context.InternationalScholarship)
+        </GridColumn>
+        @*Checkbox Bool*@
+
 
 
 
@@ -334,6 +340,15 @@
                         </div>
                     </td>
                 </tr>
+                <tr>
+                    <td> <label class="mt-3">InternationalScholarship</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="isInternationalScholarship" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
 
 
 
@@ -431,7 +446,8 @@
             Active = false,
             ESA = false,
             Athlete = false,
-            ADA = false
+            ADA = false,
+            InternationalScholarship = false
         };
         await OnShowModalClick();
     }
@@ -585,6 +601,21 @@
     private string GetADAText(bool? ada)
     {
         return ada switch
+        {
+            true => "Yes",
+            false => "No",
+            null => "Unknown"
+        };
+    }
+    private bool isInternationalScholarship
+    {
+        get => SelectedObject.InternationalScholarship ?? false;
+        set => SelectedObject.InternationalScholarship = value;
+    }
+
+    private string GetInternationalScholarshipText(bool? internationalScholarship)
+    {
+        return internationalScholarship switch
         {
             true => "Yes",
             false => "No",
