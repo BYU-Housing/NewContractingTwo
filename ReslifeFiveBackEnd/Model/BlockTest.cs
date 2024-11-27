@@ -32,5 +32,9 @@ namespace ReslifeFiveBackEnd.Model
         public bool? NoAnimal { get; set; } = false;
         public bool? IsolateQuarantine { get; set; } = false;
         public bool? FLEXGE { get; set; } = false;
+        public bool? POSTBacc { get; set; } = false;
+        public bool? Freeze { get; set; } = false;
+        public bool? WaitingList { get; set; } = false;
+        public bool? Consolidate { get; set; } = false;
     }
 }
