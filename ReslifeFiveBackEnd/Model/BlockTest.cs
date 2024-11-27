@@ -25,5 +25,6 @@ namespace ReslifeFiveBackEnd.Model
         public int? ApartmentUnit { get; set; }
         public bool? Active { get; set; } = false;
         public bool? ESA { get; set; } = false;
+        public bool? Athlete { get; set; } = false;
     }
 }
