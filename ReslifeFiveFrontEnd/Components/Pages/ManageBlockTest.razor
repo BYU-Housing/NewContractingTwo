@@ -234,6 +234,24 @@
                 </tr>
 
                 <tr>
+                    <td><label for="occupantTypeSelect" class="mt-3">Occupant Type:</label></td>
+                    <td>
+                        <select class="form-control mt-3" @bind="SelectedObject.OccupantType">
+                            @* <option value="0">None</option> *@
+                            <option value="1">Single</option>
+                            <option value="2">Family</option>
+                            <option value="3">Conference</option>
+                            <option value="4">LISR</option>
+                            <option value="5">Off Campus</option>
+                            <option value="6">Closed For Maintenance</option>
+                            <option value="7">Not Available</option>
+                            <option value="8">Available if Needed</option>
+                            <option value="9">Special</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
                     <td><label for="statusSelect" class="mt-3">Status:</label></td>
                     <td>
                         <select class="form-control mt-3" @bind="SelectedObject.Status">
@@ -332,23 +350,7 @@
                 <tr>
                     <td colspan="2" align="center"><b>Bedspace Flags</b></td>
                 </tr>
-                <tr>
-                    <td><label for="occupantTypeSelect" class="mt-3">Occupant Type:</label></td>
-                    <td>
-                        <select class="form-control mt-3" @bind="SelectedObject.OccupantType">
-                            @* <option value="0">None</option> *@
-                            <option value="1">Single</option>
-                            <option value="2">Family</option>
-                            <option value="3">Conference</option>
-                            <option value="4">LISR</option>
-                            <option value="5">Off Campus</option>
-                            <option value="6">Closed For Maintenance</option>
-                            <option value="7">Not Available</option>
-                            <option value="8">Available if Needed</option>
-                            <option value="9">Special</option>
-                        </select>
-                    </td>
-                </tr>
+
                 <tr>
                     <td><label for="sexSelect" class="mt-3">Sex:</label></td>
                     <td>
