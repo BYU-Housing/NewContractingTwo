@@ -387,8 +387,9 @@
                         <select class="form-control mt-3" @bind="SelectedObject.Community">
                             @* <option value="0">None</option> *@
                             <option value="1">18-</option>
-                            <option value="2">19+</option>
-                            <option value="3">Either</option>
+                            <option value="2">18+</option>
+                            <option value="3">19+</option>
+                            <option value="4">Any</option>
 
                         </select>
                     </td>
@@ -600,6 +601,7 @@
             OccupantType = 0,
             Area = 0,
             Building = 1,
+            Community = 1,
             Sex = 0,
             Active = false,
             ESA = false,
@@ -730,8 +732,9 @@
         return community switch
         {
             1 => "18-",
-            2 => "19+",
-            3 => "Either",
+            2 => "18+",
+            3 => "19+",
+            4 => "Any",
             _ => "NA"
         };
     }
