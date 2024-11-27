@@ -36,5 +36,6 @@ namespace ReslifeFiveBackEnd.Model
         public bool? Freeze { get; set; } = false;
         public bool? WaitingList { get; set; } = false;
         public bool? Consolidate { get; set; } = false;
+        public int? Status { get; set; }
     }
 }
