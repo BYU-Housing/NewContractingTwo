@@ -28,5 +28,8 @@ namespace ReslifeFiveBackEnd.Model
         public bool? Athlete { get; set; } = false;
         public bool? ADA { get; set; } = false;
         public bool? InternationalScholarship { get; set; } = false;
+        public bool? Wheatley { get; set; } = false;
+        public bool? NoAnimal { get; set; } = false;
+        public bool? IsolateQuarantine { get; set; } = false;
     }
 }
