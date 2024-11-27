@@ -170,6 +170,11 @@
             @GetStatus(context.Status)
         </GridColumn>
         @* Dropdown *@
+        @* Dropdown *@
+        <GridColumn TItem="BlockTest" HeaderText="AgreementPeriod">
+            @GetAgreementPeriod(context.AgreementPeriod)
+        </GridColumn>
+        @* Dropdown *@
 
 
 
@@ -266,7 +271,19 @@
                         </select>
                     </td>
                 </tr>
-
+                <tr>
+                    <td><label for="agreementPeriodSelect" class="mt-3">AgreementPeriod:</label></td>
+                    <td>
+                        <select class="form-control mt-3" @bind="SelectedObject.AgreementPeriod">
+                            <option value="1">Fall Winter 2024</option>
+                            <option value="2">Winter 2025</option>
+                            <option value="3">Spring 2025</option>
+                            <option value="4">Summer 2025</option>
+                            <option value="5">Fall Wintere 2025</option>
+                            <option value="6">Winter 2026</option>
+                        </select>
+                    </td>
+                </tr>
 
 
 
@@ -597,7 +614,8 @@
             Freeze = false,
             WaitingList = false,
             Consolidate = false,
-            Status = 1
+            Status = 1,
+            AgreementPeriod = 0
         };
         await OnShowModalClick();
     }
@@ -652,7 +670,20 @@
             _=> "Unknown"
         };
     }
-
+    private string GetAgreementPeriod(int? agreementPeriod)
+    {
+        return agreementPeriod switch
+        {
+            // 0 => "None",
+            1 => "Fall Winter 2024",
+            2 => "Winter 2025",
+            3 => "Spring 2025",
+            4 => "Spring 2025",
+            5 => "Fall Wintere 2025",
+            6 => "Winter 2026",
+            _ => "Unknown"
+        };
+    }
     private string GetStatus(int? status)
     {
         return status switch
