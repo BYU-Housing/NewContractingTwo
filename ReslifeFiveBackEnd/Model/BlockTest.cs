@@ -31,5 +31,6 @@ namespace ReslifeFiveBackEnd.Model
         public bool? Wheatley { get; set; } = false;
         public bool? NoAnimal { get; set; } = false;
         public bool? IsolateQuarantine { get; set; } = false;
+        public bool? FLEXGE { get; set; } = false;
     }
 }
