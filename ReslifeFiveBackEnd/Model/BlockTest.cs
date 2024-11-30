@@ -40,6 +40,7 @@ namespace ReslifeFiveBackEnd.Model
         public int? AgreementPeriod { get; set; }
         public string FName { get; set; } = string.Empty;
         public string LName { get; set; } = string.Empty;
+        public string NetID { get; set; } = string.Empty;
 
     }
 }

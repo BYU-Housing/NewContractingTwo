@@ -188,7 +188,11 @@
         </GridColumn>
         @* StringInput *@
 
-
+        @* StringInput *@
+        <GridColumn TItem="BlockTest" HeaderText="NetID">
+            @context.NetID
+        </GridColumn>
+        @* StringInput *@
 
 
 
@@ -532,6 +536,11 @@
                 <tr>
                     <td><label for="nameInput">Last Name:</label></td>
                     <td><input type="text" @bind="SelectedObject.LName" /></td>
+                </tr>
+
+                <tr>
+                    <td><label for="nameInput">NetID:</label></td>
+                    <td><input type="text" @bind="SelectedObject.NetID" /></td>
                 </tr>
 
 
