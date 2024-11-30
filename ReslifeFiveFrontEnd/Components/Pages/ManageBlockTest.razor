@@ -182,8 +182,11 @@
         </GridColumn>
         @* StringInput *@
 
-
-
+        @* StringInput *@
+        <GridColumn TItem="BlockTest" HeaderText="LName">
+            @context.LName
+        </GridColumn>
+        @* StringInput *@
 
 
 
@@ -524,6 +527,11 @@
                 <tr>
                     <td><label for="nameInput">First Name:</label></td>
                     <td><input type="text" @bind="SelectedObject.FName" /></td>
+                </tr>
+
+                <tr>
+                    <td><label for="nameInput">Last Name:</label></td>
+                    <td><input type="text" @bind="SelectedObject.LName" /></td>
                 </tr>
 
 
