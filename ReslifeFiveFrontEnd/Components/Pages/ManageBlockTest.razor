@@ -176,8 +176,11 @@
         </GridColumn>
         @* Dropdown *@
 
-
-
+        @* StringInput *@
+        <GridColumn TItem="BlockTest" HeaderText="FName">
+            @context.FName
+        </GridColumn>
+        @* StringInput *@
 
 
 
@@ -519,8 +522,8 @@
                     <td colspan="2" align="center"><b>User Actions</b></td>
                 </tr>
                 <tr>
-                    <td>Action One</td>
-                    <td> Action One</td>
+                    <td><label for="nameInput">First Name:</label></td>
+                    <td><input type="text" @bind="SelectedObject.FName" /></td>
                 </tr>
 
 

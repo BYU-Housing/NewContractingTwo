@@ -38,6 +38,7 @@ namespace ReslifeFiveBackEnd.Model
         public bool? Consolidate { get; set; } = false;
         public int? Status { get; set; }
         public int? AgreementPeriod { get; set; }
+        public string FName { get; set; } = string.Empty;
 
     }
 }
