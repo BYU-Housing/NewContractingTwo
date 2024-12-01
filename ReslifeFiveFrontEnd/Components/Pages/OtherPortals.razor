@@ -8,10 +8,17 @@
 <p>
     <button class="btn btn-primary" @onclick="NavigateToCounter">Go to Counter</button>
 </p>
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToWeather">Go to Weather</button>
+</p>
 
 @code {
     private void NavigateToCounter()
     {
         NavigationManager.NavigateTo("/counter");
+    }
+    private void NavigateToWeather()
+    {
+        NavigationManager.NavigateTo("/weather");
     }
 }
