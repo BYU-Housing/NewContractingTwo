@@ -10,6 +10,9 @@
     <button class="btn btn-primary" @onclick="NavigateToTestManageHASpouce">Go to Manage Test HA Spouce</button>
 </p>
 <p>
+    <button class="btn btn-primary" @onclick="NavigateToAdminDash">Admin Dash</button>
+</p>
+<p>
     <button class="btn btn-primary" @onclick="NavigateToManageBlock">Go to Manage Block</button>
 </p>
 <p>
@@ -48,5 +51,9 @@
     private void NavigateToTestManageHASpouce()
     {
         NavigationManager.NavigateTo("/testManageHASpouce");
+    }
+    private void NavigateToAdminDash()
+    {
+        NavigationManager.NavigateTo("/testAdminDash");
     }
 }
