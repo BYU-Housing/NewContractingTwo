@@ -30,6 +30,10 @@
     <button class="btn btn-primary" @onclick="NavigateToTestSeekingReplacement">Seeking Replacments</button>
 </p>
 
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToTestMyPetitions">Test My Petitions</button>
+</p>
+
 @code {
     private void NavigateToPortalOne()
     {
@@ -53,5 +57,9 @@
     private void NavigateToTestSeekingReplacement()
     {
         NavigationManager.NavigateTo("/testSeekingReplacement");
+    }
+    private void NavigateToTestMyPetitions()
+    {
+        NavigationManager.NavigateTo("/testMyPetitions");
     }
 }
