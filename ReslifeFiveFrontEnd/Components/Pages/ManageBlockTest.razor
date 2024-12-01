@@ -194,7 +194,11 @@
         </GridColumn>
         @* StringInput *@
 
-
+        @*  Contract Date Time Stamp *@
+        <GridColumn TItem="BlockTest" HeaderText="Contract Date">
+            @(context.ContractDate.ToString() ?? "Not Set")
+        </GridColumn>
+        @*  Contract Date Time Stamp *@
 
 
 
@@ -542,7 +546,13 @@
                     <td><label for="nameInput">NetID:</label></td>
                     <td><input type="text" @bind="SelectedObject.NetID" /></td>
                 </tr>
-
+                <tr>
+                    <td><label for="contractDateInput" class="mt-3">Contract Date:</label></td>
+                    <td>
+                        <DateInput TValue="DateOnly" @bind-Value="ContractDate" />
+                        <TimeInput TValue="TimeOnly" @bind-Value="ContractTime" />
+                    </td>
+                </tr>
 
 
 
@@ -611,6 +621,8 @@
     private TimeOnly StartTime = TimeOnly.FromDateTime(DateTime.Now);
     private DateOnly EndDate = DateOnly.FromDateTime(DateTime.Now);
     private TimeOnly EndTime = TimeOnly.FromDateTime(DateTime.Now);
+    private DateOnly ContractDate = DateOnly.FromDateTime(DateTime.Now);
+    private TimeOnly ContractTime = TimeOnly.FromDateTime(DateTime.Now);
 
 
     protected override void OnInitialized()
@@ -666,6 +678,7 @@
         //SelectedObject.Start = selectedDateTime;
         SelectedObject.StartDate = DateTime.SpecifyKind(StartDate.ToDateTime(StartTime), DateTimeKind.Utc);
         SelectedObject.EndDate = DateTime.SpecifyKind(EndDate.ToDateTime(EndTime), DateTimeKind.Utc);
+        SelectedObject.ContractDate = DateTime.SpecifyKind(ContractDate.ToDateTime(ContractTime), DateTimeKind.Utc);
         GenService.Upsert<BlockTest>(SelectedObject);
         await OnHideModalClick();
         UpdateObjects();
