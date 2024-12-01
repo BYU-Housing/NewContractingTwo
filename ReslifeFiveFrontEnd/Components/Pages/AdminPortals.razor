@@ -6,8 +6,9 @@
 <p>
     <button class="btn btn-primary" @onclick="NavigateToTestManageEmployees">Manage Test Employees</button>
 </p>
-
-
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToTestManageHASpouce">Go to Manage Test HA Spouce</button>
+</p>
 <p>
     <button class="btn btn-primary" @onclick="NavigateToManageBlock">Go to Manage Block</button>
 </p>
@@ -20,6 +21,7 @@
 <p>
     <button class="btn btn-primary" @onclick="NavigateToManageTimePeriod">Go to Manage Time Period</button>
 </p>
+
 
 @code {
 
@@ -42,5 +44,9 @@
     private void NavigateToTestManageEmployees()
     {
         NavigationManager.NavigateTo("/testManageEmployee");
+    }
+    private void NavigateToTestManageHASpouce()
+    {
+        NavigationManager.NavigateTo("/testManageHASpouce");
     }
 }
