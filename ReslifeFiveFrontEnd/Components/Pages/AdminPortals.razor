@@ -3,6 +3,10 @@
 @inject NavigationManager NavigationManager
 
 <h3>AdminPortals</h3>
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToTestManageEmployees">Manage Test Employees</button>
+</p>
+
 
 <p>
     <button class="btn btn-primary" @onclick="NavigateToManageBlock">Go to Manage Block</button>
@@ -34,5 +38,9 @@
     private void NavigateToManageTimePeriod()
     {
         NavigationManager.NavigateTo("/manageTimePeriodTest");
+    }
+    private void NavigateToTestManageEmployees()
+    {
+        NavigationManager.NavigateTo("/testManageEmployee");
     }
 }
