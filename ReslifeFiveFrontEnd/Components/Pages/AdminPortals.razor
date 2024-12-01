@@ -7,11 +7,18 @@
 <p>
     <button class="btn btn-primary" @onclick="NavigateToManageBlock">Go to Manage Block</button>
 </p>
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToManageBlockTest">Go to Manage Block Test</button>
+</p>
 
 @code {
 
     private void NavigateToManageBlock()
     {
         NavigationManager.NavigateTo("/manageBlock");
+    }
+    private void NavigateToManageBlockTest()
+    {
+        NavigationManager.NavigateTo("/manageBlockTest");
     }
 }
