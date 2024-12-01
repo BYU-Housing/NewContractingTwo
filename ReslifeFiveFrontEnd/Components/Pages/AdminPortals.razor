@@ -10,6 +10,12 @@
 <p>
     <button class="btn btn-primary" @onclick="NavigateToManageBlockTest">Go to Manage Block Test</button>
 </p>
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToGridBlockTestG">Go to Grid Block Test</button>
+</p>
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToManageTimePeriod">Go to Manage Time Period</button>
+</p>
 
 @code {
 
@@ -20,5 +26,13 @@
     private void NavigateToManageBlockTest()
     {
         NavigationManager.NavigateTo("/manageBlockTest");
+    }
+    private void NavigateToGridBlockTestG()
+    {
+        NavigationManager.NavigateTo("/gridBlockTestG");
+    }
+    private void NavigateToManageTimePeriod()
+    {
+        NavigationManager.NavigateTo("/manageTimePeriodTest");
     }
 }
