@@ -15,11 +15,15 @@
 </p>
 
 <p>
-    <button class="btn btn-primary" @onclick="NavigateToPortalOne">Go to New Contract PortalOne</button>
+    <button class="btn btn-primary" @onclick="NavigateToPortalOne">Go to New Test Contract PortalOne</button>
 </p>
 
 <p>
-    <button class="btn btn-primary" @onclick="NavigateToCancelContracts">Go to Cancle Contract</button>
+    <button class="btn btn-primary" @onclick="NavigateToCancelContracts">Go to Test Cancle Contract</button>
+</p>
+
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToTestMySwaps">Go to Test My Swaps</button>
 </p>
 
 @code {
@@ -35,5 +39,10 @@
     private void NavigateToCancelContracts()
     {
         NavigationManager.NavigateTo("/testContractCancelation");
+    }
+
+    private void NavigateToTestMySwaps()
+    {
+        NavigationManager.NavigateTo("/testMySwaps");
     }
 }
