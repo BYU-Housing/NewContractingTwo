@@ -14,9 +14,17 @@
     <button class="btn btn-primary" @onclick="NavigateToPortalOne">Go to PortalOne</button>
 </p>
 
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToTestMyContracts">Test My Contracts</button>
+</p>
+
 @code {
     private void NavigateToPortalOne()
     {
         NavigationManager.NavigateTo("/portalOne");
+    }
+    private void NavigateToTestMyContracts()
+    {
+        NavigationManager.NavigateTo("/testMyContracts");
     }
 }
