@@ -11,6 +11,9 @@
 <p>
     <button class="btn btn-primary" @onclick="NavigateToWeather">Go to Weather</button>
 </p>
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToGridBlockTest">Go to Grid Block Test</button>
+</p>
 
 @code {
     private void NavigateToCounter()
@@ -20,5 +23,9 @@
     private void NavigateToWeather()
     {
         NavigationManager.NavigateTo("/weather");
+    }
+    private void NavigateToGridBlockTest()
+    {
+        NavigationManager.NavigateTo("/gridBlockTest");
     }
 }
