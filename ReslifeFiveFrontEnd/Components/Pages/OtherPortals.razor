@@ -1,0 +1,17 @@
+﻿@page "/otherPortals"
+@inject IGenService GenService
+@inject NavigationManager NavigationManager
+
+<h3>Other Portals</h3>
+
+<!-- Navigation using a button -->
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToCounter">Go to Counter</button>
+</p>
+
+@code {
+    private void NavigateToCounter()
+    {
+        NavigationManager.NavigateTo("/counter");
+    }
+}
