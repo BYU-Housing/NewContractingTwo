@@ -315,10 +315,11 @@
                     <td>
                         <select class="form-control mt-3" @bind="SelectedObject.Area">
                             @* <option value="0">None</option> *@
-                            <option value="1">HELA</option>
-                            <option value="2">HERI</option>
-                            <option value="3">RIV</option>
+                            <option value="1">HELAMAN</option>
+                            <option value="2">HERITAGE</option>
+                            <option value="3">RIVIERA</option>
                             <option value="4">WYVIEW</option>
+                            <option value="5">LISR</option>
                         </select>
                     </td>
                 </tr>
@@ -752,10 +753,11 @@
         return area switch
         {
             // 0 => "None",
-            1 => "HELA",
-            2 => "HERI",
-            3 => "RIV",
+            1 => "HELAMAN",
+            2 => "HERITAGE",
+            3 => "RIVIERA",
             4 => "WYVIEW",
+            5 => "LISR",
             _ => "Unknown"
         };
     }
