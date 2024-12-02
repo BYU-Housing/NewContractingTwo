@@ -2,7 +2,48 @@
 @inject IGenService GenService
 
 <h3>Block Test H Grid</h3>
+<div>
+    <button class="btn btn-primary" @onclick="FetchBlockTestData">Load BlockTest Data</button>
+</div>
+
+@if (BlockTestList != null && BlockTestList.Any())
+{
+    <div class="mt-3">
+        <h4>BlockTest Data:</h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var block in BlockTestList)
+                {
+                    <tr>
+                        <td>@block.Id</td>
+                        <td>@block.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else if (BlockTestList != null)
+{
+    <div class="alert alert-warning mt-3">
+        No data found in the BlockTest table.
+    </div>
+}
 
 @code {
+    private List<BlockTest> BlockTestList { get; set; } = new List<BlockTest>();
 
+    private void FetchBlockTestData()
+    {
+        // Fetch all rows from the BlockTest table
+        BlockTestList = GenService.GetModel<BlockTest>()
+                                   .AsQueryable()
+                                   .ToList();
+    }
 }
