@@ -1,0 +1,125 @@
+﻿@page "/gridBlockTestJ"
+@inject IGenService GenService
+
+<h3>NewGridBlockTestJ</h3>
+
+<div>
+    <button class="btn btn-primary" @onclick="FetchBlockTestData">Load BlockTest Data</button>
+</div>
+
+<div class="scroll-container">
+    @if (BlockTestList != null && BlockTestList.Any())
+    {
+        <div class="block-container">
+            @foreach (var block in BlockTestList)
+            {
+                <div class="block-item"
+                     style="width:@CalculateBlockWidth(block.StartDate, block.EndDate); background-color:@GetBackgroundColor(block.OccupantType)">
+                    @block.Name |
+                    @(block.StartDate.HasValue ? block.StartDate.Value.ToString("yyyy-MM-dd HH:mm") : "No Start Date") |
+                    @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : "No End Date") |
+                    Occupant Type: @GetOccupantTypeDescription(block.OccupantType)
+                </div>
+            }
+        </div>
+    }
+    else if (BlockTestList != null)
+    {
+        <div class="alert alert-warning">
+            No data found in the BlockTest table.
+        </div>
+    }
+</div>
+
+<style>
+    /* Ensures the scrollbars are always visible */
+    .scroll-container {
+        position: relative;
+        width: 100%;
+        height: calc(100vh - 100px); /* Adjust height to fit within the viewport */
+        overflow: auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    /* Stacks all blocks vertically */
+    .block-container {
+        display: flex;
+        flex-direction: column;
+        gap: 5px; /* Space between blocks */
+    }
+
+    /* Each block is styled for visibility */
+    .block-item {
+        border: 1px solid black;
+        padding: 10px;
+        margin: 0;
+        display: inline-block;
+        text-align: center;
+        white-space: normal; /* Allows text wrapping inside blocks */
+    }
+
+    /* Button styles for better UI experience */
+    button {
+        margin-bottom: 10px;
+    }
+</style>
+
+@code {
+    private List<BlockTest> BlockTestList { get; set; } = new List<BlockTest>();
+
+    private void FetchBlockTestData()
+    {
+        // Fetch all rows from the BlockTest table
+        BlockTestList = GenService.GetModel<BlockTest>()
+                                   .AsQueryable()
+                                   .ToList();
+    }
+
+    private string CalculateBlockWidth(DateTime? startDate, DateTime? endDate)
+    {
+        if (startDate.HasValue && endDate.HasValue)
+        {
+            var duration = (endDate.Value - startDate.Value).TotalHours;
+            return $"{Math.Max(1, duration)}px"; // Minimum width of 1px
+        }
+        return "1px"; // Default width if dates are null
+    }
+
+    private string GetOccupantTypeDescription(int? occupantType)
+    {
+        return occupantType switch
+        {
+            1 => "Single",
+            2 => "Family",
+            3 => "Conference",
+            4 => "LISR",
+            5 => "Off Campus",
+            6 => "Closed For Maintenance",
+            7 => "Not Available",
+            8 => "Available if Needed",
+            9 => "Special",
+            10 => "Employee",
+            _ => "Unknown"
+        };
+    }
+
+    private string GetBackgroundColor(int? occupantType)
+    {
+        return occupantType switch
+        {
+            1 => "lightblue",
+            2 => "lightgreen",
+            3 => "yellow",
+            4 => "brown",
+            5 => "red",
+            6 => "purple",
+            7 => "pink",
+            8 => "tan",
+            9 => "turquoise",
+            10 => "orange",
+            _ => "gray"
+        };
+    }
+}
