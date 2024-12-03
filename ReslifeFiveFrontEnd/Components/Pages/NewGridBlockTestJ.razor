@@ -95,10 +95,10 @@
         {
             // Calculate the duration in hours
             var duration = (endDate.Value - startDate.Value).TotalHours;
-            // Scale the duration to width (e.g., 10px per hour)
-            return $"{Math.Max(100, duration * 10)}px"; // Ensure minimum width of 100px
+            // Use 1 pixel per hour
+            return $"{Math.Max(1, duration)}px"; // Ensure minimum width of 1px
         }
-        return "100px"; // Default width for blocks without dates
+        return "1px"; // Default width for blocks without dates
     }
 
     private string GetOccupantTypeDescription(int? occupantType)
