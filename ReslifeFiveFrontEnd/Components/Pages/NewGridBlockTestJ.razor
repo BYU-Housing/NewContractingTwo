@@ -12,7 +12,7 @@
             @foreach (var group in BlockTestList.GroupBy(b => b.BedspaceCode))
             {
                 <div class="block-row">
-                    @foreach (var block in group)
+                    @foreach (var block in group.OrderBy(b => b.StartDate))
                     {
                         <div class="block-item"
                              style="width:@CalculateBlockWidth(block.StartDate, block.EndDate); background-color:@GetBackgroundColor(block.OccupantType)">
