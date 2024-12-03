@@ -16,7 +16,8 @@
                 <div class="block-item" style="width:@CalculateBlockWidth(block.StartDate, block.EndDate)">
                     @block.Name |
                     @(block.StartDate.HasValue ? block.StartDate.Value.ToString("yyyy-MM-dd HH:mm") : "No Start Date") |
-                    @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : "No End Date")
+                    @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : "No End Date") |
+                    @block.OccupantType
                 </div>
             }
         </div>
