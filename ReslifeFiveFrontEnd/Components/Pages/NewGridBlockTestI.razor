@@ -17,7 +17,7 @@
                     @block.Name |
                     @(block.StartDate.HasValue ? block.StartDate.Value.ToString("yyyy-MM-dd HH:mm") : "No Start Date") |
                     @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : "No End Date") |
-                    @block.OccupantType
+                    Occupant Type: @GetOccupantTypeDescription(block.OccupantType)
                 </div>
             }
         </div>
@@ -85,6 +85,22 @@
         }
         return "1px"; // Default width if dates are null
     }
+
+    private string GetOccupantTypeDescription(int? occupantType)
+    {
+        return occupantType switch
+        {
+            1 => "Single",
+            2 => "Family",
+            3 => "Conference",
+            4 => "LISR",
+            5 => "Off Campus",
+            6 => "Closed For Maintenance",
+            7 => "Not Available",
+            8 => "Available if Needed",
+            9 => "Special",
+            10 => "Employee",
+            _ => "Unknown"
+        };
+    }
 }
-
-
