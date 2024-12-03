@@ -12,7 +12,11 @@
     <div class="mt-3">
         @foreach (var block in BlockTestList)
         {
-            <div class="block-item">@block.Name | @block.StartDate | @block.EndDate</div>
+            <div class="block-item" style="width:@CalculateBlockWidth(block.StartDate, block.EndDate)">
+                @block.Name |
+                @(block.StartDate.HasValue ? block.StartDate.Value.ToString("yyyy-MM-dd HH:mm") : "No Start Date") |
+                @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : "No End Date")
+            </div>
         }
     </div>
 }
@@ -29,6 +33,7 @@ else if (BlockTestList != null)
         padding: 10px;
         margin: 5px;
         display: inline-block;
+        text-align: center;
     }
 </style>
 
@@ -41,5 +46,15 @@ else if (BlockTestList != null)
         BlockTestList = GenService.GetModel<BlockTest>()
                                    .AsQueryable()
                                    .ToList();
+    }
+
+    private string CalculateBlockWidth(DateTime? startDate, DateTime? endDate)
+    {
+        if (startDate.HasValue && endDate.HasValue)
+        {
+            var duration = (endDate.Value - startDate.Value).TotalHours;
+            return $"{Math.Max(1, duration)}px"; // Minimum width of 1px
+        }
+        return "1px"; // Default width if dates are null
     }
 }
