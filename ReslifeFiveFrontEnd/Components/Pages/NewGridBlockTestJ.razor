@@ -17,7 +17,7 @@
                         <div class="block-item"
                              style="width:@CalculateBlockWidth(block.StartDate, block.EndDate); background-color:@GetBackgroundColor(block.OccupantType)">
                             @block.Name |
-                            @(block.StartDate.HasValue ? block.StartDate.Value.ToString("yyyy-MM-dd HH:mm") : "No Start Date") |
+                            @(block.StartDate.HasValue ? block.StartDate.Value.ToString("yyyy-MM-dd HH:mm") : "No Start Date") |<br />
                             @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : "No End Date") |
                             Occupant Type: @GetOccupantTypeDescription(block.OccupantType)
                         </div>
@@ -35,42 +35,39 @@
 </div>
 
 <style>
-    /* Enable horizontal and vertical scrolling */
     .scroll-container {
         position: relative;
         width: 100%;
-        height: calc(100vh - 100px); /* Adjust height to fit within the viewport */
-        overflow: auto; /* Allow scrolling in both directions */
+        height: calc(100vh - 100px);
+        overflow: auto;
         border: 1px solid #ccc;
-        padding: 10px;
+        padding: 0;
         box-sizing: border-box;
     }
 
-    /* Ensure the block container can extend horizontally */
     .block-container {
         display: flex;
         flex-direction: column;
-        gap: 10px; /* Space between rows */
+        gap: 0;
     }
 
-    /* Prevent wrapping of rows and allow scrolling for wide blocks */
     .block-row {
         display: flex;
         flex-direction: row;
-        flex-wrap: nowrap; /* Prevent wrapping */
-        gap: 5px; /* Space between blocks in the same row */
-        min-width: max-content; /* Allow rows to extend beyond the screen */
+        flex-wrap: nowrap;
+        gap: 0;
+        min-width: max-content;
     }
 
-    /* Blocks maintain their proportional widths */
     .block-item {
         border: 1px solid black;
-        padding: 10px;
+        padding: 0;
         margin: 0;
         display: inline-block;
         text-align: left;
-        white-space: nowrap; /* Prevent text wrapping inside blocks */
+        white-space: nowrap;
     }
+
 
     /* Style for buttons */
     button {
