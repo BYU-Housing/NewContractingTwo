@@ -19,7 +19,8 @@
                             @block.Name |
                             @(block.StartDate.HasValue ? block.StartDate.Value.ToString("yyyy-MM-dd HH:mm") : "No Start Date") |<br />
                             @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : "No End Date") |
-                            Occupant Type: @GetOccupantTypeDescription(block.OccupantType)
+                            Occupant Type: @GetOccupantTypeDescription(block.OccupantType) |
+                            Area : @GetAreaDescription(block.Area)
                         </div>
                     }
                 </div>
@@ -131,6 +132,18 @@
             9 => "turquoise",
             10 => "orange",
             _ => "gray"
+        };
+    }
+    private string GetAreaDescription(int? area)
+    {
+        return area switch
+        {
+            1 => "HELAMAN",
+            2 => "HERITAGE",
+            3 => "RIVIERA",
+            4 => "WYVIEW",
+            5 => "LISR",
+            _ => "Unknown"
         };
     }
 }
