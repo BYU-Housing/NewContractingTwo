@@ -2,6 +2,18 @@
 @inject IGenService GenService
 
 <div>
+    <!-- Filter Section -->
+    <div>
+        <h5>Filter by Area</h5>
+        @foreach (var area in AreaFilterOptions)
+        {
+            <div>
+                <input type="checkbox" id="@area.Value" @bind="@SelectedAreas[area.Key]" />
+                <label for="@area.Value">@area.Value</label>
+            </div>
+        }
+    </div>
+
     <button class="btn btn-primary" @onclick="FetchBlockTestData">Load BlockTest Data</button>
 </div>
 
@@ -20,7 +32,7 @@
                             @(block.StartDate.HasValue ? block.StartDate.Value.ToString("yyyy-MM-dd HH:mm") : "No Start Date") |<br />
                             @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : "No End Date") |
                             Occupant Type: @GetOccupantTypeDescription(block.OccupantType) |
-                            Area : @GetAreaDescription(block.Area)
+                            Area: @GetAreaDescription(block.Area)
                         </div>
                     }
                 </div>
@@ -69,7 +81,6 @@
         white-space: nowrap;
     }
 
-
     /* Style for buttons */
     button {
         margin-bottom: 10px;
@@ -79,24 +90,47 @@
 @code {
     private List<BlockTest> BlockTestList { get; set; } = new List<BlockTest>();
 
-    private void FetchBlockTestData()
+    // Dictionary to store the filter options
+    private Dictionary<int, string> AreaFilterOptions = new()
     {
-        // Fetch all rows from the BlockTest table
-        BlockTestList = GenService.GetModel<BlockTest>()
-                                   .AsQueryable()
-                                   .ToList();
+        { 1, "HELAMAN" },
+        { 2, "HERITAGE" },
+        { 3, "RIVIERA" },
+        { 4, "WYVIEW" },
+        { 5, "LISR" }
+    };
+
+    // Dictionary to track selected filter checkboxes
+    private Dictionary<int, bool> SelectedAreas = new()
+    {
+        { 1, false },
+        { 2, false },
+        { 3, false },
+        { 4, false },
+        { 5, false }
+    };
+
+    private async Task FetchBlockTestData()
+    {
+        // Get the list of selected area keys
+        var selectedAreaKeys = SelectedAreas.Where(kvp => kvp.Value).Select(kvp => kvp.Key).ToList();
+
+        // Fetch filtered data from the service
+        BlockTestList = await Task.Run(() =>
+            GenService.GetModel<BlockTest>()
+                      .AsQueryable()
+                      .Where(b => selectedAreaKeys.Contains(b.Area ?? 0)) // Handle null areas with ?? 0
+                      .ToList());
     }
 
     private string CalculateBlockWidth(DateTime? startDate, DateTime? endDate)
     {
         if (startDate.HasValue && endDate.HasValue)
         {
-            // Calculate the duration in hours
             var duration = (endDate.Value - startDate.Value).TotalHours;
-            // Use 1 pixel per hour
-            return $"{Math.Max(1, duration)}px"; // Ensure minimum width of 1px
+            return $"{Math.Max(1, duration)}px";
         }
-        return "1px"; // Default width for blocks without dates
+        return "1px";
     }
 
     private string GetOccupantTypeDescription(int? occupantType)
@@ -134,6 +168,7 @@
             _ => "gray"
         };
     }
+
     private string GetAreaDescription(int? area)
     {
         return area switch
