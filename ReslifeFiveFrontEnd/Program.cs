@@ -11,7 +11,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")),
+    options.UseNpgsql(builder.Configuration.GetConnectionString("BlocktestConnection")),
     ServiceLifetime.Scoped);
 builder.Services.AddScoped<IGenRepository,GenRepository>();
 builder.Services.AddScoped<IGenService, GenService>();
