@@ -21,6 +21,17 @@ namespace ReslifeFiveBusinessLayer.Service
         {
             return _repo.Set<T>();
         }
+        public IQueryable<T> GetModel<T>(params Expression<Func<T, object>>[] includes) where T : class
+        {
+            var query = _repo.Set<T>();
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return query;
+        }
 
         public async Task<T> GetByIdAsync<T>(int id) where T : class
         {

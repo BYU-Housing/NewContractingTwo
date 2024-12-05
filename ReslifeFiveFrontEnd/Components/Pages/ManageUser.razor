@@ -3,6 +3,149 @@
 
 <h3>Mange Users</h3>
 
-@code {
+<p>Manage Users</p>
 
+
+<Button @onclick="AddRow">Add New User</Button>
+
+<div class="container-fluid vh-100">
+    <Grid TItem="User"
+          Data="AllObjects"
+          Class="w-100 table table-hover table-bordered table-striped"
+          AllowPaging="true"
+          PageSize="10"
+          Responsive="true">
+        <GridColumn TItem="User" HeaderText="Id">
+            @context.Id
+        </GridColumn>
+        <GridColumn TItem="User" HeaderText="FName">
+            @context.FName
+        </GridColumn>
+        <GridColumn TItem="User" HeaderText="LName">
+            @context.LName
+        </GridColumn>
+        <GridColumn TItem="User" HeaderText="NetID">
+            @context.NetID
+        </GridColumn>
+        <GridColumn TItem="User" HeaderText="Role">
+            @(context.Role?.Name ?? "Role Not Loaded")
+        </GridColumn>
+        @* DateLastUpdated *@
+        <GridColumn TItem="User" HeaderText="DateLastUpdated">
+            @(context.DateLastUpdated.ToString() ?? "Not Set")
+        </GridColumn>
+        @* DateLastUpdated *@
+        @* Dropdown *@
+        <GridColumn TItem="User" HeaderText="LastUpdatedBy">
+            @context.LastUpdatedBy
+        </GridColumn>
+        @* Dropdown *@
+
+        <GridColumn TItem="User" HeaderText="Action">
+            <Button @onclick="() => EditObject(context)">
+                <Icon Name="IconName.Pencil" />
+            </Button>
+            <Button @onclick="() => DeleteObject(context)">
+                <Icon Name="IconName.Trash3" />
+            </Button>
+        </GridColumn>
+    </Grid>
+</div>
+
+<Modal @ref="ObjectAdditionModal" Title="Add/Edit User">
+    <BodyTemplate>
+        <div>
+            @if (SelectedObject.Id != 0)
+            {
+                <p>
+                    User ID: @SelectedObject.Id
+                </p>
+            }
+
+            <label for="nameInput">First Name:</label>
+            <input type="text" @bind="SelectedObject.FName" />
+            <br />
+            <label for="nameInput">Last Name:</label>
+            <input type="text" @bind="SelectedObject.LName" />
+            <br />
+            <label for="nameInput">Net ID:</label>
+            <input type="text" @bind="SelectedObject.NetID" />
+            <br />
+            <label for="RoleDropDown">Role</label>
+            <select name="RoleDropDown" @bind="SelectedObject.RoleID">
+                @foreach(var role in Roles)
+                {
+                    <option value="@role.Id" >@role.Name</option>
+                }
+
+            </select>
+
+        </div>
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
+        <Button Color="ButtonColor.Primary" @onclick="UpsertObject">Save changes</Button>
+    </FooterTemplate>
+</Modal>
+
+@code {
+    private List<User> AllObjects = [];
+    private Modal ObjectAdditionModal = default!;
+    private User SelectedObject = new User();
+
+    private List<Role> Roles = [];
+    private DateOnly DateLastUpdated = DateOnly.FromDateTime(DateTime.UtcNow);
+    private TimeOnly TimeLastUpdated = TimeOnly.FromDateTime(DateTime.UtcNow);
+
+    protected override void OnInitialized()
+    {
+        AllObjects = GenService.GetModel<User>(x => x.Role).ToList();
+        Roles = GenService.GetModel<Role>().ToList();
+    }
+
+    private void UpdateObjects()
+    {
+        AllObjects = GenService.GetModel<User>().ToList();
+    }
+
+    private async Task AddRow()
+    {
+        SelectedObject = new User
+            {
+                DateLastUpdated = DateTime.UtcNow
+            };
+        await OnShowModalClick();
+    }
+
+    private async Task OnShowModalClick()
+    {
+        await ObjectAdditionModal.ShowAsync();
+    }
+
+    private async Task OnHideModalClick()
+    {
+        await ObjectAdditionModal.HideAsync();
+    }
+
+    private async Task UpsertObject()
+    {
+
+        SelectedObject.DateLastUpdated = DateTime.SpecifyKind(DateLastUpdated.ToDateTime(TimeLastUpdated), DateTimeKind.Utc);
+        GenService.Upsert<User>(SelectedObject);
+        await OnHideModalClick();
+        UpdateObjects();
+    }
+
+    private async Task EditObject(User varObject)
+    {
+        SelectedObject = varObject;
+        await OnShowModalClick();
+    }
+
+    private void DeleteObject(User varObject)
+    {
+        GenService.Remove<User>(varObject);
+        GenService.SaveChanges();
+        UpdateObjects();
+    }
 }
