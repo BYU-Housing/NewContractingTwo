@@ -1,0 +1,1199 @@
+﻿@page "/metricContracting"
+@inject IGenService GenService
+
+<h3>Contracting Metrics</h3>
+<p>This is the Test Version of the Block Manager.</p>
+
+
+<Button @onclick="AddRow">Add New BlockTest</Button>
+
+<div class="container-fluid vh-100">
+    <Grid TItem="BlockTest"
+          Data="AllObjects"
+          Class="w-100 table table-hover table-bordered table-striped"
+          AllowPaging="true"
+          PageSize="10"
+          Responsive="true">
+        <GridColumn TItem="BlockTest" HeaderText="Id">
+            @context.Id
+        </GridColumn>
+        <GridColumn TItem="BlockTest" HeaderText="Name">
+            @context.Name
+        </GridColumn>
+        <GridColumn TItem="BlockTest" HeaderText="Start Date">
+            @(context.StartDate.ToString() ?? "Not Set")
+        </GridColumn>
+
+       @*  End Date Time Stamp *@
+        <GridColumn TItem="BlockTest" HeaderText="End Date">
+            @(context.EndDate.ToString() ?? "Not Set")
+        </GridColumn>
+        @*  End Date Time Stamp *@
+
+        @* RoomNumber *@
+        <GridColumn TItem="BlockTest" HeaderText="Room Number">
+            @context.RoomNumber
+        </GridColumn>
+        @* RoomNumber *@
+        
+        @* Dropdown *@
+        <GridColumn TItem="BlockTest" HeaderText="OccupantType">
+            @GetOccupantType(context.OccupantType)
+        </GridColumn>
+        @* Dropdown *@
+
+        @* Dropdown *@
+        <GridColumn TItem="BlockTest" HeaderText="Area">
+            @GetArea(context.Area)
+        </GridColumn>
+        @* Dropdown *@
+
+        @* Dropdown *@
+        <GridColumn TItem="BlockTest" HeaderText="Building">
+            @GetBuilding(context.Building)
+        </GridColumn>
+        @* Dropdown *@
+
+        @* Floor *@
+        <GridColumn TItem="BlockTest" HeaderText="Floor">
+            @context.Floor
+        </GridColumn>
+        @* Floor *@
+
+        @* Wing *@
+        <GridColumn TItem="BlockTest" HeaderText="Wing">
+            @context.Wing
+        </GridColumn>
+        @* Wing *@
+
+        @* StairWell *@
+        <GridColumn TItem="BlockTest" HeaderText="StairWell">
+            @context.StairWell
+        </GridColumn>
+        @* StaiWell *@
+
+        @* ApartmentUnit *@
+        <GridColumn TItem="BlockTest" HeaderText="ApartmentUnit">
+            @context.ApartmentUnit
+        </GridColumn>
+        @* ApartmentUnit *@
+
+        @* Dropdown *@
+        <GridColumn TItem="BlockTest" HeaderText="Sex">
+            @GetSex(context.Sex)
+        </GridColumn>
+        @* Dropdown *@
+        @* Dropdown *@
+        <GridColumn TItem="BlockTest" HeaderText="Community">
+            @GetCommunity(context.Community)
+        </GridColumn>
+        @* Dropdown *@
+        @* BedspaceCode *@
+        <GridColumn TItem="BlockTest" HeaderText="BedspaceCode">
+            @context.BedspaceCode
+        </GridColumn>
+        @* BedspaceCode *@
+
+        @*Checkbox Bool*@
+        <GridColumn TItem="BlockTest" HeaderText="Active">
+            @GetActiveText(context.Active)
+        </GridColumn>
+        @*Checkbox Bool*@
+
+        @*Checkbox Bool*@
+        <GridColumn TItem="BlockTest" HeaderText="ESA">
+            @GetESAText(context.ESA)
+        </GridColumn>
+        @*Checkbox Bool*@
+
+        @*Checkbox Bool*@
+        <GridColumn TItem="BlockTest" HeaderText="Athlete">
+            @GetAthleteText(context.Athlete)
+        </GridColumn>
+        @*Checkbox Bool*@
+
+        @*Checkbox Bool*@
+        <GridColumn TItem="BlockTest" HeaderText="ADA">
+            @GetADAText(context.ADA)
+        </GridColumn>
+        @*Checkbox Bool*@
+
+        @*Checkbox Bool*@
+        <GridColumn TItem="BlockTest" HeaderText="InternationalScholarship">
+            @GetInternationalScholarshipText(context.InternationalScholarship)
+        </GridColumn>
+        @*Checkbox Bool*@
+
+        @*Checkbox Bool*@
+        <GridColumn TItem="BlockTest" HeaderText="Wheatley">
+            @GetWheatleyText(context.Wheatley)
+        </GridColumn>
+        @*Checkbox Bool*@
+        @*Checkbox Bool*@
+        <GridColumn TItem="BlockTest" HeaderText="NoAnimal">
+            @GetNoAnimalText(context.NoAnimal)
+        </GridColumn>
+        @*Checkbox Bool*@
+        @*Checkbox Bool*@
+        <GridColumn TItem="BlockTest" HeaderText="IsolateQuarantine">
+            @GetIsolateQuarantineText(context.IsolateQuarantine)
+        </GridColumn>
+        @*Checkbox Bool*@
+        @*Checkbox Bool*@
+        <GridColumn TItem="BlockTest" HeaderText="FLEXGE">
+            @GetFLEXGEText(context.FLEXGE)
+        </GridColumn>
+        @*Checkbox Bool*@
+        @*Checkbox Bool*@
+        <GridColumn TItem="BlockTest" HeaderText="POSTBacc">
+            @GetPOSTBaccText(context.POSTBacc)
+        </GridColumn>
+        @*Checkbox Bool*@
+        @*Checkbox Bool*@
+        <GridColumn TItem="BlockTest" HeaderText="Freeze">
+            @GetFreezeText(context.Freeze)
+        </GridColumn>
+        @*Checkbox Bool*@
+        @*Checkbox Bool*@
+        <GridColumn TItem="BlockTest" HeaderText="WaitingList">
+            @GetWaitingListText(context.WaitingList)
+        </GridColumn>
+        @*Checkbox Bool*@
+        @*Checkbox Bool*@
+        <GridColumn TItem="BlockTest" HeaderText="Consolidate">
+            @GetConsolidateText(context.Consolidate)
+        </GridColumn>
+        @*Checkbox Bool*@
+
+        @* Dropdown *@
+        <GridColumn TItem="BlockTest" HeaderText="Status">
+            @GetStatus(context.Status)
+        </GridColumn>
+        @* Dropdown *@
+        @* Dropdown *@
+        <GridColumn TItem="BlockTest" HeaderText="AgreementPeriod">
+            @GetAgreementPeriod(context.AgreementPeriod)
+        </GridColumn>
+        @* Dropdown *@
+
+        @* StringInput *@
+        <GridColumn TItem="BlockTest" HeaderText="FName">
+            @context.FName
+        </GridColumn>
+        @* StringInput *@
+
+        @* StringInput *@
+        <GridColumn TItem="BlockTest" HeaderText="LName">
+            @context.LName
+        </GridColumn>
+        @* StringInput *@
+
+        @* StringInput *@
+        <GridColumn TItem="BlockTest" HeaderText="NetID">
+            @context.NetID
+        </GridColumn>
+        @* StringInput *@
+
+        @*  Contract Date Time Stamp *@
+        <GridColumn TItem="BlockTest" HeaderText="Contract Date">
+            @(context.ContractDate.ToString() ?? "Not Set")
+        </GridColumn>
+        @*  Contract Date Time Stamp *@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <GridColumn TItem="BlockTest" HeaderText="Action">
+            <Button @onclick="() => EditObject(context)">
+                <Icon Name="IconName.Pencil" />
+            </Button>
+            <Button @onclick="() => DeleteObject(context)">
+                <Icon Name="IconName.Trash3" />
+            </Button>
+        </GridColumn>
+    </Grid>
+</div>
+
+<Modal @ref="ObjectAdditionModal" Title="Add/Edit BlockTest">
+    <BodyTemplate>
+        <div>
+            @if (SelectedObject.Id != 0)
+            {
+                <p>
+                    BlockTest ID: @SelectedObject.Id
+                </p>
+            }
+
+
+            <table>
+                <tr>
+                    <td><label for="nameInput">Name:</label></td>
+                    <td><input type="text" @bind="SelectedObject.Name" /></td>
+                </tr>
+                <tr>
+                    <td><label for="bedspaceCodeInput" class="my-3">Bedspace Code:</label></td>
+                    <td><InputNumber @bind-Value="SelectedObject.BedspaceCode" class="form-control mt-3" placeholder="Bedspace Code" /></td>
+                </tr>
+
+                <tr>
+                    <td><label for="occupantTypeSelect" class="mt-3">Occupant Type:</label></td>
+                    <td>
+                        <select class="form-control mt-3" @bind="SelectedObject.OccupantType">
+                            @* <option value="0">None</option> *@
+                            <option value="1">Single</option>
+                            <option value="2">Family</option>
+                            <option value="3">Conference</option>
+                            <option value="4">LISR</option>
+                            <option value="5">Off Campus</option>
+                            <option value="6">Closed For Maintenance</option>
+                            <option value="7">Not Available</option>
+                            <option value="8">Available if Needed</option>
+                            <option value="9">Special</option>
+                            <option value="10">Employee</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><label for="statusSelect" class="mt-3">Status:</label></td>
+                    <td>
+                        <select class="form-control mt-3" @bind="SelectedObject.Status">
+                            <option value="1">Admin Freeze</option>
+                            <option value="2">Admin Setup</option>
+                            <option value="3">Contractable</option>
+                            <option value="4">Pending Contract</option>
+                            <option value="5">Contracted</option>
+                            <option value="6">Seeking Termination</option>
+                            <option value="7">Cancelled</option>
+                            <option value="8">Closed</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="agreementPeriodSelect" class="mt-3">AgreementPeriod:</label></td>
+                    <td>
+                        <select class="form-control mt-3" @bind="SelectedObject.AgreementPeriod">
+                            <option value="1">Fall Winter 2024</option>
+                            <option value="2">Winter 2025</option>
+                            <option value="3">Spring 2025</option>
+                            <option value="4">Summer 2025</option>
+                            <option value="5">Fall Wintere 2025</option>
+                            <option value="6">Winter 2026</option>
+                        </select>
+                    </td>
+                </tr>
+
+
+
+
+                <tr>
+                    <td><br /></td>
+                    <td><br /></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><b>Location Properties</b></td>
+                </tr>
+                <tr>
+                    <td><label for="areaSelect" class="mt-3">Area:</label></td>
+                    <td>
+                        <select class="form-control mt-3" @bind="SelectedObject.Area">
+                            @* <option value="0">None</option> *@
+                            <option value="1">HELAMAN</option>
+                            <option value="2">HERITAGE</option>
+                            <option value="3">RIVIERA</option>
+                            <option value="4">WYVIEW</option>
+                            <option value="5">LISR</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="buildingSelect" class="mt-3">Building:</label></td>
+                    <td>
+                        <select class="form-control mt-3" @bind="SelectedObject.Building">
+                            @* <option value="0">None</option> *@
+                            <option value="1">LI A</option>
+                            <option value="2">LI B</option>
+                            <option value="3">LI C</option>
+                            <option value="4">LI D</option>
+                            <option value="5">LI E</option>
+                            <option value="6">HL Hinckley</option>
+                            <option value="7">HL Chipman</option>
+                            <option value="8">HL David John</option>
+                            <option value="9">HL Taylor</option>
+                            <option value="10">HL Stover</option>
+                            <option value="11">HL Budge</option>
+                            <option value="12">HL Merrill</option>
+                            <option value="13">HL May</option>
+                            <option value="14">HL B9</option>
+                            <option value="15">HR02</option>
+                            <option value="16">HR03</option>
+                            <option value="17">HR04</option>
+                            <option value="18">HR05</option>
+                            <option value="19">HR06</option>
+                            <option value="20">HR07</option>
+                            <option value="21">HR08</option>
+                            <option value="22">HR09</option>
+                            <option value="23">HR10</option>
+                            <option value="24">HR11</option>
+                            <option value="25">HR12</option>
+                            <option value="26">HR13</option>
+                            <option value="27">HR14</option>
+                            <option value="28">HR15</option>
+                            <option value="29">HR16</option>
+                            <option value="30">RI A</option>
+                            <option value="31">RI B</option>
+                            <option value="32">RI C</option>
+                            <option value="33">RI D</option>
+                            <option value="34">RI E</option>
+                            <option value="35">RI F</option>
+                            <option value="36">RI G</option>
+                            <option value="37">RI H</option>
+                            <option value="38">RI I</option>
+                            <option value="39">RI J</option>
+                            <option value="40">RI K</option>
+                            <option value="41">RI L</option>
+                            <option value="42">WP 1</option>
+                            <option value="43">WP 2</option>
+                            <option value="44">WP 3</option>
+                            <option value="45">WP 4</option>
+                            <option value="46">WP 5</option>
+                            <option value="47">WP 6</option>
+                            <option value="48">WP 7</option>
+                            <option value="49">WP 8</option>
+                            <option value="50">WP 9</option>
+                            <option value="51">WP 10</option>
+                            <option value="52">WP 11</option>
+                            <option value="53">WP 12</option>
+                            <option value="54">WP 13</option>
+                            <option value="55">WP 14</option>
+                            <option value="56">WP 15</option>
+                            <option value="57">WP 16</option>
+                            <option value="58">WP 17</option>
+                            <option value="59">WP 18</option>
+                            <option value="60">WP 19</option>
+                            <option value="61">WP 20</option>
+                            <option value="62">WP 21</option>
+                            <option value="63">WP 22</option>
+                            <option value="64">WP 23</option>
+                            <option value="65">WP 24</option>
+                            <option value="66">WP 25</option>
+                            <option value="67">WP 26</option>
+                            <option value="68">WP 27</option>
+                            <option value="69">WP 28</option>
+                            <option value="70">WP 29</option>
+                            <option value="71">WP 30</option>
+                            <option value="72">RI 0</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="floorInput" class="my-3">Floor :</label></td>
+                    <td><InputNumber @bind-Value="SelectedObject.Floor" class="form-control mt-3" placeholder="Floor" /></td>
+                </tr>
+                <tr>
+                    <td><label for="wingInput" class="my-3">Wing :</label></td>
+                    <td><InputNumber @bind-Value="SelectedObject.Wing" class="form-control mt-3" placeholder="Wing" /></td>
+                </tr>
+                <tr>
+                    <td><label for="stairWellInput" class="my-3">StairWell :</label></td>
+                    <td><InputNumber @bind-Value="SelectedObject.StairWell" class="form-control mt-3" placeholder="StairWell" /></td>
+                </tr>
+                <tr>
+                    <td><label for="roomNumberInput" class="my-3">Room Number:</label></td>
+                    <td><InputNumber @bind-Value="SelectedObject.RoomNumber" class="form-control mt-3" placeholder="Room Number" /></td>
+                </tr>
+                <tr>
+                    <td><label for="appartmentUnitInput" class="my-3">AppartmentUnit :</label></td>
+                    <td><InputNumber @bind-Value="SelectedObject.ApartmentUnit" class="form-control mt-3" placeholder="AppartmentUnit" /></td>
+                </tr>
+                <tr>
+                    <td><br /></td>
+                    <td><br /></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><b>Bedspace Setup</b></td>
+                </tr>
+                <tr>
+                    <td><label for="startDateInput" class="mt-3">Start Date:</label></td>
+                    <td>
+                        <DateInput TValue="DateOnly" @bind-Value="StartDate" />
+                        <TimeInput TValue="TimeOnly" @bind-Value="StartTime" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="endDateInput" class="mt-3">End Date:</label></td>
+                    <td>
+                        <DateInput TValue="DateOnly" @bind-Value="EndDate" />
+                        <TimeInput TValue="TimeOnly" @bind-Value="EndTime" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><br /></td>
+                    <td><br /></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><b>Bedspace Flags</b></td>
+                </tr>
+
+                <tr>
+                    <td><label for="sexSelect" class="mt-3">Sex:</label></td>
+                    <td>
+                        <select class="form-control mt-3" @bind="SelectedObject.Sex">
+                            @* <option value="0">None</option> *@
+                            <option value="1">M</option>
+                            <option value="2">F</option>
+                            <option value="3">NA</option>
+
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="communitySelect" class="mt-3">Community:</label></td>
+                    <td>
+
+                        <select class="form-control mt-3" @bind="SelectedObject.Community">
+                            @* <option value="0">None</option> *@
+                            <option value="1">18-</option>
+                            <option value="2">18+</option>
+                            <option value="3">19+</option>
+                            <option value="4">Any</option>
+
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">Active</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="isActive" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">ESA</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="isESA" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">Athlete</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="isAthlete" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">ADA</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="isADA" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">InternationalScholarship</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="isInternationalScholarship" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">Wheatley</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="isWheatley" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">NoAnimal</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="isNoAnimal" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">IsolateQuarantine</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="isIsolateQuarantine" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">FLEXGE</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="isFLEXGE" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">POSTBacc</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="isPOSTBacc" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">Freeze</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="isFreeze" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">WaitingList</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="isWaitingList" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">Consolidate</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="isConsolidate" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><br /></td>
+                    <td><br /></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><b>User Actions</b></td>
+                </tr>
+                <tr>
+                    <td><label for="nameInput">First Name:</label></td>
+                    <td><input type="text" @bind="SelectedObject.FName" /></td>
+                </tr>
+
+                <tr>
+                    <td><label for="nameInput">Last Name:</label></td>
+                    <td><input type="text" @bind="SelectedObject.LName" /></td>
+                </tr>
+
+                <tr>
+                    <td><label for="nameInput">NetID:</label></td>
+                    <td><input type="text" @bind="SelectedObject.NetID" /></td>
+                </tr>
+                <tr>
+                    <td><label for="contractDateInput" class="mt-3">Contract Date:</label></td>
+                    <td>
+                        <DateInput TValue="DateOnly" @bind-Value="ContractDate" />
+                        <TimeInput TValue="TimeOnly" @bind-Value="ContractTime" />
+                    </td>
+                </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            </table>
+
+
+
+
+            
+
+            <br />
+            
+
+
+        </div>
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
+        <Button Color="ButtonColor.Primary" @onclick="UpsertObject">Save changes</Button>
+    </FooterTemplate>
+</Modal>
+
+@code {
+    private List<BlockTest> AllObjects = [];
+    private Modal ObjectAdditionModal = default!;
+    private BlockTest SelectedObject = new BlockTest();
+
+    // Start Date
+    private DateOnly StartDate = DateOnly.FromDateTime(DateTime.Now);
+    private TimeOnly StartTime = TimeOnly.FromDateTime(DateTime.Now);
+    private DateOnly EndDate = DateOnly.FromDateTime(DateTime.Now);
+    private TimeOnly EndTime = TimeOnly.FromDateTime(DateTime.Now);
+    private DateOnly ContractDate = DateOnly.FromDateTime(DateTime.Now);
+    private TimeOnly ContractTime = TimeOnly.FromDateTime(DateTime.Now);
+
+
+    protected override void OnInitialized()
+    {
+        AllObjects = GenService.GetModel<BlockTest>().ToList();
+    }
+
+    private void UpdateObjects()
+    {
+        AllObjects = GenService.GetModel<BlockTest>().ToList();
+    }
+
+    private async Task AddRow()
+    {
+        SelectedObject = new BlockTest
+        {
+            OccupantType = 0,
+            Area = 0,
+            Building = 1,
+            Community = 1,
+            Sex = 0,
+            Active = false,
+            ESA = false,
+            Athlete = false,
+            ADA = false,
+            InternationalScholarship = false,
+            Wheatley = false,
+            NoAnimal = false,
+            IsolateQuarantine = false,
+            FLEXGE = false,
+            POSTBacc = false,
+            Freeze = false,
+            WaitingList = false,
+            Consolidate = false,
+            Status = 1,
+            AgreementPeriod = 0
+        };
+        await OnShowModalClick();
+    }
+
+    private async Task OnShowModalClick()
+    {
+        await ObjectAdditionModal.ShowAsync();
+    }
+
+    private async Task OnHideModalClick()
+    {
+        await ObjectAdditionModal.HideAsync();
+    }
+
+    private async Task UpsertObject()
+    {
+        //SelectedObject.Start = selectedDateTime;
+        SelectedObject.StartDate = DateTime.SpecifyKind(StartDate.ToDateTime(StartTime), DateTimeKind.Utc);
+        SelectedObject.EndDate = DateTime.SpecifyKind(EndDate.ToDateTime(EndTime), DateTimeKind.Utc);
+        SelectedObject.ContractDate = DateTime.SpecifyKind(ContractDate.ToDateTime(ContractTime), DateTimeKind.Utc);
+        GenService.Upsert<BlockTest>(SelectedObject);
+        await OnHideModalClick();
+        UpdateObjects();
+    }
+
+    private async Task EditObject(BlockTest varObject)
+    {
+        SelectedObject = varObject;
+        await OnShowModalClick();
+    }
+
+    private void DeleteObject(BlockTest varObject)
+    {
+        GenService.Remove<BlockTest>(varObject);
+        GenService.SaveChanges();
+        UpdateObjects();
+    }
+
+    private string GetOccupantType(int? occupantType)
+    {
+        return occupantType switch
+        {
+            // 0 => "None",
+            1 => "Single",
+            2 => "Family",
+            3 => "Conference",
+            4 => "LISR",
+            5 => "Off Campus",
+            6 => "Closed For Maintenance",
+            7 => "Not Available",
+            8 => "Available if Needed",
+            9 => "Special",
+            10 => "Employee",
+            _=> "Unknown"
+        };
+    }
+    private string GetAgreementPeriod(int? agreementPeriod)
+    {
+        return agreementPeriod switch
+        {
+            // 0 => "None",
+            1 => "Fall Winter 2024",
+            2 => "Winter 2025",
+            3 => "Spring 2025",
+            4 => "Summer 2025",
+            5 => "Fall Wintere 2025",
+            6 => "Winter 2026",
+            _ => "Unknown"
+        };
+    }
+    private string GetStatus(int? status)
+    {
+        return status switch
+        {
+            // 0 => "None",
+            1 => "Admin Freeze",
+            2 => "Admin Setup",
+            3 => "Contractable",
+            4 => "Pending Contract",
+            5 => "Contracted",
+            6 => "Seeking Termination",
+            7 => "Cancelled",
+            8 => "Closed",
+            _ => "Unknown"
+        };
+    }
+
+    private string GetArea(int? area)
+    {
+        return area switch
+        {
+            // 0 => "None",
+            1 => "HELAMAN",
+            2 => "HERITAGE",
+            3 => "RIVIERA",
+            4 => "WYVIEW",
+            5 => "LISR",
+            _ => "Unknown"
+        };
+    }
+
+    private string GetSex(int? sex)
+    {
+        return sex switch
+        {
+            1 => "M",
+            2 => "F",
+            3 => "NA",
+            _=> "NA"
+        };
+    }
+
+    private string GetCommunity(int? community)
+    {
+        return community switch
+        {
+            1 => "18-",
+            2 => "18+",
+            3 => "19+",
+            4 => "Any",
+            _ => "NA"
+        };
+    }
+
+    private string GetBuilding(int? building)
+    {
+        return building switch
+        {
+            1 => "LI A",
+            2 => "LI B",
+            3 => "LI C",
+            4 => "LI D",
+            5 => "LI E",
+            6 => "HL Hinckley",
+            7 => "HL Chipman",
+            8 => "HL David John",
+            9 => "HL Taylor",
+            10 => "HL Stover",
+            11 => "HL Budge",
+            12 => "HL Merrill",
+            13 => "HL May",
+            14 => "HL B9",
+            15 => "HR02",
+            16 => "HR03",
+            17 => "HR04",
+            18 => "HR05",
+            19 => "HR06",
+            20 => "HR07",
+            21 => "HR08",
+            22 => "HR09",
+            23 => "HR10",
+            24 => "HR11",
+            25 => "HR12",
+            26 => "HR13",
+            27 => "HR14",
+            28 => "HR15",
+            29 => "HR16",
+            30 => "RI A",
+            31 => "RI B",
+            32 => "RI C",
+            33 => "RI D",
+            34 => "RI E",
+            35 => "RI F",
+            36 => "RI G",
+            37 => "RI H",
+            38 => "RI I",
+            39 => "RI J",
+            40 => "RI K",
+            41 => "RI L",
+            42 => "WP 1",
+            43 => "WP 2",
+            44 => "WP 3",
+            45 => "WP 4",
+            46 => "WP 5",
+            47 => "WP 6",
+            48 => "WP 7",
+            49 => "WP 8",
+            50 => "WP 9",
+            51 => "WP 10",
+            52 => "WP 11",
+            53 => "WP 12",
+            54 => "WP 13",
+            55 => "WP 14",
+            56 => "WP 15",
+            57 => "WP 16",
+            58 => "WP 17",
+            59 => "WP 18",
+            60 => "WP 19",
+            61 => "WP 20",
+            62 => "WP 21",
+            63 => "WP 22",
+            64 => "WP 23",
+            65 => "WP 24",
+            66 => "WP 25",
+            67 => "WP 26",
+            68 => "WP 27",
+            69 => "WP 28",
+            70 => "WP 29",
+            71 => "WP 30",
+            72 => "RI O",
+            _ => "NA"
+        };
+    }
+
+    private bool isActive
+    {
+        get => SelectedObject.Active ?? false;
+        set => SelectedObject.Active = value;
+    }
+
+    private string GetActiveText(bool? active)
+    {
+        return active switch
+        {
+            true => "Yes",
+            false => "No",
+            null => "Unknown"
+        };
+    }
+
+    private bool isESA
+    {
+        get => SelectedObject.ESA ?? false;
+        set => SelectedObject.ESA = value;
+    }
+
+    private string GetESAText(bool? esa)
+    {
+        return esa switch
+        {
+            true => "Yes",
+            false => "No",
+            null => "Unknown"
+        };
+    }
+
+    private bool isAthlete
+    {
+        get => SelectedObject.Athlete ?? false;
+        set => SelectedObject.Athlete = value;
+    }
+
+    private string GetAthleteText(bool? athlete)
+    {
+        return athlete switch
+        {
+            true => "Yes",
+            false => "No",
+            null => "Unknown"
+        };
+    }
+    private bool isADA
+    {
+        get => SelectedObject.ADA ?? false;
+        set => SelectedObject.ADA = value;
+    }
+
+    private string GetADAText(bool? ada)
+    {
+        return ada switch
+        {
+            true => "Yes",
+            false => "No",
+            null => "Unknown"
+        };
+    }
+    private bool isInternationalScholarship
+    {
+        get => SelectedObject.InternationalScholarship ?? false;
+        set => SelectedObject.InternationalScholarship = value;
+    }
+
+    private string GetInternationalScholarshipText(bool? internationalScholarship)
+    {
+        return internationalScholarship switch
+        {
+            true => "Yes",
+            false => "No",
+            null => "Unknown"
+        };
+    }
+    private bool isWheatley
+    {
+        get => SelectedObject.Wheatley ?? false;
+        set => SelectedObject.Wheatley = value;
+    }
+
+    private string GetWheatleyText(bool? wheatley)
+    {
+        return wheatley switch
+        {
+            true => "Yes",
+            false => "No",
+            null => "Unknown"
+        };
+    }
+    private bool isNoAnimal
+    {
+        get => SelectedObject.NoAnimal ?? false;
+        set => SelectedObject.NoAnimal = value;
+    }
+
+    private string GetNoAnimalText(bool? noAnimal)
+    {
+        return noAnimal switch
+        {
+            true => "Yes",
+            false => "No",
+            null => "Unknown"
+        };
+    }
+
+    private bool isIsolateQuarantine
+    {
+        get => SelectedObject.IsolateQuarantine ?? false;
+        set => SelectedObject.IsolateQuarantine = value;
+    }
+
+    private string GetIsolateQuarantineText(bool? isolateQuarantine)
+    {
+        return isolateQuarantine switch
+        {
+            true => "Yes",
+            false => "No",
+            null => "Unknown"
+        };
+    }
+
+    private bool isFLEXGE
+    {
+        get => SelectedObject.FLEXGE ?? false;
+        set => SelectedObject.FLEXGE = value;
+    }
+
+    private string GetFLEXGEText(bool? fLEXGE)
+    {
+        return fLEXGE switch
+        {
+            true => "Yes",
+            false => "No",
+            null => "Unknown"
+        };
+    }
+
+    private bool isPOSTBacc
+    {
+        get => SelectedObject.POSTBacc ?? false;
+        set => SelectedObject.POSTBacc = value;
+    }
+
+    private string GetPOSTBaccText(bool? pOSTBacc)
+    {
+        return pOSTBacc switch
+        {
+            true => "Yes",
+            false => "No",
+            null => "Unknown"
+        };
+    }
+
+    private bool isFreeze
+    {
+        get => SelectedObject.Freeze ?? false;
+        set => SelectedObject.Freeze = value;
+    }
+
+    private string GetFreezeText(bool? freeze)
+    {
+        return freeze switch
+        {
+            true => "Yes",
+            false => "No",
+            null => "Unknown"
+        };
+    }
+
+    private bool isWaitingList
+    {
+        get => SelectedObject.WaitingList ?? false;
+        set => SelectedObject.WaitingList = value;
+    }
+
+    private string GetWaitingListText(bool? waitingList)
+    {
+        return waitingList switch
+        {
+            true => "Yes",
+            false => "No",
+            null => "Unknown"
+        };
+    }
+    private bool isConsolidate
+    {
+        get => SelectedObject.Consolidate ?? false;
+        set => SelectedObject.Consolidate = value;
+    }
+
+    private string GetConsolidateText(bool? consolidate)
+    {
+        return consolidate switch
+        {
+            true => "Yes",
+            false => "No",
+            null => "Unknown"
+        };
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
