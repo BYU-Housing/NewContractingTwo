@@ -86,7 +86,6 @@
 
     private async Task LoadBlockTestCount()
     {
-        // Assuming GenService.GetModel<T>() returns an IQueryable<T>
         BlockTestCount = await Task.Run(() =>
             GenService.GetModel<BlockTest>().Count(bt => bt.AgreementPeriod == 3));
     }
