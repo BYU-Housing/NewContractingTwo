@@ -3,29 +3,7 @@
 
 <h3>PortalOne</h3>
 
-@if (FilteredBlocks != null && FilteredBlocks.Any())
-{
-    <ul>
-        @foreach (var block in FilteredBlocks)
-        {
-            <li>
-                <strong>@block.Name</strong> - Sex: @block.Sex, Community: @block.Community
-            </li>
-        }
-    </ul>
-}
-else
-{
-    <p>No blocks match the criteria.</p>
-}
 
 @code {
-    private List<BlockTest> FilteredBlocks { get; set; } = new List<BlockTest>();
 
-    protected override async Task OnInitializedAsync()
-    {
-        // Fetch and filter the data
-        var allBlocks = await Task.Run(() => GenService.GetModel<BlockTest>().ToList());
-        FilteredBlocks = allBlocks.Where(block => block.Sex == 1 && block.Community == 1).ToList();
-    }
 }
