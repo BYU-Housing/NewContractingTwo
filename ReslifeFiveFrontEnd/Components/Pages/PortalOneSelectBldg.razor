@@ -1,5 +1,6 @@
 ﻿@page "/portalOneSelectBuilding"
 @inject NavigationManager NavigationManager
+@inject IGenService GenService
 @using Microsoft.AspNetCore.Components
 
 <h3>Select A Building</h3>
@@ -16,49 +17,22 @@
     </div>
 </div>
 
-@if (Area == 1)
+@if (IsLoading)
 {
-    <h4>Helaman Buildings</h4>
-    <ul>
-        @foreach (var building in HelamanBuildings)
-        {
-            <li>@building</li>
-        }
-    </ul>
-}
-else if (Area == 2)
-{
-    <h4>Heritage Buildings</h4>
-    <ul>
-        @foreach (var building in HeritageBuildings)
-        {
-            <li>@building</li>
-        }
-    </ul>
-}
-else if (Area == 3)
-{
-    <h4>Riviera Buildings</h4>
-    <ul>
-        @foreach (var building in RivieraBuildings)
-        {
-            <li>@building</li>
-        }
-    </ul>
-}
-else if (Area == 4)
-{
-    <h4>Wyview Buildings</h4>
-    <ul>
-        @foreach (var building in WyviewBuildings)
-        {
-            <li>@building</li>
-        }
-    </ul>
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%;">
+            Loading...
+        </div>
+    </div>
 }
 else if (Area.HasValue)
 {
-    <p>No buildings are available for Area @Area.</p>
+    <div class="d-flex flex-column gap-3">
+        @foreach (var block in BuildingBlocks)
+        {
+            @RenderBlock(block.Name, block.ImageUrl, block.Count)
+        }
+    </div>
 }
 else
 {
@@ -70,36 +44,116 @@ else
     [SupplyParameterFromQuery]
     public int? Area { get; set; } // Allow nullable in case the parameter is not provided
 
-    private List<string> HelamanBuildings = new()
+    private bool IsLoading = true;
+
+    private List<BuildingBlock> BuildingBlocks = new();
+
+    protected override async Task OnInitializedAsync()
     {
-        "Hinckley", 
-        "Chipman", 
-        "David John", 
-        "Taylor", 
-        "Stover", 
-        "Budge", 
-        "Merrill", 
-        "May", 
-        "Building 9"
+        IsLoading = true;
+
+        // Fetch building data based on the Area
+        await LoadBuildingBlocksAsync();
+
+        IsLoading = false;
+    }
+
+    private async Task LoadBuildingBlocksAsync()
+    {
+        if (Area == 1)
+        {
+            BuildingBlocks = new()
+            {
+                new BuildingBlock("Hinckley", "https://example.com/hinckley.jpg", await GetBuildingCount(1)),
+                new BuildingBlock("Chipman", "https://example.com/chipman.jpg", await GetBuildingCount(2)),
+                new BuildingBlock("David John", "https://example.com/davidjohn.jpg", await GetBuildingCount(3)),
+                new BuildingBlock("Taylor", "https://example.com/taylor.jpg", await GetBuildingCount(4)),
+                new BuildingBlock("Stover", "https://example.com/stover.jpg", await GetBuildingCount(5)),
+                new BuildingBlock("Budge", "https://example.com/budge.jpg", await GetBuildingCount(6)),
+                new BuildingBlock("Merrill", "https://example.com/merrill.jpg", await GetBuildingCount(7)),
+                new BuildingBlock("May", "https://example.com/may.jpg", await GetBuildingCount(8)),
+                new BuildingBlock("Building 9", "https://example.com/building9.jpg", await GetBuildingCount(14)) // Building ID = 14
+            };
+        }
+        else if (Area == 2)
+        {
+            BuildingBlocks = Enumerable.Range(2, 15)
+                .Select(i => new BuildingBlock($"Building {i}", $"https://example.com/building{i}.jpg", i * 10))
+                .ToList();
+        }
+        else if (Area == 3)
+        {
+            BuildingBlocks = Enumerable.Range('A', 12)
+                .Select(i => new BuildingBlock(((char)i).ToString(), $"https://example.com/building{(char)i}.jpg", i - 64))
+                .ToList();
+        }
+        else if (Area == 4)
+        {
+            BuildingBlocks = Enumerable.Range(1, 11)
+                .Select(i => new BuildingBlock($"WP Building {i}", $"https://example.com/wpbuilding{i}.jpg", i * 5))
+                .ToList();
+        }
+    }
+
+    private async Task<int> GetBuildingCount(int buildingId)
+    {
+        return await GenService.CountAsync<BlockTest>(bt =>
+            bt.AgreementPeriod == 3 &&
+            bt.Active == true &&
+            bt.OccupantType == 1 &&
+            bt.Area == Area &&
+            bt.Sex == 1 &&
+            bt.Community == 1 &&
+            (bt.ContractingReqMet == 1 || bt.ContractingReqMet == 3) &&
+            bt.Building == buildingId);
+    }
+
+    private RenderFragment RenderBlock(string name, string imageUrl, int count) => builder =>
+    {
+        builder.OpenElement(0, "div");
+        builder.AddAttribute(1, "class", "d-flex align-items-center border rounded p-3 bg-light shadow-sm");
+
+        // Image Section
+        builder.OpenElement(2, "img");
+        builder.AddAttribute(3, "src", imageUrl);
+        builder.AddAttribute(4, "alt", name);
+        builder.AddAttribute(5, "class", "img-thumbnail me-3");
+        builder.AddAttribute(6, "style", "width: 100px; height: 100px; object-fit: cover;");
+        builder.CloseElement();
+
+        // Middle Section (Description)
+        builder.OpenElement(7, "div");
+        builder.AddAttribute(8, "class", "flex-grow-1");
+        builder.OpenElement(9, "h5");
+        builder.AddContent(10, name);
+        builder.CloseElement();
+        builder.OpenElement(11, "p");
+        builder.AddContent(12, "Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
+        builder.CloseElement();
+        builder.CloseElement();
+
+        // Count Section
+        builder.OpenElement(13, "div");
+        builder.AddAttribute(14, "class", "ms-3 text-end");
+        builder.OpenElement(15, "h4");
+        builder.AddContent(16, count.ToString());
+        builder.CloseElement();
+        builder.CloseElement();
+
+        builder.CloseElement();
     };
 
-    private List<string> HeritageBuildings = Enumerable.Range(2, 15) // Generates numbers from 2 to 16
-                                                        .Select(i => $"Building {i}")
-                                                        .ToList();
-
-    private List<string> RivieraBuildings = Enumerable.Range('A', 12) // Generates letters A to L
-                                                      .Select(i => ((char)i).ToString())
-                                                      .ToList();
-
-    private List<string> WyviewBuildings = Enumerable.Range(1, 11) // Generates numbers from 1 to 11
-                                                     .Select(i => $"WP Building {i}")
-                                                     .ToList();
-
-    protected override void OnInitialized()
+    private class BuildingBlock
     {
-        if (Area == null)
+        public string Name { get; }
+        public string ImageUrl { get; }
+        public int Count { get; }
+
+        public BuildingBlock(string name, string imageUrl, int count)
         {
-            Area = 0; // Set a default value if Area is not provided
+            Name = name;
+            ImageUrl = imageUrl;
+            Count = count;
         }
     }
 }
