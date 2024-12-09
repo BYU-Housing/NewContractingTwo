@@ -28,11 +28,12 @@
                     {
                         <div class="block-item"
                              style="width:@CalculateBlockWidth(block.StartDate, block.EndDate); background-color:@GetBackgroundColor(block.OccupantType)">
-                            @block.Name |
-                            @(block.StartDate.HasValue ? block.StartDate.Value.ToString("yyyy-MM-dd HH:mm") : "No Start Date") |<br />
-                            @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : "No End Date") |
-                            Occupant Type: @GetOccupantTypeDescription(block.OccupantType) |
-                            Area: @GetAreaDescription(block.Area)
+                            Bedspace: @block.Name | Area: @GetAreaDescription(block.Area)
+                            <br />
+                            Contract Start: @(block.StartDate.HasValue ? block.StartDate.Value.ToString("yyyy-MM-dd HH:mm") : "No Start Date") 
+                            Contract End: @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : "No End Date") 
+                            <br />
+                            Occupant Type: @GetOccupantTypeDescription(block.OccupantType) 
                         </div>
                     }
                 </div>
