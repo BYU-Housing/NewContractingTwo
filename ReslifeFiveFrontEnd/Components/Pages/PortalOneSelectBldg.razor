@@ -63,17 +63,17 @@ else
         if (Area == 1)
         {
             BuildingBlocks = new()
-            {
-                new BuildingBlock("Hinckley", "https://example.com/hinckley.jpg", await GetBuildingCount(1)),
-                new BuildingBlock("Chipman", "https://example.com/chipman.jpg", await GetBuildingCount(2)),
-                new BuildingBlock("David John", "https://example.com/davidjohn.jpg", await GetBuildingCount(3)),
-                new BuildingBlock("Taylor", "https://example.com/taylor.jpg", await GetBuildingCount(4)),
-                new BuildingBlock("Stover", "https://example.com/stover.jpg", await GetBuildingCount(5)),
-                new BuildingBlock("Budge", "https://example.com/budge.jpg", await GetBuildingCount(6)),
-                new BuildingBlock("Merrill", "https://example.com/merrill.jpg", await GetBuildingCount(7)),
-                new BuildingBlock("May", "https://example.com/may.jpg", await GetBuildingCount(8)),
-                new BuildingBlock("Building 9", "https://example.com/building9.jpg", await GetBuildingCount(14)) // Building ID = 14
-            };
+        {
+            new BuildingBlock("Hinckley", "https://example.com/hinckley.jpg", await GetBuildingCount(6)),
+            new BuildingBlock("Chipman", "https://example.com/chipman.jpg", await GetBuildingCount(7)),
+            new BuildingBlock("David John", "https://example.com/davidjohn.jpg", await GetBuildingCount(8)),
+            new BuildingBlock("Taylor", "https://example.com/taylor.jpg", await GetBuildingCount(9)),
+            new BuildingBlock("Stover", "https://example.com/stover.jpg", await GetBuildingCount(10)),
+            new BuildingBlock("Budge", "https://example.com/budge.jpg", await GetBuildingCount(11)),
+            new BuildingBlock("Merrill", "https://example.com/merrill.jpg", await GetBuildingCount(12)),
+            new BuildingBlock("May", "https://example.com/may.jpg", await GetBuildingCount(13)),
+            new BuildingBlock("Building 9", "https://example.com/building9.jpg", await GetBuildingCount(14))
+        };
         }
         else if (Area == 2)
         {
@@ -94,6 +94,7 @@ else
                 .ToList();
         }
     }
+
 
     private async Task<int> GetBuildingCount(int buildingId)
     {
