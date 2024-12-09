@@ -3,7 +3,6 @@
 
 <h3>PortalOne</h3>
 
-
 <h1>Spring 2025</h1>
 
 @if (IsLoading)
@@ -16,56 +15,21 @@
 }
 else
 {
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">Category</th>
-                <th scope="col">Active</th>
-                <th scope="col">Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th scope="row">Single Helaman</th>
-                <td>@AllSingleActiveCountHL</td>
-                <td></td>
-            </tr>
-            <tr>
-                <th scope="row">Single Heritage</th>
-                <td>@AllSingleActiveCountHR</td>
-                <td></td>
-            </tr>
-            <tr>
-                <th scope="row">Single Riviera</th>
-                <td>@AllSingleActiveCountRI</td>
-                <td></td>
-            </tr>
-            <tr>
-                <th scope="row">Single Wyview Park</th>
-                <td>@AllSingleActiveCountWP</td>
-                <td></td>
-            </tr>
-
-        </tbody>
-    </table>
+    <div class="d-flex flex-column gap-3">
+        @RenderBlock("Helaman", "https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/HL.jpg", AllSingleActiveCountHL)
+        @RenderBlock("Heritage", "https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/HR.jpg", AllSingleActiveCountHR)
+        @RenderBlock("Riviera", "https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/RI.jpg", AllSingleActiveCountRI)
+        @RenderBlock("Wyview Park", "https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/WP.jpg", AllSingleActiveCountWP)
+    </div>
 }
 
 @code {
     private bool IsLoading = true;
 
-
     private int AllSingleActiveCountHL;
-
-
     private int AllSingleActiveCountHR;
-
-
     private int AllSingleActiveCountRI;
-
     private int AllSingleActiveCountWP;
-
-
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -76,8 +40,7 @@ else
 
     private async Task LoadMetrics()
     {
-
-        AllSingleActiveCountHL = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 1 && bt.Area == 1 
+        AllSingleActiveCountHL = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 1 && bt.Area == 1
             && bt.Sex == 1 && bt.Community == 1 && (bt.ContractingReqMet == 1 || bt.ContractingReqMet == 3));
 
         AllSingleActiveCountHR = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 1 && bt.Area == 2
@@ -89,5 +52,39 @@ else
         AllSingleActiveCountWP = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 1 && bt.Area == 4
             && bt.Sex == 1 && bt.Community == 1 && (bt.ContractingReqMet == 1 || bt.ContractingReqMet == 3));
     }
-}
 
+    private RenderFragment RenderBlock(string title, string imageUrl, int count) => builder =>
+    {
+        builder.OpenElement(0, "div");
+        builder.AddAttribute(1, "class", "d-flex align-items-center border rounded p-3 bg-light shadow-sm");
+
+        // Image Section
+        builder.OpenElement(2, "img");
+        builder.AddAttribute(3, "src", imageUrl);
+        builder.AddAttribute(4, "alt", title);
+        builder.AddAttribute(5, "class", "img-thumbnail me-3");
+        builder.AddAttribute(6, "style", "width: 100px; height: 100px; object-fit: cover;");
+        builder.CloseElement();
+
+        // Middle Section (Description)
+        builder.OpenElement(7, "div");
+        builder.AddAttribute(8, "class", "flex-grow-1");
+        builder.OpenElement(9, "h5");
+        builder.AddContent(10, title);
+        builder.CloseElement();
+        builder.OpenElement(11, "p");
+        builder.AddContent(12, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+        builder.CloseElement();
+        builder.CloseElement();
+
+        // Count Section
+        builder.OpenElement(13, "div");
+        builder.AddAttribute(14, "class", "ms-3 text-end");
+        builder.OpenElement(15, "h4");
+        builder.AddContent(16, count.ToString());
+        builder.CloseElement();
+        builder.CloseElement();
+
+        builder.CloseElement();
+    };
+}
