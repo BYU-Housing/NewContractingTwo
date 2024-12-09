@@ -23,6 +23,24 @@ else if (Area == 2)
         }
     </ul>
 }
+else if (Area == 3)
+{
+    <ul>
+        @foreach (var building in RivieraBuildings)
+        {
+            <li>@building</li>
+        }
+    </ul>
+}
+else if (Area == 4)
+{
+    <ul>
+        @foreach (var building in WyviewBuildings)
+        {
+            <li>@building</li>
+        }
+    </ul>
+}
 else if (Area.HasValue)
 {
     <p>No buildings are available for Area @Area.</p>
@@ -53,6 +71,14 @@ else
     private List<string> HeritageBuildings = Enumerable.Range(2, 15) // Generates numbers from 2 to 16
                                                         .Select(i => $"Building {i}")
                                                         .ToList();
+
+    private List<string> RivieraBuildings = Enumerable.Range('A', 12) // Generates letters A to L
+                                                      .Select(i => ((char)i).ToString())
+                                                      .ToList();
+
+    private List<string> WyviewBuildings = Enumerable.Range(1, 11) // Generates numbers from 1 to 11
+                                                     .Select(i => $"WP Building {i}")
+                                                     .ToList();
 
     protected override void OnInitialized()
     {
