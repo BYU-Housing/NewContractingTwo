@@ -3,75 +3,88 @@
 
 <h3>Contracting Metrics</h3>
 <h1>Spring 2025</h1>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th scope="col">Category</th>
-            <th scope="col">Active</th>
-            <th scope="col">Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th scope="row">Single</th>
-            <td>@AllSingleActiveCount</td>
-            <td>@AllSingleCount</td>
-        </tr>
-        <tr>
-            <th scope="row">Family</th>
-            <td>@AllFamilyActiveCount</td>
-            <td>@AllFamilyCount</td>
-        </tr>
-        <tr>
-            <th scope="row">Conference</th>
-            <td>@AllConferenceActiveCount</td>
-            <td>@AllConferenceCount</td>
-        </tr>
-        <tr>
-            <th scope="row">LISR</th>
-            <td>@AllLISRActiveCount</td>
-            <td>@AllLISRCount</td>
-        </tr>
-        <tr>
-            <th scope="row">Off Campus</th>
-            <td>@AllOffCampusActiveCount</td>
-            <td>@AllOffCampusCount</td>
-        </tr>
-        <tr>
-            <th scope="row">Closed For Maintenance</th>
-            <td>@AllClosedForMaintenanceActiveCount</td>
-            <td>@AllClosedForMaintenanceCount</td>
-        </tr>
-        <tr>
-            <th scope="row">Not Available</th>
-            <td>@AllNotAvailableActiveCount</td>
-            <td>@AllNotAvailableCount</td>
-        </tr>
-        <tr>
-            <th scope="row">Available If Needed</th>
-            <td>@AllAvailableIfNeededActiveCount</td>
-            <td>@AllAvailableIfNeededCount</td>
-        </tr>
-        <tr>
-            <th scope="row">Special</th>
-            <td>@AllSpecialActiveCount</td>
-            <td>@AllSpecialCount</td>
-        </tr>
-        <tr>
-            <th scope="row">Employee</th>
-            <td>@AllEmployeeActiveCount</td>
-            <td>@AllEmployeeCount</td>
-        </tr>
-        <tr>
-            <th scope="row">Total Active Agreements</th>
-            <td>@ActiveBlockTestCount</td>
-            <td>@BlockTestCount</td>
-        </tr>
-    </tbody>
-</table>
 
+@if (IsLoading)
+{
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%;">
+            Loading...
+        </div>
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Category</th>
+                <th scope="col">Active</th>
+                <th scope="col">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">Single</th>
+                <td>@AllSingleActiveCount</td>
+                <td>@AllSingleCount</td>
+            </tr>
+            <tr>
+                <th scope="row">Family</th>
+                <td>@AllFamilyActiveCount</td>
+                <td>@AllFamilyCount</td>
+            </tr>
+            <tr>
+                <th scope="row">Conference</th>
+                <td>@AllConferenceActiveCount</td>
+                <td>@AllConferenceCount</td>
+            </tr>
+            <tr>
+                <th scope="row">LISR</th>
+                <td>@AllLISRActiveCount</td>
+                <td>@AllLISRCount</td>
+            </tr>
+            <tr>
+                <th scope="row">Off Campus</th>
+                <td>@AllOffCampusActiveCount</td>
+                <td>@AllOffCampusCount</td>
+            </tr>
+            <tr>
+                <th scope="row">Closed For Maintenance</th>
+                <td>@AllClosedForMaintenanceActiveCount</td>
+                <td>@AllClosedForMaintenanceCount</td>
+            </tr>
+            <tr>
+                <th scope="row">Not Available</th>
+                <td>@AllNotAvailableActiveCount</td>
+                <td>@AllNotAvailableCount</td>
+            </tr>
+            <tr>
+                <th scope="row">Available If Needed</th>
+                <td>@AllAvailableIfNeededActiveCount</td>
+                <td>@AllAvailableIfNeededCount</td>
+            </tr>
+            <tr>
+                <th scope="row">Special</th>
+                <td>@AllSpecialActiveCount</td>
+                <td>@AllSpecialCount</td>
+            </tr>
+            <tr>
+                <th scope="row">Employee</th>
+                <td>@AllEmployeeActiveCount</td>
+                <td>@AllEmployeeCount</td>
+            </tr>
+            <tr>
+                <th scope="row">Total Active Agreements</th>
+                <td>@ActiveBlockTestCount</td>
+                <td>@BlockTestCount</td>
+            </tr>
+        </tbody>
+    </table>
+}
 
 @code {
+    private bool IsLoading = true;
+
     private int BlockTestCount;
     private int ActiveBlockTestCount;
 
@@ -107,7 +120,9 @@
 
     protected override async Task OnInitializedAsync()
     {
+        IsLoading = true; // Show loading bar
         await LoadMetrics();
+        IsLoading = false; // Hide loading bar
     }
 
     private async Task LoadMetrics()
@@ -120,7 +135,7 @@
 
         AllConferenceCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 3);
         AllConferenceActiveCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 3);
-        
+
         AllLISRCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 4);
         AllLISRActiveCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 4);
 
@@ -142,8 +157,6 @@
         AllEmployeeCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 10);
         AllEmployeeActiveCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 10);
 
-
-
         // Count rows where AgreementPeriod = 3
         BlockTestCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3);
 
@@ -151,3 +164,4 @@
         ActiveBlockTestCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true);
     }
 }
+
