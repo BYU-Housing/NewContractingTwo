@@ -2,8 +2,7 @@
 @inject IGenService GenService
 
 <h3>Contracting Metrics</h3>
-
-<h1> Spring 2025</h1>
+<h1>Spring 2025</h1>
 <table class="table table-striped">
     <thead>
         <tr>
@@ -14,79 +13,33 @@
     </thead>
     <tbody>
         <tr>
-            <th scope="row">Single</th>
-            <td>Row 1, Column 1</td>
-            <td>Row 1, Column 2</td>
-        </tr>
-        <tr>
-            <th scope="row">LISR</th>
-            <td>Row 2, Column 1</td>
-            <td>Row 2, Column 2</td>
-        </tr>
-        <tr>
-            <th scope="row">Family</th>
-            <td>Row 3, Column 1</td>
-            <td>Row 3, Column 2</td>
-        </tr>
-        <tr>
-            <th scope="row">LISR</th>
-            <td>Row 4, Column 1</td>
-            <td>Row 4, Column 2</td>
-        </tr>
-        <tr>
-            <th scope="row">Off Campus</th>
-            <td>Row 5, Column 1</td>
-            <td>Row 5, Column 2</td>
-        </tr>
-        <tr>
-            <th scope="row">Closed For Maintenance</th>
-            <td>Row 5, Column 1</td>
-            <td>Row 5, Column 2</td>
-        </tr>
-        <tr>
-            <th scope="row">Not Available</th>
-            <td>Row 5, Column 1</td>
-            <td>Row 5, Column 2</td>
-        </tr>
-        <tr>
-            <th scope="row">Available if Needed</th>
-            <td>Row 5, Column 1</td>
-            <td>Row 5, Column 2</td>
-        </tr>
-                <tr>
-            <th scope="row">Special</th>
-            <td>Row 5, Column 1</td>
-            <td>Row 5, Column 2</td>
-        </tr>
-        <tr>
-            <th scope="row">Employee</th>
-            <td>Row 5, Column 1</td>
-            <td>Row 5, Column 2</td>
-        </tr>
-        <tr>
-            <th scope="row">Total</th>
-            <td>Row 5, Column 1</td>
+            <th scope="row">Total Active Agreements</th>
+            <td>@ActiveBlockTestCount</td>
             <td>@BlockTestCount</td>
         </tr>
     </tbody>
 </table>
 
-
 <div class="container-fluid vh-100">
     <h4>Total Count of BlockTest Rows (AgreementPeriod = 3): @BlockTestCount</h4>
+    <h4>Total Count of Active BlockTest Rows (AgreementPeriod = 3 and Active = true): @ActiveBlockTestCount</h4>
 </div>
 
 @code {
     private int BlockTestCount;
+    private int ActiveBlockTestCount;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadBlockTestCount();
+        await LoadMetrics();
     }
 
-    private async Task LoadBlockTestCount()
+    private async Task LoadMetrics()
     {
-        BlockTestCount = await Task.Run(() =>
-            GenService.GetModel<BlockTest>().Count(bt => bt.AgreementPeriod == 3));
+        // Count rows where AgreementPeriod = 3
+        BlockTestCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3);
+
+        // Count rows where AgreementPeriod = 3 and Active = true
+        ActiveBlockTestCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true);
     }
 }

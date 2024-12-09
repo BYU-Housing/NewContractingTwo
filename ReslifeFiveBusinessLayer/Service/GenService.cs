@@ -112,5 +112,11 @@ namespace ReslifeFiveBusinessLayer.Service
             await _repo.SaveChangesAsync();
         }
 
+        public async Task<int> CountAsync<T>(Expression<Func<T, bool>> predicate) where T : class
+        {
+            return await _repo.Set<T>().CountAsync(predicate);
+        }
+
+
     }
 }

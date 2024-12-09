@@ -20,5 +20,7 @@ namespace ReslifeFiveBusinessLayer.Service
         void Update<T>(T entity) where T : class;
         void SaveChanges();
         Task SaveChangesAsync();
+        Task<int> CountAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
+
     }
 }
