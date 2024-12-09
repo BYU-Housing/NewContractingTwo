@@ -43,5 +43,7 @@ namespace ReslifeFiveBackEnd.Model
         public string NetID { get; set; } = string.Empty;
 
         public DateTime? ContractDate { get; set; }
+
+        public int? ContractingReqMet { get; set; }
     }
 }
