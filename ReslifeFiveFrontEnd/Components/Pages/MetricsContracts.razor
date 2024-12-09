@@ -23,9 +23,29 @@ else
         </thead>
         <tbody>
             <tr>
-                <th scope="row">Single</th>
+                <th scope="row">Single Total</th>
                 <td>@AllSingleActiveCount</td>
                 <td>@AllSingleCount</td>
+            </tr>
+            <tr>
+                <th scope="row">Single Helaman</th>
+                <td>@AllSingleActiveCountHL</td>
+                <td>@AllSingleCountHL</td>
+            </tr>
+            <tr>
+                <th scope="row">Single Heritage</th>
+                <td>@AllSingleActiveCountHR</td>
+                <td>@AllSingleCountHR</td>
+            </tr>
+            <tr>
+                <th scope="row">Single Riviera</th>
+                <td>@AllSingleActiveCountRI</td>
+                <td>@AllSingleCountRI</td>
+            </tr>
+            <tr>
+                <th scope="row">Single Wyview Park</th>
+                <td>@AllSingleActiveCountWP</td>
+                <td>@AllSingleCountWP</td>
             </tr>
             <tr>
                 <th scope="row">Family</th>
@@ -90,6 +110,25 @@ else
     private int AllSingleCount;
     private int AllSingleActiveCount;
 
+
+
+
+    private int AllSingleCountHL;
+    private int AllSingleActiveCountHL;
+
+    private int AllSingleCountHR;
+    private int AllSingleActiveCountHR;
+
+    private int AllSingleCountRI;
+    private int AllSingleActiveCountRI;
+
+    private int AllSingleCountWP;
+    private int AllSingleActiveCountWP;
+
+
+
+
+
     private int AllFamilyCount;
     private int AllFamilyActiveCount;
 
@@ -128,6 +167,18 @@ else
     {
         AllSingleCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 1);
         AllSingleActiveCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 1);
+
+        AllSingleCountHL = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 1 && bt.Area == 1);
+        AllSingleActiveCountHL = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 1 && bt.Area == 1);
+
+        AllSingleCountHR = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 1 && bt.Area == 2);
+        AllSingleActiveCountHR = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 1 && bt.Area == 2);
+
+        AllSingleCountRI = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 1 && bt.Area == 3);
+        AllSingleActiveCountRI = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 1 && bt.Area == 3);
+
+        AllSingleCountWP = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 1 && bt.Area == 4);
+        AllSingleActiveCountWP = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 1 && bt.Area == 4);
 
         AllFamilyCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 2);
         AllFamilyActiveCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 2);
