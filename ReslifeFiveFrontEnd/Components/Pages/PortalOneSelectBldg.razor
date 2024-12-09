@@ -1,7 +1,20 @@
 ﻿@page "/portalOneSelectBuilding"
-@inject IGenService GenService
-<h3> Select A Building</h3>
+@inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.Components
+
+<h3>Select A Building</h3>
+<p>Selected Area: @Area</p>
 
 @code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? Area { get; set; } // Allow nullable in case the parameter is not provided
 
+    protected override void OnInitialized()
+    {
+        if (Area == null)
+        {
+            Area = 0; // Set a default value if Area is not provided
+        }
+    }
 }

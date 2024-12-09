@@ -1,5 +1,7 @@
 ﻿@page "/portalOne"
 @inject IGenService GenService
+@inject NavigationManager NavigationManager
+
 <div class="progress">
     <div class="progress-bar"
          role="progressbar"
@@ -25,10 +27,10 @@
 else
 {
     <div class="d-flex flex-column gap-3">
-        @RenderBlock("Helaman", "https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/HL.jpg", AllSingleActiveCountHL)
-        @RenderBlock("Heritage", "https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/HR.jpg", AllSingleActiveCountHR)
-        @RenderBlock("Riviera", "https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/RI.jpg", AllSingleActiveCountRI)
-        @RenderBlock("Wyview Park", "https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/WP.jpg", AllSingleActiveCountWP)
+        @RenderBlock("Helaman", "https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/HL.jpg", AllSingleActiveCountHL, 1)
+        @RenderBlock("Heritage", "https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/HR.jpg", AllSingleActiveCountHR, 2)
+        @RenderBlock("Riviera", "https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/RI.jpg", AllSingleActiveCountRI, 3)
+        @RenderBlock("Wyview Park", "https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/WP.jpg", AllSingleActiveCountWP, 4)
     </div>
 }
 
@@ -62,7 +64,7 @@ else
             && bt.Sex == 1 && bt.Community == 1 && (bt.ContractingReqMet == 1 || bt.ContractingReqMet == 3));
     }
 
-    private RenderFragment RenderBlock(string title, string imageUrl, int count) => builder =>
+    private RenderFragment RenderBlock(string title, string imageUrl, int count, int area) => builder =>
     {
         builder.OpenElement(0, "div");
         builder.AddAttribute(1, "class", "d-flex align-items-center border rounded p-3 bg-light shadow-sm");
@@ -92,8 +94,20 @@ else
         builder.OpenElement(15, "h4");
         builder.AddContent(16, count.ToString());
         builder.CloseElement();
+
+        // Button Section
+        builder.OpenElement(17, "button");
+        builder.AddAttribute(18, "class", "btn btn-primary mt-2");
+        builder.AddAttribute(19, "onclick", EventCallback.Factory.Create(this, () => NavigateToSelectBuilding(area)));
+        builder.AddContent(20, "Select");
         builder.CloseElement();
 
         builder.CloseElement();
+        builder.CloseElement();
     };
+
+    private void NavigateToSelectBuilding(int area)
+    {
+        NavigationManager.NavigateTo($"/portalOneSelectBuilding?area={area}");
+    }
 }
