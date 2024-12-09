@@ -5,10 +5,41 @@
 <h3>Select A Building</h3>
 <p>Selected Area: @Area</p>
 
+@if (Area == 1)
+{
+    <ul>
+        @foreach (var building in HelamanBuildings)
+        {
+            <li>@building</li>
+        }
+    </ul>
+}
+else if (Area.HasValue)
+{
+    <p>No buildings are available for Area @Area.</p>
+}
+else
+{
+    <p>Area not specified. Please select an area.</p>
+}
+
 @code {
     [Parameter]
     [SupplyParameterFromQuery]
     public int? Area { get; set; } // Allow nullable in case the parameter is not provided
+
+    private List<string> HelamanBuildings = new()
+    {
+        "Hinckley", 
+        "Chipman", 
+        "David John", 
+        "Taylor", 
+        "Stover", 
+        "Budge", 
+        "Merrill", 
+        "May", 
+        "Building 9"
+    };
 
     protected override void OnInitialized()
     {
