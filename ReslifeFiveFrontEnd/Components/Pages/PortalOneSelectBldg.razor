@@ -48,6 +48,17 @@ else
 
     private List<BuildingBlock> BuildingBlocks = new();
 
+    // Building ID constants for clarity and maintainability
+    private const int HinckleyId = 6;
+    private const int ChipmanId = 7;
+    private const int DavidJohnId = 8;
+    private const int TaylorId = 9;
+    private const int StoverId = 10;
+    private const int BudgeId = 11;
+    private const int MerrillId = 12;
+    private const int MayId = 13;
+    private const int Building9Id = 14;
+
     protected override async Task OnInitializedAsync()
     {
         IsLoading = true;
@@ -63,17 +74,17 @@ else
         if (Area == 1)
         {
             BuildingBlocks = new()
-        {
-            new BuildingBlock("Hinckley", "https://example.com/hinckley.jpg", await GetBuildingCount(6)),
-            new BuildingBlock("Chipman", "https://example.com/chipman.jpg", await GetBuildingCount(7)),
-            new BuildingBlock("David John", "https://example.com/davidjohn.jpg", await GetBuildingCount(8)),
-            new BuildingBlock("Taylor", "https://example.com/taylor.jpg", await GetBuildingCount(9)),
-            new BuildingBlock("Stover", "https://example.com/stover.jpg", await GetBuildingCount(10)),
-            new BuildingBlock("Budge", "https://example.com/budge.jpg", await GetBuildingCount(11)),
-            new BuildingBlock("Merrill", "https://example.com/merrill.jpg", await GetBuildingCount(12)),
-            new BuildingBlock("May", "https://example.com/may.jpg", await GetBuildingCount(13)),
-            new BuildingBlock("Building 9", "https://example.com/building9.jpg", await GetBuildingCount(14))
-        };
+            {
+                new BuildingBlock("Hinckley", "https://example.com/hinckley.jpg", await GetBuildingCount(HinckleyId)),
+                new BuildingBlock("Chipman", "https://example.com/chipman.jpg", await GetBuildingCount(ChipmanId)),
+                new BuildingBlock("David John", "https://example.com/davidjohn.jpg", await GetBuildingCount(DavidJohnId)),
+                new BuildingBlock("Taylor", "https://example.com/taylor.jpg", await GetBuildingCount(TaylorId)),
+                new BuildingBlock("Stover", "https://example.com/stover.jpg", await GetBuildingCount(StoverId)),
+                new BuildingBlock("Budge", "https://example.com/budge.jpg", await GetBuildingCount(BudgeId)),
+                new BuildingBlock("Merrill", "https://example.com/merrill.jpg", await GetBuildingCount(MerrillId)),
+                new BuildingBlock("May", "https://example.com/may.jpg", await GetBuildingCount(MayId)),
+                new BuildingBlock("Building 9", "https://example.com/building9.jpg", await GetBuildingCount(Building9Id))
+            };
         }
         else if (Area == 2)
         {
@@ -94,7 +105,6 @@ else
                 .ToList();
         }
     }
-
 
     private async Task<int> GetBuildingCount(int buildingId)
     {
