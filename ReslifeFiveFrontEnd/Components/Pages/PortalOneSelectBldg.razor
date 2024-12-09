@@ -58,6 +58,24 @@ else
     private const int MerrillId = 12;
     private const int MayId = 13;
     private const int Building9Id = 14;
+    private const int HR02Id = 15;
+    private const int HR03Id = 16;
+    private const int HR04Id = 17;
+    private const int HR05Id = 18;
+    private const int HR06Id = 19;
+    private const int HR07Id = 20;
+    private const int HR08Id = 21;
+    private const int HR09Id = 22;
+    private const int HR10Id = 23;
+    private const int HR11Id = 24;
+    private const int HR12Id = 25;
+    private const int HR13Id = 26;
+    private const int HR14Id = 27;
+    private const int HR15Id = 28;
+    private const int HR16Id = 29;
+
+
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -88,9 +106,24 @@ else
         }
         else if (Area == 2)
         {
-            BuildingBlocks = Enumerable.Range(2, 15)
-                .Select(i => new BuildingBlock($"Building {i}", $"https://example.com/building{i}.jpg", i * 10))
-                .ToList();
+            BuildingBlocks = new()
+            {
+                new BuildingBlock("HR02", "https://example.com/hinckley.jpg", await GetBuildingCount(HR02Id)),
+                new BuildingBlock("HR03", "https://example.com/chipman.jpg", await GetBuildingCount(HR03Id)),
+                new BuildingBlock("HR04", "https://example.com/davidjohn.jpg", await GetBuildingCount(HR04Id)),
+                new BuildingBlock("HR05", "https://example.com/taylor.jpg", await GetBuildingCount(HR05Id)),
+                new BuildingBlock("HR06", "https://example.com/stover.jpg", await GetBuildingCount(HR06Id)),
+                new BuildingBlock("HR07", "https://example.com/budge.jpg", await GetBuildingCount(HR07Id)),
+                new BuildingBlock("HR08", "https://example.com/merrill.jpg", await GetBuildingCount(HR08Id)),
+                new BuildingBlock("HR09", "https://example.com/may.jpg", await GetBuildingCount(HR09Id)),
+                new BuildingBlock("HR10", "https://example.com/building9.jpg", await GetBuildingCount(HR10Id)),
+                new BuildingBlock("HR11", "https://example.com/building9.jpg", await GetBuildingCount(HR11Id)),
+                new BuildingBlock("HR12", "https://example.com/building9.jpg", await GetBuildingCount(HR12Id)),
+                new BuildingBlock("HR13", "https://example.com/building9.jpg", await GetBuildingCount(HR13Id)),
+                new BuildingBlock("HR14", "https://example.com/building9.jpg", await GetBuildingCount(HR14Id)),
+                new BuildingBlock("HR15", "https://example.com/building9.jpg", await GetBuildingCount(HR15Id)),
+                new BuildingBlock("HR16", "https://example.com/building9.jpg", await GetBuildingCount(HR16Id))
+            };
         }
         else if (Area == 3)
         {
