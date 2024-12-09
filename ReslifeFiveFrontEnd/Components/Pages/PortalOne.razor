@@ -4,6 +4,217 @@
 <h3>PortalOne</h3>
 
 
-@code {
+<h1>Spring 2025</h1>
 
+@if (IsLoading)
+{
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%;">
+            Loading...
+        </div>
+    </div>
 }
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Category</th>
+                <th scope="col">Active</th>
+                <th scope="col">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">Single Total</th>
+                <td>@AllSingleActiveCount</td>
+                <td>@AllSingleCount</td>
+            </tr>
+            <tr>
+                <th scope="row">Single Helaman</th>
+                <td>@AllSingleActiveCountHL</td>
+                <td>@AllSingleCountHL</td>
+            </tr>
+            <tr>
+                <th scope="row">Single Heritage</th>
+                <td>@AllSingleActiveCountHR</td>
+                <td>@AllSingleCountHR</td>
+            </tr>
+            <tr>
+                <th scope="row">Single Riviera</th>
+                <td>@AllSingleActiveCountRI</td>
+                <td>@AllSingleCountRI</td>
+            </tr>
+            <tr>
+                <th scope="row">Single Wyview Park</th>
+                <td>@AllSingleActiveCountWP</td>
+                <td>@AllSingleCountWP</td>
+            </tr>
+            <tr>
+                <th scope="row">Family</th>
+                <td>@AllFamilyActiveCount</td>
+                <td>@AllFamilyCount</td>
+            </tr>
+            <tr>
+                <th scope="row">Conference</th>
+                <td>@AllConferenceActiveCount</td>
+                <td>@AllConferenceCount</td>
+            </tr>
+            <tr>
+                <th scope="row">LISR</th>
+                <td>@AllLISRActiveCount</td>
+                <td>@AllLISRCount</td>
+            </tr>
+            <tr>
+                <th scope="row">Off Campus</th>
+                <td>@AllOffCampusActiveCount</td>
+                <td>@AllOffCampusCount</td>
+            </tr>
+            <tr>
+                <th scope="row">Closed For Maintenance</th>
+                <td>@AllClosedForMaintenanceActiveCount</td>
+                <td>@AllClosedForMaintenanceCount</td>
+            </tr>
+            <tr>
+                <th scope="row">Not Available</th>
+                <td>@AllNotAvailableActiveCount</td>
+                <td>@AllNotAvailableCount</td>
+            </tr>
+            <tr>
+                <th scope="row">Available If Needed</th>
+                <td>@AllAvailableIfNeededActiveCount</td>
+                <td>@AllAvailableIfNeededCount</td>
+            </tr>
+            <tr>
+                <th scope="row">Special</th>
+                <td>@AllSpecialActiveCount</td>
+                <td>@AllSpecialCount</td>
+            </tr>
+            <tr>
+                <th scope="row">Employee</th>
+                <td>@AllEmployeeActiveCount</td>
+                <td>@AllEmployeeCount</td>
+            </tr>
+            <tr>
+                <th scope="row">Total Blocks</th>
+                <td>@ActiveBlockTestCount</td>
+                <td>@BlockTestCount</td>
+            </tr>
+        </tbody>
+    </table>
+}
+
+@code {
+    private bool IsLoading = true;
+
+    private int BlockTestCount;
+    private int ActiveBlockTestCount;
+
+    private int AllSingleCount;
+    private int AllSingleActiveCount;
+
+
+
+
+    private int AllSingleCountHL;
+    private int AllSingleActiveCountHL;
+
+    private int AllSingleCountHR;
+    private int AllSingleActiveCountHR;
+
+    private int AllSingleCountRI;
+    private int AllSingleActiveCountRI;
+
+    private int AllSingleCountWP;
+    private int AllSingleActiveCountWP;
+
+
+
+
+
+    private int AllFamilyCount;
+    private int AllFamilyActiveCount;
+
+    private int AllConferenceCount;
+    private int AllConferenceActiveCount;
+
+    private int AllLISRCount;
+    private int AllLISRActiveCount;
+
+    private int AllOffCampusCount;
+    private int AllOffCampusActiveCount;
+
+    private int AllClosedForMaintenanceCount;
+    private int AllClosedForMaintenanceActiveCount;
+
+    private int AllNotAvailableCount;
+    private int AllNotAvailableActiveCount;
+
+    private int AllAvailableIfNeededCount;
+    private int AllAvailableIfNeededActiveCount;
+
+    private int AllSpecialCount;
+    private int AllSpecialActiveCount;
+
+    private int AllEmployeeCount;
+    private int AllEmployeeActiveCount;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true; // Show loading bar
+        await LoadMetrics();
+        IsLoading = false; // Hide loading bar
+    }
+
+    private async Task LoadMetrics()
+    {
+        AllSingleCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 1);
+        AllSingleActiveCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 1);
+
+        AllSingleCountHL = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 1 && bt.Area == 1);
+        AllSingleActiveCountHL = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 1 && bt.Area == 1);
+
+        AllSingleCountHR = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 1 && bt.Area == 2);
+        AllSingleActiveCountHR = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 1 && bt.Area == 2);
+
+        AllSingleCountRI = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 1 && bt.Area == 3);
+        AllSingleActiveCountRI = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 1 && bt.Area == 3);
+
+        AllSingleCountWP = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 1 && bt.Area == 4);
+        AllSingleActiveCountWP = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 1 && bt.Area == 4);
+
+        AllFamilyCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 2);
+        AllFamilyActiveCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 2);
+
+        AllConferenceCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 3);
+        AllConferenceActiveCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 3);
+
+        AllLISRCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 4);
+        AllLISRActiveCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 4);
+
+        AllOffCampusCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 5);
+        AllOffCampusActiveCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 5);
+
+        AllClosedForMaintenanceCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 6);
+        AllClosedForMaintenanceActiveCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 6);
+
+        AllNotAvailableCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 7);
+        AllNotAvailableActiveCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 7);
+
+        AllAvailableIfNeededCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 8);
+        AllAvailableIfNeededActiveCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 8);
+
+        AllSpecialCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 9);
+        AllSpecialActiveCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 9);
+
+        AllEmployeeCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.OccupantType == 10);
+        AllEmployeeActiveCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 10);
+
+        // Count rows where AgreementPeriod = 3
+        BlockTestCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3);
+
+        // Count rows where AgreementPeriod = 3 and Active = true
+        ActiveBlockTestCount = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true);
+    }
+}
+
