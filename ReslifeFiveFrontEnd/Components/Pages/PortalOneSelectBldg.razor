@@ -14,6 +14,15 @@
         }
     </ul>
 }
+else if (Area == 2)
+{
+    <ul>
+        @foreach (var building in HeritageBuildings)
+        {
+            <li>@building</li>
+        }
+    </ul>
+}
 else if (Area.HasValue)
 {
     <p>No buildings are available for Area @Area.</p>
@@ -40,6 +49,10 @@ else
         "May", 
         "Building 9"
     };
+
+    private List<string> HeritageBuildings = Enumerable.Range(2, 15) // Generates numbers from 2 to 16
+                                                        .Select(i => $"Building {i}")
+                                                        .ToList();
 
     protected override void OnInitialized()
     {
