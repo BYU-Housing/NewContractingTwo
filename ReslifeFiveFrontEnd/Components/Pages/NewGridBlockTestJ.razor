@@ -37,10 +37,10 @@
                             Contract Start: @(block.StartDate.HasValue ? block.StartDate.Value.ToString("yyyy-MM-dd HH:mm") : "No Start Date") 
                             Contract End: @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : "No End Date") 
                             <br />
-                            Occupant Type: @GetOccupantTypeDescription(block.OccupantType) 
-                            | First Name: @block.FName
-                            | Last Name: @block.LName
-                            | NetId: @block.NetID
+                            Occupant Type: @GetOccupantTypeDescription(block.OccupantType)
+                            | First Name: @(string.IsNullOrWhiteSpace(block.FName) ? "Empty" : block.FName)
+                            | Last Name: @(string.IsNullOrWhiteSpace(block.LName) ? "Empty" : block.LName)
+                            | NetId: @(string.IsNullOrWhiteSpace(block.NetID) ? "Empty" : block.NetID)
 
                             <br />
                             Flags :
