@@ -31,7 +31,7 @@
                             Bedspace: @block.Name | Area: @GetAreaDescription(block.Area) 
                             | Buidling: @GetBuidlingDescription(block.Building)
                             | Floor: @block.Floor
-                            | Wing: @block.Wing
+                            | Wing: @(block.Wing.HasValue ? block.Wing.ToString() : "NA")
                             <br />
                             Contract Start: @(block.StartDate.HasValue ? block.StartDate.Value.ToString("yyyy-MM-dd HH:mm") : "No Start Date") 
                             Contract End: @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : "No End Date") 
