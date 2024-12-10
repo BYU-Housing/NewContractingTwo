@@ -35,7 +35,7 @@ else
             {
                 <div class="d-flex justify-content-between align-items-center border rounded p-3 bg-light shadow-sm">
                     <h5>@block</h5>
-                    <button class="btn btn-primary" @onclick="() => SelectWing(block)">Select</button>
+                    <button class="btn btn-primary" @onclick="() => NavigateToSelectBed(block)">Select</button>
                 </div>
             }
         </div>
@@ -58,10 +58,10 @@ else
     private bool IsLoading = true;
     private List<string> Blocks = new() { "1100", "1200", "2100", "2200", "3100", "3200" };
 
-    private void SelectWing(string wing)
+    private void NavigateToSelectBed(string wing)
     {
-        // Navigate or perform action based on selected wing
-        NavigationManager.NavigateTo($"/nextPage?Area={Area}&BuildingId={BuildingId}&Wing={wing}");
+        // Navigate to the bed selection page with the appropriate parameters
+        NavigationManager.NavigateTo($"/portalOneSelectBed?Area={Area}&BuildingId={BuildingId}&Wing={wing}");
     }
 
     protected override async Task OnInitializedAsync()
