@@ -1,9 +1,26 @@
 ﻿@page "/portalOneSelectWing"
 @inject NavigationManager NavigationManager
-@inject IGenService GenService
 @using Microsoft.AspNetCore.Components
-<h3>PortalOneAddWing</h3>
+
+<h3>Select Wing</h3>
+
+<p>Selected Area: @Area</p>
+<p>Selected Building: @BuildingId</p>
 
 @code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? Area { get; set; } // Allow nullable in case the parameter is not provided
 
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? BuildingId { get; set; } // Allow nullable in case the parameter is not provided
+
+    protected override void OnInitialized()
+    {
+        if (Area == null || BuildingId == null)
+        {
+            NavigationManager.NavigateTo("/portalOneSelectBuilding"); // Redirect if parameters are missing
+        }
+    }
 }
