@@ -38,6 +38,10 @@
                             Contract End: @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : "No End Date") 
                             <br />
                             Occupant Type: @GetOccupantTypeDescription(block.OccupantType) 
+                            | First Name: @block.FName
+                            | Last Name: @block.LName
+                            | NetId: @block.NetID
+
                             <br />
                             Flags :
                         </div>
