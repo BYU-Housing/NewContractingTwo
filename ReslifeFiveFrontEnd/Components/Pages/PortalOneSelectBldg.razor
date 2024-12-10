@@ -30,7 +30,7 @@ else if (Area.HasValue)
     <div class="d-flex flex-column gap-3">
         @foreach (var block in BuildingBlocks)
         {
-            @RenderBlock(block.Name, block.ImageUrl, block.Count)
+            @RenderBlock(block.Name, block.Count)
         }
     </div>
 }
@@ -74,9 +74,6 @@ else
     private const int HR15Id = 28;
     private const int HR16Id = 29;
 
-
-
-
     protected override async Task OnInitializedAsync()
     {
         IsLoading = true;
@@ -93,48 +90,48 @@ else
         {
             BuildingBlocks = new()
             {
-                new BuildingBlock("Hinckley", "https://example.com/hinckley.jpg", await GetBuildingCount(HinckleyId)),
-                new BuildingBlock("Chipman", "https://example.com/chipman.jpg", await GetBuildingCount(ChipmanId)),
-                new BuildingBlock("David John", "https://example.com/davidjohn.jpg", await GetBuildingCount(DavidJohnId)),
-                new BuildingBlock("Taylor", "https://example.com/taylor.jpg", await GetBuildingCount(TaylorId)),
-                new BuildingBlock("Stover", "https://example.com/stover.jpg", await GetBuildingCount(StoverId)),
-                new BuildingBlock("Budge", "https://example.com/budge.jpg", await GetBuildingCount(BudgeId)),
-                new BuildingBlock("Merrill", "https://example.com/merrill.jpg", await GetBuildingCount(MerrillId)),
-                new BuildingBlock("May", "https://example.com/may.jpg", await GetBuildingCount(MayId)),
-                new BuildingBlock("Building 9", "https://example.com/building9.jpg", await GetBuildingCount(Building9Id))
+                new BuildingBlock("Hinckley", await GetBuildingCount(HinckleyId)),
+                new BuildingBlock("Chipman", await GetBuildingCount(ChipmanId)),
+                new BuildingBlock("David John", await GetBuildingCount(DavidJohnId)),
+                new BuildingBlock("Taylor", await GetBuildingCount(TaylorId)),
+                new BuildingBlock("Stover", await GetBuildingCount(StoverId)),
+                new BuildingBlock("Budge", await GetBuildingCount(BudgeId)),
+                new BuildingBlock("Merrill", await GetBuildingCount(MerrillId)),
+                new BuildingBlock("May", await GetBuildingCount(MayId)),
+                new BuildingBlock("Building 9", await GetBuildingCount(Building9Id))
             };
         }
         else if (Area == 2)
         {
             BuildingBlocks = new()
             {
-                new BuildingBlock("HR02", "https://example.com/hinckley.jpg", await GetBuildingCount(HR02Id)),
-                new BuildingBlock("HR03", "https://example.com/chipman.jpg", await GetBuildingCount(HR03Id)),
-                new BuildingBlock("HR04", "https://example.com/davidjohn.jpg", await GetBuildingCount(HR04Id)),
-                new BuildingBlock("HR05", "https://example.com/taylor.jpg", await GetBuildingCount(HR05Id)),
-                new BuildingBlock("HR06", "https://example.com/stover.jpg", await GetBuildingCount(HR06Id)),
-                new BuildingBlock("HR07", "https://example.com/budge.jpg", await GetBuildingCount(HR07Id)),
-                new BuildingBlock("HR08", "https://example.com/merrill.jpg", await GetBuildingCount(HR08Id)),
-                new BuildingBlock("HR09", "https://example.com/may.jpg", await GetBuildingCount(HR09Id)),
-                new BuildingBlock("HR10", "https://example.com/building9.jpg", await GetBuildingCount(HR10Id)),
-                new BuildingBlock("HR11", "https://example.com/building9.jpg", await GetBuildingCount(HR11Id)),
-                new BuildingBlock("HR12", "https://example.com/building9.jpg", await GetBuildingCount(HR12Id)),
-                new BuildingBlock("HR13", "https://example.com/building9.jpg", await GetBuildingCount(HR13Id)),
-                new BuildingBlock("HR14", "https://example.com/building9.jpg", await GetBuildingCount(HR14Id)),
-                new BuildingBlock("HR15", "https://example.com/building9.jpg", await GetBuildingCount(HR15Id)),
-                new BuildingBlock("HR16", "https://example.com/building9.jpg", await GetBuildingCount(HR16Id))
+                new BuildingBlock("HR02", await GetBuildingCount(HR02Id)),
+                new BuildingBlock("HR03", await GetBuildingCount(HR03Id)),
+                new BuildingBlock("HR04", await GetBuildingCount(HR04Id)),
+                new BuildingBlock("HR05", await GetBuildingCount(HR05Id)),
+                new BuildingBlock("HR06", await GetBuildingCount(HR06Id)),
+                new BuildingBlock("HR07", await GetBuildingCount(HR07Id)),
+                new BuildingBlock("HR08", await GetBuildingCount(HR08Id)),
+                new BuildingBlock("HR09", await GetBuildingCount(HR09Id)),
+                new BuildingBlock("HR10", await GetBuildingCount(HR10Id)),
+                new BuildingBlock("HR11", await GetBuildingCount(HR11Id)),
+                new BuildingBlock("HR12", await GetBuildingCount(HR12Id)),
+                new BuildingBlock("HR13", await GetBuildingCount(HR13Id)),
+                new BuildingBlock("HR14", await GetBuildingCount(HR14Id)),
+                new BuildingBlock("HR15", await GetBuildingCount(HR15Id)),
+                new BuildingBlock("HR16", await GetBuildingCount(HR16Id))
             };
         }
         else if (Area == 3)
         {
             BuildingBlocks = Enumerable.Range('A', 12)
-                .Select(i => new BuildingBlock(((char)i).ToString(), $"https://example.com/building{(char)i}.jpg", i - 64))
+                .Select(i => new BuildingBlock(((char)i).ToString(), i - 64))
                 .ToList();
         }
         else if (Area == 4)
         {
             BuildingBlocks = Enumerable.Range(1, 11)
-                .Select(i => new BuildingBlock($"WP Building {i}", $"https://example.com/wpbuilding{i}.jpg", i * 5))
+                .Select(i => new BuildingBlock($"WP Building {i}", i * 5))
                 .ToList();
         }
     }
@@ -152,35 +149,24 @@ else
             bt.Building == buildingId);
     }
 
-    private RenderFragment RenderBlock(string name, string imageUrl, int count) => builder =>
+    private RenderFragment RenderBlock(string name, int count) => builder =>
     {
         builder.OpenElement(0, "div");
         builder.AddAttribute(1, "class", "d-flex align-items-center border rounded p-3 bg-light shadow-sm");
 
-        // Image Section
-        builder.OpenElement(2, "img");
-        builder.AddAttribute(3, "src", imageUrl);
-        builder.AddAttribute(4, "alt", name);
-        builder.AddAttribute(5, "class", "img-thumbnail me-3");
-        builder.AddAttribute(6, "style", "width: 100px; height: 100px; object-fit: cover;");
-        builder.CloseElement();
-
-        // Middle Section (Description)
-        builder.OpenElement(7, "div");
-        builder.AddAttribute(8, "class", "flex-grow-1");
-        builder.OpenElement(9, "h5");
-        builder.AddContent(10, name);
-        builder.CloseElement();
-        builder.OpenElement(11, "p");
-        builder.AddContent(12, "Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
+        // Name Section
+        builder.OpenElement(2, "div");
+        builder.AddAttribute(3, "class", "flex-grow-1");
+        builder.OpenElement(4, "h5");
+        builder.AddContent(5, name);
         builder.CloseElement();
         builder.CloseElement();
 
         // Count Section
-        builder.OpenElement(13, "div");
-        builder.AddAttribute(14, "class", "ms-3 text-end");
-        builder.OpenElement(15, "h4");
-        builder.AddContent(16, count.ToString());
+        builder.OpenElement(6, "div");
+        builder.AddAttribute(7, "class", "ms-3 text-end");
+        builder.OpenElement(8, "h4");
+        builder.AddContent(9, count.ToString());
         builder.CloseElement();
         builder.CloseElement();
 
@@ -190,13 +176,11 @@ else
     private class BuildingBlock
     {
         public string Name { get; }
-        public string ImageUrl { get; }
         public int Count { get; }
 
-        public BuildingBlock(string name, string imageUrl, int count)
+        public BuildingBlock(string name, int count)
         {
             Name = name;
-            ImageUrl = imageUrl;
             Count = count;
         }
     }
