@@ -32,6 +32,7 @@
                             | Buidling: @GetBuidlingDescription(block.Building)
                             | Floor: @block.Floor
                             | Wing: @(block.Wing.HasValue ? block.Wing.ToString() : "NA")
+                            | Stair Well: @(block.StairWell.HasValue ? block.StairWell.ToString() : "NA")
                             <br />
                             Contract Start: @(block.StartDate.HasValue ? block.StartDate.Value.ToString("yyyy-MM-dd HH:mm") : "No Start Date") 
                             Contract End: @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : "No End Date") 
