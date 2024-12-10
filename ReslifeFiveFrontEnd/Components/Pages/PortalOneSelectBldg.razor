@@ -18,6 +18,7 @@
 </div>
 
 @if (IsLoading)
+
 {
     <div class="progress">
         <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%;">
@@ -25,163 +26,323 @@
         </div>
     </div>
 }
+
 else if (Area.HasValue)
+
 {
     <div class="d-flex flex-column gap-3">
         @foreach (var block in BuildingBlocks)
+
         {
-            @RenderBlock(block.Name, block.Count)
+            @RenderBlock(block.Name, block.Count, block.Id)
         }
     </div>
 }
+
 else
+
 {
     <p>Area not specified. Please select an area.</p>
 }
 
 @code {
     [Parameter]
+
     [SupplyParameterFromQuery]
+
     public int? Area { get; set; } // Allow nullable in case the parameter is not provided
+
+
 
     private bool IsLoading = true;
 
+
+
     private List<BuildingBlock> BuildingBlocks = new();
 
+
+
     // Building ID constants for clarity and maintainability
+
     private const int HinckleyId = 6;
+
     private const int ChipmanId = 7;
+
     private const int DavidJohnId = 8;
+
     private const int TaylorId = 9;
+
     private const int StoverId = 10;
+
     private const int BudgeId = 11;
+
     private const int MerrillId = 12;
+
     private const int MayId = 13;
+
     private const int Building9Id = 14;
+
     private const int HR02Id = 15;
+
     private const int HR03Id = 16;
+
     private const int HR04Id = 17;
+
     private const int HR05Id = 18;
+
     private const int HR06Id = 19;
+
     private const int HR07Id = 20;
+
     private const int HR08Id = 21;
+
     private const int HR09Id = 22;
+
     private const int HR10Id = 23;
+
     private const int HR11Id = 24;
+
     private const int HR12Id = 25;
+
     private const int HR13Id = 26;
+
     private const int HR14Id = 27;
+
     private const int HR15Id = 28;
+
     private const int HR16Id = 29;
 
+
+
     protected override async Task OnInitializedAsync()
+
     {
+
         IsLoading = true;
 
+
+
         // Fetch building data based on the Area
+
         await LoadBuildingBlocksAsync();
 
+
+
         IsLoading = false;
+
     }
+
+
 
     private async Task LoadBuildingBlocksAsync()
+
     {
+
         if (Area == 1)
+
         {
+
             BuildingBlocks = new()
             {
-                new BuildingBlock("Hinckley", await GetBuildingCount(HinckleyId)),
-                new BuildingBlock("Chipman", await GetBuildingCount(ChipmanId)),
-                new BuildingBlock("David John", await GetBuildingCount(DavidJohnId)),
-                new BuildingBlock("Taylor", await GetBuildingCount(TaylorId)),
-                new BuildingBlock("Stover", await GetBuildingCount(StoverId)),
-                new BuildingBlock("Budge", await GetBuildingCount(BudgeId)),
-                new BuildingBlock("Merrill", await GetBuildingCount(MerrillId)),
-                new BuildingBlock("May", await GetBuildingCount(MayId)),
-                new BuildingBlock("Building 9", await GetBuildingCount(Building9Id))
+                new BuildingBlock("Hinckley", HinckleyId, await GetBuildingCount(HinckleyId)),
+                new BuildingBlock("Chipman", ChipmanId, await GetBuildingCount(ChipmanId)),
+                new BuildingBlock("David John", DavidJohnId, await GetBuildingCount(DavidJohnId)),
+                new BuildingBlock("Taylor", TaylorId, await GetBuildingCount(TaylorId)),
+                new BuildingBlock("Stover", StoverId, await GetBuildingCount(StoverId)),
+                new BuildingBlock("Budge", BudgeId, await GetBuildingCount(BudgeId)),
+                new BuildingBlock("Merrill", MerrillId, await GetBuildingCount(MerrillId)),
+                new BuildingBlock("May", MayId, await GetBuildingCount(MayId)),
+                new BuildingBlock("Building 9", Building9Id, await GetBuildingCount(Building9Id))
             };
+
         }
+
         else if (Area == 2)
+
         {
+
             BuildingBlocks = new()
             {
-                new BuildingBlock("HR02", await GetBuildingCount(HR02Id)),
-                new BuildingBlock("HR03", await GetBuildingCount(HR03Id)),
-                new BuildingBlock("HR04", await GetBuildingCount(HR04Id)),
-                new BuildingBlock("HR05", await GetBuildingCount(HR05Id)),
-                new BuildingBlock("HR06", await GetBuildingCount(HR06Id)),
-                new BuildingBlock("HR07", await GetBuildingCount(HR07Id)),
-                new BuildingBlock("HR08", await GetBuildingCount(HR08Id)),
-                new BuildingBlock("HR09", await GetBuildingCount(HR09Id)),
-                new BuildingBlock("HR10", await GetBuildingCount(HR10Id)),
-                new BuildingBlock("HR11", await GetBuildingCount(HR11Id)),
-                new BuildingBlock("HR12", await GetBuildingCount(HR12Id)),
-                new BuildingBlock("HR13", await GetBuildingCount(HR13Id)),
-                new BuildingBlock("HR14", await GetBuildingCount(HR14Id)),
-                new BuildingBlock("HR15", await GetBuildingCount(HR15Id)),
-                new BuildingBlock("HR16", await GetBuildingCount(HR16Id))
+                new BuildingBlock("HR02", HR02Id, await GetBuildingCount(HR02Id)),
+                new BuildingBlock("HR03", HR03Id, await GetBuildingCount(HR03Id)),
+                new BuildingBlock("HR04", HR04Id, await GetBuildingCount(HR04Id)),
+                new BuildingBlock("HR05", HR05Id, await GetBuildingCount(HR05Id)),
+                new BuildingBlock("HR06", HR06Id, await GetBuildingCount(HR06Id)),
+                new BuildingBlock("HR07", HR07Id, await GetBuildingCount(HR07Id)),
+                new BuildingBlock("HR08", HR08Id, await GetBuildingCount(HR08Id)),
+                new BuildingBlock("HR09", HR09Id, await GetBuildingCount(HR09Id)),
+                new BuildingBlock("HR10", HR10Id, await GetBuildingCount(HR10Id)),
+                new BuildingBlock("HR11", HR11Id, await GetBuildingCount(HR11Id)),
+                new BuildingBlock("HR12", HR12Id, await GetBuildingCount(HR12Id)),
+                new BuildingBlock("HR13", HR13Id, await GetBuildingCount(HR13Id)),
+                new BuildingBlock("HR14", HR14Id, await GetBuildingCount(HR14Id)),
+                new BuildingBlock("HR15", HR15Id, await GetBuildingCount(HR15Id)),
+                new BuildingBlock("HR16", HR16Id, await GetBuildingCount(HR16Id))
             };
+
         }
+
         else if (Area == 3)
+
         {
+
             BuildingBlocks = Enumerable.Range('A', 12)
-                .Select(i => new BuildingBlock(((char)i).ToString(), i - 64))
+
+                .Select(i => new BuildingBlock(((char)i).ToString(), i, i - 64))
+
                 .ToList();
+
         }
+
         else if (Area == 4)
+
         {
+
             BuildingBlocks = Enumerable.Range(1, 11)
-                .Select(i => new BuildingBlock($"WP Building {i}", i * 5))
+
+                .Select(i => new BuildingBlock($"WP Building {i}", i, i * 5))
+
                 .ToList();
+
         }
+
     }
+
+
 
     private async Task<int> GetBuildingCount(int buildingId)
+
     {
+
         return await GenService.CountAsync<BlockTest>(bt =>
+
             bt.AgreementPeriod == 3 &&
+
             bt.Active == true &&
+
             bt.OccupantType == 1 &&
+
             bt.Area == Area &&
+
             bt.Sex == 1 &&
+
             bt.Community == 1 &&
+
             (bt.ContractingReqMet == 1 || bt.ContractingReqMet == 3) &&
+
             bt.Building == buildingId);
+
     }
 
-    private RenderFragment RenderBlock(string name, int count) => builder =>
+
+
+    private RenderFragment RenderBlock(string name, int count, int buildingId) => builder =>
+
     {
+
         builder.OpenElement(0, "div");
+
         builder.AddAttribute(1, "class", "d-flex align-items-center border rounded p-3 bg-light shadow-sm");
 
+
+
         // Name Section
+
         builder.OpenElement(2, "div");
+
         builder.AddAttribute(3, "class", "flex-grow-1");
+
         builder.OpenElement(4, "h5");
+
         builder.AddContent(5, name);
+
         builder.CloseElement();
+
         builder.CloseElement();
+
+
 
         // Count Section
+
         builder.OpenElement(6, "div");
+
         builder.AddAttribute(7, "class", "ms-3 text-end");
+
         builder.OpenElement(8, "h4");
+
         builder.AddContent(9, count.ToString());
-        builder.CloseElement();
+
         builder.CloseElement();
 
         builder.CloseElement();
+
+
+
+        // Button Section
+
+        builder.OpenElement(10, "div");
+
+        builder.AddAttribute(11, "class", "ms-3");
+
+        builder.OpenElement(12, "button");
+
+        builder.AddAttribute(13, "class", "btn btn-primary");
+
+        builder.AddAttribute(14, "onclick", EventCallback.Factory.Create(this, () =>
+
+        {
+
+            NavigateToWing(buildingId);
+
+        }));
+
+        builder.AddContent(15, "Select");
+
+        builder.CloseElement();
+
+        builder.CloseElement();
+
+
+
+        builder.CloseElement();
+
     };
 
-    private class BuildingBlock
+
+
+    private void NavigateToWing(int buildingId)
+
     {
+
+        NavigationManager.NavigateTo($"/portalOneSelectWing?Area={Area}&BuildingId={buildingId}");
+
+    }
+
+
+
+    private class BuildingBlock
+
+    {
+
         public string Name { get; }
+
+        public int Id { get; }
+
         public int Count { get; }
 
-        public BuildingBlock(string name, int count)
+
+
+        public BuildingBlock(string name, int id, int count)
+
         {
+
             Name = name;
+
+            Id = id;
+
             Count = count;
+
         }
+
     }
 }
