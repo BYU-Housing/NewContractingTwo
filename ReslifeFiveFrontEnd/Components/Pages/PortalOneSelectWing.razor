@@ -7,6 +7,23 @@
 <p>Selected Area: @Area</p>
 <p>Selected Building: @BuildingId</p>
 
+@if (BuildingId >= 6 && BuildingId <= 14)
+{
+    <div class="d-flex flex-column gap-3">
+        @foreach (var block in Blocks)
+        {
+            <div class="d-flex justify-content-between align-items-center border rounded p-3 bg-light shadow-sm">
+                <h5>@block</h5>
+                <button class="btn btn-primary" @onclick="() => SelectWing(block)">Select</button>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>The selected building does not have predefined wings.</p>
+}
+
 @code {
     [Parameter]
     [SupplyParameterFromQuery]
@@ -15,6 +32,14 @@
     [Parameter]
     [SupplyParameterFromQuery]
     public int? BuildingId { get; set; } // Allow nullable in case the parameter is not provided
+
+    private List<string> Blocks = new() { "1100", "1200", "2100", "2200", "3100", "3200" };
+
+    private void SelectWing(string wing)
+    {
+        // Navigate or perform action based on selected wing
+        NavigationManager.NavigateTo($"/nextPage?Area={Area}&BuildingId={BuildingId}&Wing={wing}");
+    }
 
     protected override void OnInitialized()
     {
