@@ -2,26 +2,48 @@
 @inject NavigationManager NavigationManager
 @using Microsoft.AspNetCore.Components
 
-<h3>Select Floor or Wing</h3>
+<h3>Select Wing</h3>
 
-<p>Selected Area: @Area</p>
-<p>Selected Building: @BuildingId</p>
+<div class="progress">
+    <div class="progress-bar"
+         role="progressbar"
+         style="width: 30%;"
+         aria-valuenow="30"
+         aria-valuemin="0"
+         aria-valuemax="100">
+        Step 3 of 10
+    </div>
+</div>
 
-@if (BuildingId >= 6 && BuildingId <= 14)
+@if (IsLoading)
 {
-    <div class="d-flex flex-column gap-3">
-        @foreach (var block in Blocks)
-        {
-            <div class="d-flex justify-content-between align-items-center border rounded p-3 bg-light shadow-sm">
-                <h5>@block</h5>
-                <button class="btn btn-primary" @onclick="() => SelectWing(block)">Select</button>
-            </div>
-        }
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%;">
+            Loading...
+        </div>
     </div>
 }
 else
 {
-    <p>The selected building does not have predefined wings.</p>
+    <p>Selected Area: @Area</p>
+    <p>Selected Building: @BuildingId</p>
+
+    @if (BuildingId >= 6 && BuildingId <= 14)
+    {
+        <div class="d-flex flex-column gap-3">
+            @foreach (var block in Blocks)
+            {
+                <div class="d-flex justify-content-between align-items-center border rounded p-3 bg-light shadow-sm">
+                    <h5>@block</h5>
+                    <button class="btn btn-primary" @onclick="() => SelectWing(block)">Select</button>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>The selected building does not have predefined wings.</p>
+    }
 }
 
 @code {
@@ -33,6 +55,7 @@ else
     [SupplyParameterFromQuery]
     public int? BuildingId { get; set; } // Allow nullable in case the parameter is not provided
 
+    private bool IsLoading = true;
     private List<string> Blocks = new() { "1100", "1200", "2100", "2200", "3100", "3200" };
 
     private void SelectWing(string wing)
@@ -41,11 +64,20 @@ else
         NavigationManager.NavigateTo($"/nextPage?Area={Area}&BuildingId={BuildingId}&Wing={wing}");
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         if (Area == null || BuildingId == null)
         {
             NavigationManager.NavigateTo("/portalOneSelectBuilding"); // Redirect if parameters are missing
+        }
+        else
+        {
+            IsLoading = true;
+
+            // Simulate data fetching or any async operation
+            await Task.Delay(1000);
+
+            IsLoading = false;
         }
     }
 }
