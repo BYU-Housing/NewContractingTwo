@@ -66,8 +66,8 @@ else
 
     private void SelectMealPlan(string mealPlan)
     {
-        // Perform navigation or other actions based on the selected meal plan
-        NavigationManager.NavigateTo($"/portalOneConfirmMealPlan?Area={Area}&BuildingId={BuildingId}&Wing={Wing}&BedspaceId={BedspaceId}&MealPlan={mealPlan}");
+        // Navigate to PortalOneSignHousing with the selected meal plan and other parameters
+        NavigationManager.NavigateTo($"/portalOneSignHousing?Area={Area}&BuildingId={BuildingId}&Wing={Wing}&BedspaceId={BedspaceId}&MealPlan={mealPlan}");
     }
 
     protected override async Task OnInitializedAsync()
