@@ -20,19 +20,22 @@ else
     <p>Selected Building: @BuildingId</p>
     <p>Selected Wing: @Wing</p>
 
-    <h4>Residents</h4>
-    @if (ResidentNames != null && ResidentNames.Any())
+    <h4>Bedspaces</h4>
+    @if (Bedspaces != null && Bedspaces.Any())
     {
-        <ul>
-            @foreach (var name in ResidentNames)
+        <div class="list-group">
+            @foreach (var bedspace in Bedspaces)
             {
-                <li>@name</li>
+                <button class="list-group-item list-group-item-action"
+                        @onclick="() => NavigateToMealPlan(bedspace.Id)">
+                    @bedspace.Name
+                </button>
             }
-        </ul>
+        </div>
     }
     else
     {
-        <p>No residents found for the selected wing.</p>
+        <p>No bedspaces found for the selected wing.</p>
     }
 }
 
@@ -50,7 +53,12 @@ else
     public string? Wing { get; set; } // Allow nullable in case the parameter is not provided
 
     private bool IsLoading = true;
-    private List<string> ResidentNames = new(); // Holds the list of resident names
+    private List<Bedspace> Bedspaces = new(); // Holds the list of bedspaces
+
+    private void NavigateToMealPlan(int bedspaceId)
+    {
+        NavigationManager.NavigateTo($"/portalOneSelectMealPlan?Area={Area}&BuildingId={BuildingId}&Wing={Wing}&BedspaceId={bedspaceId}");
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -66,8 +74,8 @@ else
         // Parse the floor number from the Wing parameter
         var floor = int.TryParse(Wing?.Substring(0, 1), out var result) ? result : 0;
 
-        // Fetch data from the database using LINQ
-        ResidentNames = await Task.Run(() =>
+        // Fetch bedspaces from the database
+        Bedspaces = await Task.Run(() =>
             GenService.GetModel<BlockTest>()
                 .Where(bt =>
                     bt.AgreementPeriod == 3 &&
@@ -79,10 +87,17 @@ else
                     (bt.ContractingReqMet == 1 || bt.ContractingReqMet == 3) &&
                     bt.Building == BuildingId &&
                     bt.Floor == floor)
-                .Select(bt => bt.Name) // Assuming `Name` is the field holding the resident's name
+                .Select(bt => new Bedspace { Id = bt.Id, Name = bt.Name }) // Assuming BlockTest has Id and Name
                 .ToList()
         );
 
         IsLoading = false;
+    }
+
+    // Temporary class to hold bedspace data
+    private class Bedspace
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }
