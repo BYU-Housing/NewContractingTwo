@@ -1,19 +1,54 @@
-﻿@inject ISamlService samlService
+﻿@page "/Login"
+@rendermode InteractiveServer
+@inject AuthenticationStateProvider authState
+@inject ISamlService samlService
 @inject NavigationManager navigation
+@inject IWebHostEnvironment Env
+@inject IGenService genService
 
-@page "/Login"
+
 <h3>Login</h3>
-
+<br />
 <div>
 
-    <label>Login With SAML:</label>
-    <br />
 
-    <Button @onclick="LoginWithSaml" >Login</Button>
 
-    <br />
-    <Button @onclick="Logout">Logout</Button>
+    @if (Env.IsDevelopment())
+    {
 
+        if(IsUserAuthenticated)
+        {
+            <h4>Dev Login is only available when not logged in</h4>
+            <h4>Current User Information: </h4>
+            <h5>Net Id: @loggedInUser.NetId</h5>
+            <h5>Preferred Name: @loggedInUser.PreferredFirstName @loggedInUser.Surname</h5>
+            <h5>Given Name: @loggedInUser.RestOfName</h5>
+            <h5>Role: @loggedInUser.Role?.Name</h5>
+
+
+            <br />
+            <Button Color="ButtonColor.Primary" @onclick="Logout">Logout</Button>
+
+        }
+        else
+        {
+            <h4>Enter Net ID for Dev Login</h4> <input type="text" @bind-value="devUserNetIdInput" placeholder="Enter Net Id..." />
+
+            <Button Color="ButtonColor.Primary" @onclick="LoginDevUser">Login Dev User</Button>
+
+            <h4>@message</h4>
+        }
+    }
+    else
+    {
+        <label>Login With SAML:</label>
+        <br />
+
+        <Button Color="ButtonColor.Primary" @onclick="LoginWithSaml">Login</Button>
+
+        <br />
+        <Button Color="ButtonColor.Primary" @onclick="Logout">Logout</Button>
+    }
 
 
 </div>
@@ -21,6 +56,36 @@
 
 
 @code {
+
+
+
+    private string devUserNetIdInput = string.Empty;
+    private string message = string.Empty;
+    private bool IsUserAuthenticated = false;
+    private User loggedInUser = new User();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await authState.GetAuthenticationStateAsync();
+        var user = auth.User;
+
+        IsUserAuthenticated = user.Identity != null && user.Identity.IsAuthenticated;
+
+        if (IsUserAuthenticated)
+        {
+            var roleName = user.FindFirst(c => c.Type == ClaimTypes.Role)?.Value;
+            loggedInUser = new User
+            {
+                RestOfName = user.FindFirst(c => c.Type == ClaimTypes.GivenName)?.Value ?? "No FirstName",
+                Surname = user.FindFirst(c => c.Type == ClaimTypes.Surname)?.Value ?? "No LastName",
+                NetId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "No NetId",
+                PreferredFirstName = user.FindFirst(c => c.Type == ClaimTypes.Name)?.Value ?? "No Name",
+                Role = genService.GetModel<Role>().FirstOrDefault(r => r.Name == roleName) ?? new Role { Name = "No Role" },
+            };
+        }
+    }
+
+
 
     private void LoginWithSaml()
     {
@@ -33,6 +98,24 @@
     {
         navigation.NavigateTo("/Logout", forceLoad: true);
     }
+
+    private void LoginDevUser()
+    {
+        if (string.IsNullOrWhiteSpace(devUserNetIdInput))
+        {
+            message = "Net Id is required";
+            return;
+        }
+        else
+        {
+            navigation.NavigateTo($"/dev-login?netId={devUserNetIdInput}", forceLoad: true);
+        }
+
+    }
+
+
+
+
 
 
 
