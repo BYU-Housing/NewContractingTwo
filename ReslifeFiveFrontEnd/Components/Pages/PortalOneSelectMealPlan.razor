@@ -3,8 +3,58 @@
 @inject IGenService GenService
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.WebUtilities
+
 <h3>PortalOneSelectMealPlan</h3>
 
-@code {
+@if (IsLoading)
+{
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%;">
+            Loading...
+        </div>
+    </div>
+}
+else
+{
+    <p>Selected Area: @Area</p>
+    <p>Selected Building: @BuildingId</p>
+    <p>Selected Wing: @Wing</p>
+    <p>Selected Bedspace ID: @BedspaceId</p>
+}
 
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? Area { get; set; } // Allow nullable in case the parameter is not provided
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? BuildingId { get; set; } // Allow nullable in case the parameter is not provided
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? Wing { get; set; } // Allow nullable in case the parameter is not provided
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? BedspaceId { get; set; } // Allow nullable in case the parameter is not provided
+
+    private bool IsLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if any of the parameters are missing
+        if (Area == null || BuildingId == null || Wing == null || BedspaceId == null)
+        {
+            NavigationManager.NavigateTo("/portalOneSelectBed"); // Redirect if parameters are missing
+            return;
+        }
+
+        IsLoading = true;
+
+        // Simulate a loading operation
+        await Task.Delay(500);
+
+        IsLoading = false;
+    }
 }
