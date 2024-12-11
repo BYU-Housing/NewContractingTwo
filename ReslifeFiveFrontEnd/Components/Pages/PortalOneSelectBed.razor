@@ -1,8 +1,55 @@
 ﻿@page "/portalOneSelectBed"
 @inject NavigationManager NavigationManager
 @using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.WebUtilities
 
 <h3>Select Bed</h3>
-@code {
 
+@if (IsLoading)
+{
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%;">
+            Loading...
+        </div>
+    </div>
+}
+else
+{
+    <p>Selected Area: @Area</p>
+    <p>Selected Building: @BuildingId</p>
+    <p>Selected Wing: @Wing</p>
+}
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? Area { get; set; } // Allow nullable in case the parameter is not provided
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? BuildingId { get; set; } // Allow nullable in case the parameter is not provided
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? Wing { get; set; } // Allow nullable in case the parameter is not provided
+
+    private bool IsLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if any of the parameters are missing
+        if (Area == null || BuildingId == null || Wing == null)
+        {
+            NavigationManager.NavigateTo("/portalOneSelectWing"); // Redirect if parameters are missing
+        }
+        else
+        {
+            IsLoading = true;
+
+            // Simulate data fetching or any async operation
+            await Task.Delay(1000);
+
+            IsLoading = false;
+        }
+    }
 }
