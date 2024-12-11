@@ -1,6 +1,5 @@
 ﻿@page "/portalOneSignHousing"
 @inject NavigationManager NavigationManager
-@using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.WebUtilities
 
 <h3>Sign Housing Agreement</h3>
@@ -15,6 +14,25 @@
         Step 7 of 10
     </div>
 </div>
+
+<h4>URL Parameters:</h4>
+<ul>
+    @if (UrlParameters.Any())
+
+    {
+        @foreach (var param in UrlParameters)
+
+        {
+            <li><strong>@param.Key:</strong> @param.Value</li>
+        }
+    }
+
+    else
+
+    {
+        <li>No parameters were provided.</li>
+    }
+</ul>
 
 <div class="iframe-container">
     <iframe src="@IframeUrl"
@@ -44,33 +62,79 @@
 
 @code {
     [Parameter]
+
     [SupplyParameterFromQuery]
+
     public int? Area { get; set; }
 
+
+
     [Parameter]
+
     [SupplyParameterFromQuery]
+
     public int? BuildingId { get; set; }
 
+
+
     [Parameter]
+
     [SupplyParameterFromQuery]
+
     public string? Wing { get; set; }
 
-    [Parameter]
-    [SupplyParameterFromQuery]
-    public int? BedspaceId { get; set; }
+
 
     [Parameter]
+
     [SupplyParameterFromQuery]
+
+    public int? BedspaceId { get; set; }
+
+
+
+    [Parameter]
+
+    [SupplyParameterFromQuery]
+
     public string? MealPlan { get; set; }
+
+
 
     private string IframeUrl => GenerateIframeUrl();
 
-    private string GenerateIframeUrl()
+    private Dictionary<string, string?> UrlParameters = new();
+
+
+
+    protected override void OnInitialized()
+
     {
+
+        // Parse the query parameters from the current URL
+
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+
+        UrlParameters = QueryHelpers.ParseQuery(uri.Query)
+
+                                     .ToDictionary(k => k.Key, v => v.Value.FirstOrDefault());
+
+    }
+
+
+
+    private string GenerateIframeUrl()
+
+    {
+
         // Base Adobe Sign URL
+
         string baseUrl = "https://byusign.na2.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhCRGXCoNOZTWZqIBFqheJBgO9aSC88qeixZ2W5qPPYHatMzvNZ5hghHC8yispuAwQo*&hosted=false";
 
+
+
         // Add query parameters
+
         var queryParams = new Dictionary<string, string?>
         {
             { "Area", Area?.ToString() },
@@ -80,6 +144,9 @@
             { "MealPlan", MealPlan }
         };
 
+
+
         return QueryHelpers.AddQueryString(baseUrl, queryParams);
+
     }
 }
