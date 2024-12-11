@@ -1,0 +1,59 @@
+﻿@page "/adminPortals"
+@inject IGenService GenService
+@inject NavigationManager NavigationManager
+
+<h3>AdminPortals</h3>
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToTestManageEmployees">Manage Test Employees</button>
+</p>
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToTestManageHASpouce">Go to Manage Test HA Spouce</button>
+</p>
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToAdminDash">Admin Dash</button>
+</p>
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToManageBlock">Go to Manage Block</button>
+</p>
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToManageBlockTest">Go to Manage Block Test</button>
+</p>
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToGridBlockTestG">Go to Grid Block Test</button>
+</p>
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToManageTimePeriod">Go to Manage Time Period</button>
+</p>
+
+
+@code {
+
+    private void NavigateToManageBlock()
+    {
+        NavigationManager.NavigateTo("/manageBlock");
+    }
+    private void NavigateToManageBlockTest()
+    {
+        NavigationManager.NavigateTo("/manageBlockTest");
+    }
+    private void NavigateToGridBlockTestG()
+    {
+        NavigationManager.NavigateTo("/gridBlockTestG");
+    }
+    private void NavigateToManageTimePeriod()
+    {
+        NavigationManager.NavigateTo("/manageTimePeriodTest");
+    }
+    private void NavigateToTestManageEmployees()
+    {
+        NavigationManager.NavigateTo("/testManageEmployee");
+    }
+    private void NavigateToTestManageHASpouce()
+    {
+        NavigationManager.NavigateTo("/testManageHASpouce");
+    }
+    private void NavigateToAdminDash()
+    {
+        NavigationManager.NavigateTo("/testAdminDash");
+    }
+}

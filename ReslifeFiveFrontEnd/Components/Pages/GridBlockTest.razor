@@ -1,0 +1,90 @@
+﻿@page "/gridBlockTest"
+@inject IGenService GenService
+
+<h3>This is the Block Test Grid</h3>
+
+<div class="mb-3">
+    <label for="startDate">Start Date:</label>
+    <input id="startDate" type="date" @bind="StartDate" class="form-control" />
+
+    <label for="endDate">End Date:</label>
+    <input id="endDate" type="date" @bind="EndDate" class="form-control" />
+
+    <button class="btn btn-primary mt-3" @onclick="GenerateColumns">Generate Grid</button>
+</div>
+
+@if (Columns != null && Columns.Any())
+{
+    <div style="overflow-x: auto; white-space: nowrap;">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    @foreach (var column in Columns)
+                    {
+                        <th>@column.ToString("MMM dd")</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @for (int row = 0; row < 5; row++)
+                {
+                    <tr>
+                        @foreach (var column in Columns)
+                        {
+                            <td></td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (AllObjects != null && AllObjects.Any())
+{
+    <div class="mt-4">
+        <h4>BlockTest Names:</h4>
+        <ul>
+            @foreach (var obj in AllObjects)
+            {
+                <li>
+                    @obj.Name | @obj.StartDate | @obj.EndDate | Bedspace Code: @obj.BedspaceCode
+                </li>
+            }
+        </ul>
+    </div>
+}
+
+@code {
+    private List<BlockTest> AllObjects { get; set; } = new List<BlockTest>();
+    public DateTime? StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
+    public List<DateTime> Columns { get; set; } = new List<DateTime>();
+
+    private void GenerateColumns()
+    {
+        if (StartDate.HasValue && EndDate.HasValue && StartDate <= EndDate)
+        {
+            // Generate a list of dates from StartDate to EndDate
+            Columns = Enumerable.Range(0, (EndDate.Value - StartDate.Value).Days + 1)
+                                .Select(offset => StartDate.Value.AddDays(offset))
+                                .ToList();
+
+            // Convert filter date to UTC
+            var filterDateUtc = new DateTime(2024, 11, 23, 0, 0, 0, DateTimeKind.Utc);
+
+            // Fetch BlockTest data where StartDate > November 23, 2024, UTC
+            AllObjects = GenService.GetModel<BlockTest>()
+                                   .AsQueryable()
+                                   .Where(obj => obj.StartDate.HasValue
+                                              && obj.StartDate.Value.ToUniversalTime() > filterDateUtc)
+                                   .ToList();
+        }
+        else
+        {
+            Columns.Clear();
+            AllObjects.Clear();
+        }
+    }
+}
+

@@ -1,0 +1,205 @@
+﻿@page "/manageTimePeriodTest"
+@inject IGenService GenService
+
+<h3>Manage Time Period Test</h3>
+
+<Button @onclick="AddRow">Add New TimePeriodTest</Button>
+
+<div class="container-fluid vh-100">
+    <Grid TItem="TimePeriodTest"
+          Data="AllObjects"
+          Class="w-100 table table-hover table-bordered table-striped"
+          AllowPaging="true"
+          PageSize="10"
+          Responsive="true">
+        <GridColumn TItem="TimePeriodTest" HeaderText="Id">
+            @context.Id
+        </GridColumn>
+        <GridColumn TItem="TimePeriodTest" HeaderText="Name">
+            @context.Name
+        </GridColumn>
+        @* Dropdown *@
+        <GridColumn TItem="TimePeriodTest" HeaderText="PeriodType">
+            @GetPeriodType(context.PeriodType)
+        </GridColumn>
+        @* Dropdown *@
+
+        @* Start Date *@
+        <GridColumn TItem="TimePeriodTest" HeaderText="Start Date">
+            @(context.StartDate.ToString() ?? "Not Set")
+        </GridColumn>
+        @* Start Date *@
+
+        @*  End Date Time Stamp *@
+        <GridColumn TItem="TimePeriodTest" HeaderText="End Date">
+            @(context.EndDate.ToString() ?? "Not Set")
+        </GridColumn>
+        @*  End Date Time Stamp *@
+
+        @* Check Box *@
+        <GridColumn TItem="TimePeriodTest" HeaderText="Active">
+            @GetActive(context.Active)
+        </GridColumn>
+        @* Check Box *@
+
+        @*  Date Last Updaeted *@
+        <GridColumn TItem="TimePeriodTest" HeaderText="Date Last Updated">
+            @(context.DateLastUpdated.ToString() ?? "Not Set")
+        </GridColumn>
+        @*  Date Last Updated*@
+
+
+        <GridColumn TItem="TimePeriodTest" HeaderText="Action">
+            <Button @onclick="() => EditObject(context)">
+                <Icon Name="IconName.Pencil" />
+            </Button>
+            <Button @onclick="() => DeleteObject(context)">
+                <Icon Name="IconName.Trash3" />
+            </Button>
+        </GridColumn>
+    </Grid>
+</div>
+
+<Modal @ref="ObjectAdditionModal" Title="Add/Edit TimePeriodTest">
+    <BodyTemplate>
+        <div>
+            @if (SelectedObject.Id != 0)
+            {
+                <p>
+                    TimePeriodTest ID: @SelectedObject.Id
+                </p>
+            }
+
+            <label for="nameInput">Name:</label>
+            <input type="text" @bind="SelectedObject.Name" />
+            <br />
+            @*  Occupant Type *@
+            <label for="occupantTypeSelect" class="mt-3">Period Type:</label>
+            <select class="form-control mt-3" @bind="SelectedObject.PeriodType">
+                <option value="1">Agreement Period</option>
+                <option value="2">Year Term</option>
+                <option value="3">Billing Period</option>
+                <option value="4">Other</option>
+            </select>
+
+            <label for="startDateInput" class="mt-3">Start Date:</label>
+            <DateInput TValue="DateOnly" @bind-Value="StartDate" />
+            <TimeInput TValue="TimeOnly" @bind-Value="StartTime" />
+            <br />
+            <label for="endDateInput" class="mt-3">End Date:</label>
+            <DateInput TValue="DateOnly" @bind-Value="EndDate" />
+            <TimeInput TValue="TimeOnly" @bind-Value="EndTime" />
+
+            @* Boolean Checkbox *@
+            <label class="mt-3">Is in Apartment</label>
+            <div class="form-check mt-3">
+                <InputCheckbox @bind-Value="isActive" class="form-check-input" />
+            </div>
+
+        </div>
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
+        <Button Color="ButtonColor.Primary" @onclick="UpsertObject">Save changes</Button>
+    </FooterTemplate>
+</Modal>
+
+@code {
+    private List<TimePeriodTest> AllObjects = [];
+    private Modal ObjectAdditionModal = default!;
+    private TimePeriodTest SelectedObject = new TimePeriodTest();
+
+    // Start Date
+    private DateOnly StartDate = DateOnly.FromDateTime(DateTime.Now);
+    private TimeOnly StartTime = TimeOnly.FromDateTime(DateTime.Now);
+    private DateOnly EndDate = DateOnly.FromDateTime(DateTime.Now);
+    private TimeOnly EndTime = TimeOnly.FromDateTime(DateTime.Now);
+    private DateOnly DateLastUpdated = DateOnly.FromDateTime(DateTime.Now);
+    private TimeOnly TimeLastUpdated = TimeOnly.FromDateTime(DateTime.Now);
+
+    protected override void OnInitialized()
+    {
+        AllObjects = GenService.GetModel<TimePeriodTest>().ToList();
+    }
+
+    private void UpdateObjects()
+    {
+        AllObjects = GenService.GetModel<TimePeriodTest>().ToList();
+    }
+
+    private async Task AddRow()
+    {
+        SelectedObject = new TimePeriodTest
+            {
+                PeriodType = 4,
+                Active = true,
+                DateLastUpdated = DateTime.UtcNow
+            };
+        await OnShowModalClick();
+    }
+
+    private async Task OnShowModalClick()
+    {
+        await ObjectAdditionModal.ShowAsync();
+    }
+
+    private async Task OnHideModalClick()
+    {
+        await ObjectAdditionModal.HideAsync();
+    }
+
+    private async Task UpsertObject()
+    {
+        SelectedObject.StartDate = DateTime.SpecifyKind(StartDate.ToDateTime(StartTime), DateTimeKind.Utc);
+        SelectedObject.EndDate = DateTime.SpecifyKind(EndDate.ToDateTime(EndTime), DateTimeKind.Utc);
+        SelectedObject.DateLastUpdated = DateTime.SpecifyKind(DateLastUpdated.ToDateTime(TimeLastUpdated), DateTimeKind.Utc);
+        GenService.Upsert<TimePeriodTest>(SelectedObject);
+        await OnHideModalClick();
+        UpdateObjects();
+    }
+
+    private async Task EditObject(TimePeriodTest varObject)
+    {
+        SelectedObject = varObject;
+        await OnShowModalClick();
+    }
+
+    private void DeleteObject(TimePeriodTest varObject)
+    {
+        GenService.Remove<TimePeriodTest>(varObject);
+        GenService.SaveChanges();
+        UpdateObjects();
+    }
+
+    private string GetPeriodType(int? periodType)
+    {
+        return periodType switch
+        {
+
+            1 => "Agreement Period",
+            2 => "Year Term",
+            3 => "Billing Period",
+            4 => "Other",
+            _ => "Unknown"
+        };
+    }
+
+    private bool isActive
+    {
+        get => SelectedObject.Active ?? false;
+        set => SelectedObject.Active = value;
+    }
+
+    private string GetActive(bool? active)
+    {
+        return active switch
+        {
+            true => "Yes",
+            false => "No",
+            null => "Unknown"
+        };
+    }
+
+
+
+}

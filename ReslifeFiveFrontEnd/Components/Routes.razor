@@ -1,6 +1,41 @@
-﻿<Router AppAssembly="typeof(Program).Assembly">
-    <Found Context="routeData">
-        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
-        <FocusOnNavigate RouteData="routeData" Selector="h1" />
-    </Found>
-</Router>
+﻿@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager Navigation
+
+
+    <CascadingAuthenticationState>
+        <Router AppAssembly="@typeof(Program).Assembly">
+            <Found Context="routeData">
+                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)">
+                    <NotAuthorized>
+                        @if (IsUserAuthenticated)
+                        {
+                            // User is authenticated but does not have sufficient permissions
+                            Navigation.NavigateTo("/unauthorized");
+                        }
+                        else
+                        {
+                            // User is not authenticated, redirect to login
+                            var returnUrl = Navigation.ToBaseRelativePath(Navigation.Uri); // Get the relative path
+                            Navigation.NavigateTo("/Login");
+                        }
+                    </NotAuthorized>
+                </AuthorizeRouteView>
+            </Found>
+            <NotFound>
+                <h3>Sorry, the page you're looking for doesn't exist.</h3>
+            </NotFound>
+        </Router>
+    </CascadingAuthenticationState>
+
+
+@code{
+    private bool IsUserAuthenticated = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        IsUserAuthenticated = user.Identity != null && user.Identity.IsAuthenticated;
+    }
+}

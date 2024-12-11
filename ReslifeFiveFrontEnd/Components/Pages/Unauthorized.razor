@@ -1,0 +1,46 @@
+﻿@page "/unauthorized"
+@inject ISamlService samlService
+@inject NavigationManager navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h3>Unauthorized</h3>
+
+<h4>Hello @userName</h4>
+<h5>You do not have permission to access this resource. Please contact your administrator</h5>
+
+
+<Button @onclick="LoginWithSaml">Login</Button>
+
+
+
+
+@code {
+    private string userName = "";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user != null && user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            // Assuming the name is stored as the Name claim
+            // extract a name claim
+            userName = user.FindFirst(c => c.Type == ClaimTypes.GivenName)?.Value ?? "Guest";
+
+        }
+    }
+
+    private void LoginWithSaml()
+    {
+        var loginUrl = samlService.GenerateSAMLLoginUrl();
+
+        navigation.NavigateTo(loginUrl, forceLoad: true);
+    }
+
+
+
+
+
+}

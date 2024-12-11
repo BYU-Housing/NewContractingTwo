@@ -1,0 +1,159 @@
+﻿@page "/manageRole"
+@inject IGenService GenService
+
+<h3>Mange Roles</h3>
+
+<p>Manage your roles.</p>
+
+
+<Button @onclick="AddRow">Add New Role</Button>
+
+<div class="container-fluid vh-100">
+    <Grid TItem="Role"
+          Data="AllObjects"
+          Class="w-100 table table-hover table-bordered table-striped"
+          AllowPaging="true"
+          PageSize="10"
+          Responsive="true">
+        <GridColumn TItem="Role" HeaderText="Id">
+            @context.Id
+        </GridColumn>
+        <GridColumn TItem="Role" HeaderText="Name">
+            @context.Name
+        </GridColumn>
+        @* Check Box *@
+        <GridColumn TItem="Role" HeaderText="Active">
+            @GetActive(context.Active)
+        </GridColumn>
+        @* Check Box *@
+
+        @* DateLastUpdated *@
+        <GridColumn TItem="Role" HeaderText="DateLastUpdated">
+            @(context.DateLastUpdated.ToString() ?? "Not Set")
+        </GridColumn>
+        @* DateLastUpdated *@
+        @* Dropdown *@
+        <GridColumn TItem="Role" HeaderText="LastUpdatedBy">
+            @context.LastUpdatedBy
+        </GridColumn>
+        @* Dropdown *@
+
+        <GridColumn TItem="Role" HeaderText="Action">
+            <Button @onclick="() => EditObject(context)">
+                <Icon Name="IconName.Pencil" />
+            </Button>
+            <Button @onclick="() => DeleteObject(context)">
+                <Icon Name="IconName.Trash3" />
+            </Button>
+        </GridColumn>
+    </Grid>
+</div>
+
+<Modal @ref="ObjectAdditionModal" Title="Add/Edit Role">
+    <BodyTemplate>
+        <div>
+            @if (SelectedObject.Id != 0)
+            {
+                <p>
+                    Role ID: @SelectedObject.Id
+                </p>
+            }
+
+            <label for="nameInput">Name:</label>
+            <input type="text" @bind="SelectedObject.Name" />
+            <br />
+
+            @* Boolean Checkbox *@
+            <label class="mt-3">Active</label>
+            <div class="form-check mt-3">
+                <InputCheckbox @bind-Value="isActive" class="form-check-input" />
+            </div>
+
+        </div>
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
+        <Button Color="ButtonColor.Primary" @onclick="UpsertObject">Save changes</Button>
+    </FooterTemplate>
+</Modal>
+
+@code {
+    private List<Role> AllObjects = [];
+    private Modal ObjectAdditionModal = default!;
+    private Role SelectedObject = new Role();
+
+    private DateOnly DateLastUpdated = DateOnly.FromDateTime(DateTime.UtcNow);
+    private TimeOnly TimeLastUpdated = TimeOnly.FromDateTime(DateTime.UtcNow);
+
+    protected override void OnInitialized()
+    {
+        AllObjects = GenService.GetModel<Role>().ToList();
+    }
+
+    private void UpdateObjects()
+    {
+        AllObjects = GenService.GetModel<Role>().ToList();
+    }
+
+    private async Task AddRow()
+    {
+        SelectedObject = new Role
+            {
+                Active = true,
+                DateLastUpdated = DateTime.UtcNow
+            };
+        await OnShowModalClick();
+    }
+
+    private async Task OnShowModalClick()
+    {
+        await ObjectAdditionModal.ShowAsync();
+    }
+
+    private async Task OnHideModalClick()
+    {
+        await ObjectAdditionModal.HideAsync();
+    }
+
+    private async Task UpsertObject()
+    {
+      
+        SelectedObject.DateLastUpdated = DateTime.SpecifyKind(DateLastUpdated.ToDateTime(TimeLastUpdated), DateTimeKind.Utc);
+        GenService.Upsert<Role>(SelectedObject);
+        await OnHideModalClick();
+        UpdateObjects();
+    }
+
+    private async Task EditObject(Role varObject)
+    {
+        SelectedObject = varObject;
+        await OnShowModalClick();
+    }
+
+    private void DeleteObject(Role varObject)
+    {
+        GenService.Remove<Role>(varObject);
+        GenService.SaveChanges();
+        UpdateObjects();
+    }
+
+
+    private bool isActive
+    {
+        get => SelectedObject.Active ?? false;
+        set => SelectedObject.Active = value;
+    }
+
+    private string GetActive(bool? active)
+    {
+        return active switch
+        {
+            true => "Yes",
+            false => "No",
+            null => "Unknown"
+        };
+    }
+
+
+
+}

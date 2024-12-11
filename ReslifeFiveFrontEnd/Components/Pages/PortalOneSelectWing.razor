@@ -1,0 +1,110 @@
+﻿@page "/portalOneSelectWing"
+@inject NavigationManager NavigationManager
+@inject IGenService GenService
+@using Microsoft.AspNetCore.Components
+
+<h3>Select Wing</h3>
+
+<div class="progress">
+    <div class="progress-bar"
+         role="progressbar"
+         style="width: 30%;"
+         aria-valuenow="30"
+         aria-valuemin="0"
+         aria-valuemax="100">
+        Step 3 of 10
+    </div>
+</div>
+
+@if (IsLoading)
+{
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%;">
+            Loading...
+        </div>
+    </div>
+}
+else
+{
+    <p>Selected Area: @Area</p>
+    <p>Selected Building: @BuildingId</p>
+
+    @if (BuildingId >= 6 && BuildingId <= 14)
+    {
+        <div class="d-flex flex-column gap-3">
+            @foreach (var block in Blocks)
+            {
+                var floor = int.Parse(block.Substring(0, 1)); // Assuming the first digit of the block represents the floor
+                <div class="d-flex justify-content-between align-items-center border rounded p-3 bg-light shadow-sm">
+                    <h5>@block</h5>
+                    <p>@(WingCounts.TryGetValue(block, out var count) ? count : 0) Residents Available</p>
+                    <button class="btn btn-primary" @onclick="() => NavigateToSelectBed(Area, BuildingId, block)">Select</button>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>The selected building does not have predefined wings.</p>
+    }
+}
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? Area { get; set; } // Allow nullable in case the parameter is not provided
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? BuildingId { get; set; } // Allow nullable in case the parameter is not provided
+
+    private bool IsLoading = true;
+    private List<string> Blocks = new() { "1100", "1200", "2100", "2200", "3100", "3200" };
+    private Dictionary<string, int> WingCounts = new(); // Stores counts for each wing
+
+    private async Task LoadWingCountsAsync()
+    {
+        foreach (var block in Blocks)
+        {
+            var floor = int.Parse(block.Substring(0, 1)); // Assuming the first digit of the block represents the floor
+            var count = await GenService.CountAsync<BlockTest>(bt =>
+                bt.AgreementPeriod == 3 &&
+                bt.Active == true &&
+                bt.OccupantType == 1 &&
+                bt.Area == Area &&
+                bt.Sex == 1 &&
+                bt.Community == 1 &&
+                (bt.ContractingReqMet == 1 || bt.ContractingReqMet == 3) &&
+                bt.Building == BuildingId &&
+                bt.Floor == floor);
+
+            WingCounts[block] = count;
+        }
+    }
+
+    private void NavigateToSelectBed(int? area, int? buildingId, string wing)
+    {
+        if (area != null && buildingId != null)
+        {
+            // Navigate to the bed selection page with the appropriate parameters
+            NavigationManager.NavigateTo($"/portalOneSelectBed?Area={area}&BuildingId={buildingId}&Wing={wing}");
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Area == null || BuildingId == null)
+        {
+            NavigationManager.NavigateTo("/portalOneSelectBuilding"); // Redirect if parameters are missing
+        }
+        else
+        {
+            IsLoading = true;
+
+            // Load counts for each wing
+            await LoadWingCountsAsync();
+
+            IsLoading = false;
+        }
+    }
+}

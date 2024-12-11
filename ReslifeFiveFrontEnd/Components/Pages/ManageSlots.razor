@@ -1,0 +1,121 @@
+﻿@page "/SlotManager"
+@inject IGenService GenService
+
+<h3>Slot Manager</h3>
+<p>Manage your slots efficiently using the grid below.</p>
+
+<Button @onclick="AddRow">Add New Slot</Button>
+
+<div class="container-fluid vh-100">
+    <Grid TItem="Slot"
+          Data="AllObjects"
+          Class="w-100 table table-hover table-bordered table-striped"
+          AllowPaging="true"
+          PageSize="10"
+          Responsive="true">
+        <GridColumn TItem="Slot" HeaderText="Id">
+            @context.Id
+        </GridColumn>
+        <GridColumn TItem="Slot" HeaderText="Name">
+            @context.Name
+        </GridColumn>
+        <GridColumn TItem="Slot" HeaderText="Start Date">
+            @(context.StartTimeStamp.ToString() ?? "Not Set")
+        </GridColumn>
+        <GridColumn TItem="Slot" HeaderText="Action">
+            <Button @onclick="() => EditObject(context)">
+                <Icon Name="IconName.Pencil" />
+            </Button>
+            <Button @onclick="() => DeleteObject(context)">
+                <Icon Name="IconName.Trash3" />
+            </Button>
+        </GridColumn>
+    </Grid>
+</div>
+
+<Modal @ref="ObjectAdditionModal" Title="Add/Edit Slot">
+    <BodyTemplate>
+        <div>
+            @if (SelectedObject.Id != 0)
+            {
+                <p>
+                    Slot ID: @SelectedObject.Id
+                </p>
+            }
+
+            <label for="nameInput">Name:</label>
+            <input type="text" @bind="SelectedObject.Name" />
+            <br/>
+            <label for="startDateInput" class="mt-3">Start Date:</label>
+            <DateInput TValue="DateOnly" @bind-Value="StartDate" />
+           <TimeInput TValue="TimeOnly" @bind-Value="StartTime" />
+
+        </div>
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
+        <Button Color="ButtonColor.Primary" @onclick="UpsertObject">Save changes</Button>
+    </FooterTemplate>
+</Modal>
+
+@code {
+    private List<Slot> AllObjects = [];
+    private Modal ObjectAdditionModal = default!;
+    private Slot SelectedObject = new Slot();
+    private DateOnly StartDate = DateOnly.FromDateTime(DateTime.Now);
+    private TimeOnly StartTime = TimeOnly.FromDateTime(DateTime.Now);
+    private DateOnly EndDate = DateOnly.FromDateTime(DateTime.Now);
+    private TimeOnly EndTime = TimeOnly.FromDateTime(DateTime.Now);
+
+    protected override void OnInitialized()
+    {
+        AllObjects = GenService.GetModel<Slot>().ToList();
+    }
+
+    private void UpdateObjects()
+    {
+        AllObjects = GenService.GetModel<Slot>().ToList();
+    }
+
+    private async Task AddRow()
+    {
+        SelectedObject = new Slot
+        {
+
+        };
+        await OnShowModalClick();
+    }
+
+    private async Task OnShowModalClick()
+    {
+        await ObjectAdditionModal.ShowAsync();
+    }
+
+    private async Task OnHideModalClick()
+    {
+        await ObjectAdditionModal.HideAsync();
+    }
+
+    private async Task UpsertObject()
+    {
+        //SelectedObject.Start = selectedDateTime;
+        SelectedObject.StartTimeStamp = DateTime.SpecifyKind(StartDate.ToDateTime(StartTime), DateTimeKind.Utc);
+        GenService.Upsert<Slot>(SelectedObject);
+        await OnHideModalClick();
+        UpdateObjects();
+    }
+
+    private async Task EditObject(Slot varObject)
+    {
+        SelectedObject = varObject;
+        await OnShowModalClick();
+    }
+
+    private void DeleteObject(Slot varObject)
+    {
+        GenService.Remove<Slot>(varObject);
+        GenService.SaveChanges();
+        UpdateObjects();
+    }
+}
+

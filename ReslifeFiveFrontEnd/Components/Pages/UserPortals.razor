@@ -1,0 +1,70 @@
+﻿@page "/userPortals"
+@inject IGenService GenService
+@inject NavigationManager NavigationManager
+
+<h3>UserPortals</h3>
+
+<!-- Navigation using a link -->
+<p>
+    <a href="/portalOne">Go to Test Portal One</a>
+    <a href="/testMyContracts">Go My Test Contracts</a>
+    <a href="/testContractCancelation">Test Contract Cancelation</a>
+    <a href="/testMySwaps">My Test Swaps</a>
+    <a href="/testSeekingReplacement">Test Seeking Replacements</a>
+    <a href="/testMyPetitions">Test My Petitions</a>
+</p>
+
+<!-- Navigation using a button -->
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToTestMyContracts">Test View My Contracts</button>
+</p>
+
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToPortalOne">P1 18- | Not Met | M | Spring 2025</button>
+</p>
+
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToCancelContracts">Go to Test Cancle Contract</button>
+</p>
+
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToTestMySwaps">Go to Test My Swaps</button>
+</p>
+
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToTestSeekingReplacement">Seeking Replacments</button>
+</p>
+
+<p>
+    <button class="btn btn-primary" @onclick="NavigateToTestMyPetitions">Test My Petitions</button>
+</p>
+
+@code {
+    private void NavigateToPortalOne()
+    {
+        NavigationManager.NavigateTo("/portalOne");
+    }
+    private void NavigateToTestMyContracts()
+    {
+        NavigationManager.NavigateTo("/testMyContracts");
+    }
+
+    private void NavigateToCancelContracts()
+    {
+        NavigationManager.NavigateTo("/testContractCancelation");
+    }
+
+    private void NavigateToTestMySwaps()
+    {
+        NavigationManager.NavigateTo("/testMySwaps");
+    }
+
+    private void NavigateToTestSeekingReplacement()
+    {
+        NavigationManager.NavigateTo("/testSeekingReplacement");
+    }
+    private void NavigateToTestMyPetitions()
+    {
+        NavigationManager.NavigateTo("/testMyPetitions");
+    }
+}

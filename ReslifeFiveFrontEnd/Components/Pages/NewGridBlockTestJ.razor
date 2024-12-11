@@ -1,0 +1,276 @@
+﻿@page "/gridBlockTestJ"
+@inject IGenService GenService
+
+<div>
+    <!-- Filter Section -->
+    <div>
+        <h5>Filter by Area</h5>
+        @foreach (var area in AreaFilterOptions)
+        {
+            <div>
+                <input type="checkbox" id="@area.Value" @bind="@SelectedAreas[area.Key]" />
+                <label for="@area.Value">@area.Value</label>
+            </div>
+        }
+    </div>
+
+    <button class="btn btn-primary" @onclick="FetchBlockTestData">Load BlockTest Data</button>
+</div>
+
+<div class="scroll-container">
+    @if (BlockTestList != null && BlockTestList.Any())
+    {
+        <div class="block-container">
+            @foreach (var group in BlockTestList.GroupBy(b => b.BedspaceCode))
+            {
+                <div class="block-row">
+                    @foreach (var block in group.OrderBy(b => b.StartDate))
+                    {
+                        <div class="block-item"
+                             style="width:@CalculateBlockWidth(block.StartDate, block.EndDate); background-color:@GetBackgroundColor(block.OccupantType)">
+                            Bedspace: @block.Name | Area: @GetAreaDescription(block.Area) 
+                            | Buidling: @GetBuidlingDescription(block.Building)
+                            | Floor: @block.Floor
+                            | Wing: @(block.Wing.HasValue ? block.Wing.ToString() : "NA")
+                            | Stair Well: @(block.StairWell.HasValue ? block.StairWell.ToString() : "NA")
+                            <br />
+                            Contract Start: @(block.StartDate.HasValue ? block.StartDate.Value.ToString("yyyy-MM-dd HH:mm") : "No Start Date") 
+                            Contract End: @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : "No End Date") 
+                            <br />
+                            Occupant Type: @GetOccupantTypeDescription(block.OccupantType)
+                            | First Name: @(string.IsNullOrWhiteSpace(block.FName) ? "Empty" : block.FName)
+                            | Last Name: @(string.IsNullOrWhiteSpace(block.LName) ? "Empty" : block.LName)
+                            | NetId: @(string.IsNullOrWhiteSpace(block.NetID) ? "Empty" : block.NetID)
+                            | ID: @block.Id
+
+                            <br />
+                            Flags :
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+    else if (BlockTestList != null)
+    {
+        <div class="alert alert-warning">
+            No data found in the BlockTest table.
+        </div>
+    }
+</div>
+
+<style>
+    .scroll-container {
+        position: relative;
+        width: 100%;
+        height: calc(100vh - 100px);
+        overflow: auto;
+        border: 1px solid #ccc;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .block-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .block-row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 0;
+        min-width: max-content;
+    }
+
+    .block-item {
+        border: 1px solid black;
+        padding: 0;
+        margin: 0;
+        display: inline-block;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    /* Style for buttons */
+    button {
+        margin-bottom: 10px;
+    }
+</style>
+
+@code {
+    private List<BlockTest> BlockTestList { get; set; } = new List<BlockTest>();
+
+    // Dictionary to store the filter options
+    private Dictionary<int, string> AreaFilterOptions = new()
+    {
+        { 1, "HELAMAN" },
+        { 2, "HERITAGE" },
+        { 3, "RIVIERA" },
+        { 4, "WYVIEW" },
+        { 5, "LISR" }
+    };
+
+    // Dictionary to track selected filter checkboxes
+    private Dictionary<int, bool> SelectedAreas = new()
+    {
+        { 1, false },
+        { 2, false },
+        { 3, false },
+        { 4, false },
+        { 5, false }
+    };
+
+    private async Task FetchBlockTestData()
+    {
+        // Get the list of selected area keys
+        var selectedAreaKeys = SelectedAreas.Where(kvp => kvp.Value).Select(kvp => kvp.Key).ToList();
+
+        // Fetch filtered data from the service
+        BlockTestList = await Task.Run(() =>
+            GenService.GetModel<BlockTest>()
+                      .AsQueryable()
+                      .Where(b => selectedAreaKeys.Contains(b.Area ?? 0)) // Handle null areas with ?? 0
+                      .ToList());
+    }
+
+    private string CalculateBlockWidth(DateTime? startDate, DateTime? endDate)
+    {
+        if (startDate.HasValue && endDate.HasValue)
+        {
+            var duration = (endDate.Value - startDate.Value).TotalHours;
+            return $"{Math.Max(1, duration)}px";
+        }
+        return "1px";
+    }
+
+    private string GetOccupantTypeDescription(int? occupantType)
+    {
+        return occupantType switch
+        {
+            1 => "Single",
+            2 => "Family",
+            3 => "Conference",
+            4 => "LISR",
+            5 => "Off Campus",
+            6 => "Closed For Maintenance",
+            7 => "Not Available",
+            8 => "Available if Needed",
+            9 => "Special",
+            10 => "Employee",
+            _ => "Unknown"
+        };
+    }
+
+    private string GetBackgroundColor(int? occupantType)
+    {
+        return occupantType switch
+        {
+            1 => "lightblue",
+            2 => "lightgreen",
+            3 => "yellow",
+            4 => "brown",
+            5 => "red",
+            6 => "purple",
+            7 => "pink",
+            8 => "tan",
+            9 => "turquoise",
+            10 => "orange",
+            _ => "gray"
+        };
+    }
+
+    private string GetAreaDescription(int? area)
+    {
+        return area switch
+        {
+            1 => "HELAMAN",
+            2 => "HERITAGE",
+            3 => "RIVIERA",
+            4 => "WYVIEW",
+            5 => "LISR",
+            _ => "Unknown"
+        };
+    }
+
+    private string GetBuidlingDescription(int? building)
+    {
+        return building switch
+        {
+            1 => "LI A",
+            2 => "LI B",
+            3 => "LI C",
+            4 => "LI D",
+            5 => "LI E",
+            6 => "HL Hinckley",
+            7 => "HL Chipman",
+            8 => "HL David John",
+            9 => "HL Taylor",
+            10 => "HL Stover",
+            11 => "HL Budge",
+            12 => "HL Merrill",
+            13 => "HL May",
+            14 => "HL B9",
+            15 => "HR02",
+            16 => "HR03",
+            17 => "HR04",
+            18 => "HR05",
+            19 => "HR06",
+            20 => "HR07",
+            21 => "HR08",
+            22 => "HR09",
+            23 => "HR10",
+            24 => "HR11",
+            25 => "HR12",
+            26 => "HR13",
+            27 => "HR14",
+            28 => "HR15",
+            29 => "HR16",
+            30 => "RI A",
+            31 => "RI B",
+            32 => "RI C",
+            33 => "RI D",
+            34 => "RI E",
+            35 => "RI F",
+            36 => "RI G",
+            37 => "RI H",
+            38 => "RI I",
+            39 => "RI J",
+            40 => "RI K",
+            41 => "RI L",
+            42 => "WP 1",
+            43 => "WP 2",
+            44 => "WP 3",
+            45 => "WP 4",
+            46 => "WP 5",
+            47 => "WP 6",
+            48 => "WP 7",
+            49 => "WP 8",
+            50 => "WP 9",
+            51 => "WP 10",
+            52 => "WP 11",
+            53 => "WP 12",
+            54 => "WP 13",
+            55 => "WP 14",
+            56 => "WP 15",
+            57 => "WP 16",
+            58 => "WP 17",
+            59 => "WP 18",
+            60 => "WP 19",
+            61 => "WP 20",
+            62 => "WP 21",
+            63 => "WP 22",
+            64 => "WP 23",
+            65 => "WP 24",
+            66 => "WP 25",
+            67 => "WP 26",
+            68 => "WP 27",
+            69 => "WP 28",
+            70 => "WP 29",
+            71 => "WP 30",
+            72 => "RI O",
+            _ => "NA"
+        };
+    }
+}

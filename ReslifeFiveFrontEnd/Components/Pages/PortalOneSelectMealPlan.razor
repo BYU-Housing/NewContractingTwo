@@ -1,0 +1,89 @@
+﻿@page "/portalOneSelectMealPlan"
+@inject NavigationManager NavigationManager
+@inject IGenService GenService
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.WebUtilities
+
+<h3>PortalOneSelectMealPlan</h3>
+
+<div class="progress">
+    <div class="progress-bar"
+         role="progressbar"
+         style="width: 60%;"
+         aria-valuenow="60"
+         aria-valuemin="0"
+         aria-valuemax="100">
+        Step 6 of 10
+    </div>
+</div>
+
+@if (IsLoading)
+{
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%; background-color: #6c757d;">
+            Loading...
+        </div>
+    </div>
+}
+else
+{
+    <p>Selected Area: @Area</p>
+    <p>Selected Building: @BuildingId</p>
+    <p>Selected Wing: @Wing</p>
+    <p>Selected Bedspace ID: @BedspaceId</p>
+
+    <h4>Select a Meal Plan</h4>
+    <div class="list-group">
+        @foreach (var mealPlan in MealPlans)
+        {
+            <button class="list-group-item list-group-item-action"
+                    @onclick="() => SelectMealPlan(mealPlan)">
+                @mealPlan
+            </button>
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? Area { get; set; } // Allow nullable in case the parameter is not provided
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? BuildingId { get; set; } // Allow nullable in case the parameter is not provided
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? Wing { get; set; } // Allow nullable in case the parameter is not provided
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? BedspaceId { get; set; } // Allow nullable in case the parameter is not provided
+
+    private bool IsLoading = true;
+    private List<string> MealPlans = new() { "MealPlan1", "MealPlan2", "MealPlan3", "MealPlan4", "MealPlan5" };
+
+    private void SelectMealPlan(string mealPlan)
+    {
+        // Navigate to PortalOneSignHousing with the selected meal plan and other parameters
+        NavigationManager.NavigateTo($"/portalOneSignHousing?Area={Area}&BuildingId={BuildingId}&Wing={Wing}&BedspaceId={BedspaceId}&MealPlan={mealPlan}");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if any of the parameters are missing
+        if (Area == null || BuildingId == null || Wing == null || BedspaceId == null)
+        {
+            NavigationManager.NavigateTo("/portalOneSelectBed"); // Redirect if parameters are missing
+            return;
+        }
+
+        IsLoading = true;
+
+        // Simulate a loading operation
+        await Task.Delay(500);
+
+        IsLoading = false;
+    }
+}

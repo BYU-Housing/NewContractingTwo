@@ -1,0 +1,113 @@
+﻿@page "/portalOne"
+@inject IGenService GenService
+@inject NavigationManager NavigationManager
+
+<div class="progress">
+    <div class="progress-bar"
+         role="progressbar"
+         style="width: 10%;"
+         aria-valuenow="10"
+         aria-valuemin="0"
+         aria-valuemax="100">
+        Step 1 of 10
+    </div>
+</div>
+<h3>PortalOne</h3>
+
+<h1>Spring 2025</h1>
+
+@if (IsLoading)
+{
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%;">
+            Loading...
+        </div>
+    </div>
+}
+else
+{
+    <div class="d-flex flex-column gap-3">
+        @RenderBlock("Helaman", "https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/HL.jpg", AllSingleActiveCountHL, 1)
+        @RenderBlock("Heritage", "https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/HR.jpg", AllSingleActiveCountHR, 2)
+        @RenderBlock("Riviera", "https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/RI.jpg", AllSingleActiveCountRI, 3)
+        @RenderBlock("Wyview Park", "https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/WP.jpg", AllSingleActiveCountWP, 4)
+    </div>
+}
+
+@code {
+    private bool IsLoading = true;
+
+    private int AllSingleActiveCountHL;
+    private int AllSingleActiveCountHR;
+    private int AllSingleActiveCountRI;
+    private int AllSingleActiveCountWP;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true; // Show loading bar
+        await LoadMetrics();
+        IsLoading = false; // Hide loading bar
+    }
+
+    private async Task LoadMetrics()
+    {
+        AllSingleActiveCountHL = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 1 && bt.Area == 1
+            && bt.Sex == 1 && bt.Community == 1 && (bt.ContractingReqMet == 1 || bt.ContractingReqMet == 3));
+
+        AllSingleActiveCountHR = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 1 && bt.Area == 2
+            && bt.Sex == 1 && bt.Community == 1 && (bt.ContractingReqMet == 1 || bt.ContractingReqMet == 3));
+
+        AllSingleActiveCountRI = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 1 && bt.Area == 3
+            && bt.Sex == 1 && bt.Community == 1 && (bt.ContractingReqMet == 1 || bt.ContractingReqMet == 3));
+
+        AllSingleActiveCountWP = await GenService.CountAsync<BlockTest>(bt => bt.AgreementPeriod == 3 && bt.Active == true && bt.OccupantType == 1 && bt.Area == 4
+            && bt.Sex == 1 && bt.Community == 1 && (bt.ContractingReqMet == 1 || bt.ContractingReqMet == 3));
+    }
+
+    private RenderFragment RenderBlock(string title, string imageUrl, int count, int area) => builder =>
+    {
+        builder.OpenElement(0, "div");
+        builder.AddAttribute(1, "class", "d-flex align-items-center border rounded p-3 bg-light shadow-sm");
+
+        // Image Section
+        builder.OpenElement(2, "img");
+        builder.AddAttribute(3, "src", imageUrl);
+        builder.AddAttribute(4, "alt", title);
+        builder.AddAttribute(5, "class", "img-thumbnail me-3");
+        builder.AddAttribute(6, "style", "width: 100px; height: 100px; object-fit: cover;");
+        builder.CloseElement();
+
+        // Middle Section (Description)
+        builder.OpenElement(7, "div");
+        builder.AddAttribute(8, "class", "flex-grow-1");
+        builder.OpenElement(9, "h5");
+        builder.AddContent(10, title);
+        builder.CloseElement();
+        builder.OpenElement(11, "p");
+        builder.AddContent(12, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+        builder.CloseElement();
+        builder.CloseElement();
+
+        // Count Section
+        builder.OpenElement(13, "div");
+        builder.AddAttribute(14, "class", "ms-3 text-end");
+        builder.OpenElement(15, "h4");
+        builder.AddContent(16, count.ToString());
+        builder.CloseElement();
+
+        // Button Section
+        builder.OpenElement(17, "button");
+        builder.AddAttribute(18, "class", "btn btn-primary mt-2");
+        builder.AddAttribute(19, "onclick", EventCallback.Factory.Create(this, () => NavigateToSelectBuilding(area)));
+        builder.AddContent(20, "Select");
+        builder.CloseElement();
+
+        builder.CloseElement();
+        builder.CloseElement();
+    };
+
+    private void NavigateToSelectBuilding(int area)
+    {
+        NavigationManager.NavigateTo($"/portalOneSelectBuilding?area={area}");
+    }
+}
