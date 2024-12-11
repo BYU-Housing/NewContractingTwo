@@ -1,6 +1,5 @@
 ﻿@page "/portalOneSignHousing"
 @inject NavigationManager NavigationManager
-@inject IGenService GenService
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.WebUtilities
 
@@ -18,7 +17,7 @@
 </div>
 
 <div class="iframe-container">
-    <iframe src="https://byusign.na2.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhCRGXCoNOZTWZqIBFqheJBgO9aSC88qeixZ2W5qPPYHatMzvNZ5hghHC8yispuAwQo*&hosted=false"
+    <iframe src="@IframeUrl"
             width="100%"
             height="100%"
             frameborder="0"
@@ -44,5 +43,43 @@
 </style>
 
 @code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? Area { get; set; }
 
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? BuildingId { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? Wing { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? BedspaceId { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? MealPlan { get; set; }
+
+    private string IframeUrl => GenerateIframeUrl();
+
+    private string GenerateIframeUrl()
+    {
+        // Base Adobe Sign URL
+        string baseUrl = "https://byusign.na2.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhCRGXCoNOZTWZqIBFqheJBgO9aSC88qeixZ2W5qPPYHatMzvNZ5hghHC8yispuAwQo*&hosted=false";
+
+        // Add query parameters
+        var queryParams = new Dictionary<string, string?>
+        {
+            { "Area", Area?.ToString() },
+            { "BuildingId", BuildingId?.ToString() },
+            { "Wing", Wing },
+            { "BedspaceId", BedspaceId?.ToString() },
+            { "MealPlan", MealPlan }
+        };
+
+        return QueryHelpers.AddQueryString(baseUrl, queryParams);
+    }
 }
