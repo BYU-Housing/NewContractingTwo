@@ -12,6 +12,7 @@ namespace ReslifeFiveBusinessLayer.Service
     {
         public IQueryable<T> GetModel<T>() where T : class;
         public IQueryable<T> GetModel<T>(params Expression<Func<T, object>>[] includes) where T : class;
+        public Task GetModelInBatchesAsync<T>(List<T> targetList, int batchSize, Func<T, int> keySelector) where T : class;
 
         public Task<T> GetByIdAsync<T>(int id) where T : class;
         void Upsert<T>(T entity) where T : class;

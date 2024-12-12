@@ -23,19 +23,19 @@ namespace ReslifeFiveBackEnd.Model
         public int? Wing { get; set; }
         public int? StairWell { get; set; }
         public int? ApartmentUnit { get; set; }
-        public bool? Active { get; set; } = false;
-        public bool? ESA { get; set; } = false;
-        public bool? Athlete { get; set; } = false;
-        public bool? ADA { get; set; } = false;
-        public bool? InternationalScholarship { get; set; } = false;
-        public bool? Wheatley { get; set; } = false;
-        public bool? NoAnimal { get; set; } = false;
-        public bool? IsolateQuarantine { get; set; } = false;
-        public bool? FLEXGE { get; set; } = false;
-        public bool? POSTBacc { get; set; } = false;
-        public bool? Freeze { get; set; } = false;
-        public bool? WaitingList { get; set; } = false;
-        public bool? Consolidate { get; set; } = false;
+        public bool Active { get; set; } = false;
+        public bool ESA { get; set; } = false;
+        public bool Athlete { get; set; } = false;
+        public bool ADA { get; set; } = false;
+        public bool InternationalScholarship { get; set; } = false;
+        public bool Wheatley { get; set; } = false;
+        public bool NoAnimal { get; set; } = false;
+        public bool IsolateQuarantine { get; set; } = false;
+        public bool FLEXGE { get; set; } = false;
+        public bool POSTBacc { get; set; } = false;
+        public bool Freeze { get; set; } = false;
+        public bool WaitingList { get; set; } = false;
+        public bool Consolidate { get; set; } = false;
         public int? Status { get; set; }
         public int? AgreementPeriod { get; set; }
         public string FName { get; set; } = string.Empty;

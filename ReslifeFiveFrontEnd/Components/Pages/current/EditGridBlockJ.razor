@@ -1,239 +1,71 @@
-﻿@page "/manageBlockTest"
+﻿@page "/editGridBlockJ"
 @inject IGenService GenService
 
-<h3>ManageBlockTest</h3>
-<p>This is the Test Version of the Block Manager.</p>
+<div>
+    <!-- Filter Section -->
+    <div>
+        <h5>Filter by Area</h5>
+        @foreach (var area in AreaFilterOptions)
+        {
+            <div>
+                <input type="checkbox" id="@area.Value" @bind="@SelectedAreas[area.Key]" />
+                <label for="@area.Value">@area.Value</label>
+            </div>
+        }
+    </div>
 
-
-<Button @onclick="AddRow">Add New BlockTest</Button>
-
-<div class="container-fluid vh-100">
-    <Grid TItem="BlockTest"
-          Data="AllObjects"
-          Class="w-100 table table-hover table-bordered table-striped"
-          AllowPaging="true"
-          PageSize="10"
-          Responsive="true">
-        <GridColumn TItem="BlockTest" HeaderText="Id">
-            @context.Id
-        </GridColumn>
-        <GridColumn TItem="BlockTest" HeaderText="Name">
-            @context.Name
-        </GridColumn>
-        <GridColumn TItem="BlockTest" HeaderText="Start Date">
-            @(context.StartDate.ToString() ?? "Not Set")
-        </GridColumn>
-
-       @*  End Date Time Stamp *@
-        <GridColumn TItem="BlockTest" HeaderText="End Date">
-            @(context.EndDate.ToString() ?? "Not Set")
-        </GridColumn>
-        @*  End Date Time Stamp *@
-
-        @* RoomNumber *@
-        <GridColumn TItem="BlockTest" HeaderText="Room Number">
-            @context.RoomNumber
-        </GridColumn>
-        @* RoomNumber *@
-        
-        @* Dropdown *@
-        <GridColumn TItem="BlockTest" HeaderText="OccupantType">
-            @GetOccupantType(context.OccupantType)
-        </GridColumn>
-        @* Dropdown *@
-
-        @* Dropdown *@
-        <GridColumn TItem="BlockTest" HeaderText="Area">
-            @GetArea(context.Area)
-        </GridColumn>
-        @* Dropdown *@
-
-        @* Dropdown *@
-        <GridColumn TItem="BlockTest" HeaderText="Building">
-            @GetBuilding(context.Building)
-        </GridColumn>
-        @* Dropdown *@
-
-        @* Floor *@
-        <GridColumn TItem="BlockTest" HeaderText="Floor">
-            @context.Floor
-        </GridColumn>
-        @* Floor *@
-
-        @* Wing *@
-        <GridColumn TItem="BlockTest" HeaderText="Wing">
-            @context.Wing
-        </GridColumn>
-        @* Wing *@
-
-        @* StairWell *@
-        <GridColumn TItem="BlockTest" HeaderText="StairWell">
-            @context.StairWell
-        </GridColumn>
-        @* StaiWell *@
-
-        @* ApartmentUnit *@
-        <GridColumn TItem="BlockTest" HeaderText="ApartmentUnit">
-            @context.ApartmentUnit
-        </GridColumn>
-        @* ApartmentUnit *@
-
-        @* Dropdown *@
-        <GridColumn TItem="BlockTest" HeaderText="Sex">
-            @GetSex(context.Sex)
-        </GridColumn>
-        @* Dropdown *@
-        @* Dropdown *@
-        <GridColumn TItem="BlockTest" HeaderText="Community">
-            @GetCommunity(context.Community)
-        </GridColumn>
-        @* Dropdown *@
-        @* BedspaceCode *@
-        <GridColumn TItem="BlockTest" HeaderText="BedspaceCode">
-            @context.BedspaceCode
-        </GridColumn>
-        @* BedspaceCode *@
-
-        @*Checkbox Bool*@
-        <GridColumn TItem="BlockTest" HeaderText="Active">
-            @GetActiveText(context.Active)
-        </GridColumn>
-        @*Checkbox Bool*@
-
-        @*Checkbox Bool*@
-        <GridColumn TItem="BlockTest" HeaderText="ESA">
-            @GetESAText(context.ESA)
-        </GridColumn>
-        @*Checkbox Bool*@
-
-        @*Checkbox Bool*@
-        <GridColumn TItem="BlockTest" HeaderText="Athlete">
-            @GetAthleteText(context.Athlete)
-        </GridColumn>
-        @*Checkbox Bool*@
-
-        @*Checkbox Bool*@
-        <GridColumn TItem="BlockTest" HeaderText="ADA">
-            @GetADAText(context.ADA)
-        </GridColumn>
-        @*Checkbox Bool*@
-
-        @*Checkbox Bool*@
-        <GridColumn TItem="BlockTest" HeaderText="InternationalScholarship">
-            @GetInternationalScholarshipText(context.InternationalScholarship)
-        </GridColumn>
-        @*Checkbox Bool*@
-
-        @*Checkbox Bool*@
-        <GridColumn TItem="BlockTest" HeaderText="Wheatley">
-            @GetWheatleyText(context.Wheatley)
-        </GridColumn>
-        @*Checkbox Bool*@
-        @*Checkbox Bool*@
-        <GridColumn TItem="BlockTest" HeaderText="NoAnimal">
-            @GetNoAnimalText(context.NoAnimal)
-        </GridColumn>
-        @*Checkbox Bool*@
-        @*Checkbox Bool*@
-        <GridColumn TItem="BlockTest" HeaderText="IsolateQuarantine">
-            @GetIsolateQuarantineText(context.IsolateQuarantine)
-        </GridColumn>
-        @*Checkbox Bool*@
-        @*Checkbox Bool*@
-        <GridColumn TItem="BlockTest" HeaderText="FLEXGE">
-            @GetFLEXGEText(context.FLEXGE)
-        </GridColumn>
-        @*Checkbox Bool*@
-        @*Checkbox Bool*@
-        <GridColumn TItem="BlockTest" HeaderText="POSTBacc">
-            @GetPOSTBaccText(context.POSTBacc)
-        </GridColumn>
-        @*Checkbox Bool*@
-        @*Checkbox Bool*@
-        <GridColumn TItem="BlockTest" HeaderText="Freeze">
-            @GetFreezeText(context.Freeze)
-        </GridColumn>
-        @*Checkbox Bool*@
-        @*Checkbox Bool*@
-        <GridColumn TItem="BlockTest" HeaderText="WaitingList">
-            @GetWaitingListText(context.WaitingList)
-        </GridColumn>
-        @*Checkbox Bool*@
-        @*Checkbox Bool*@
-        <GridColumn TItem="BlockTest" HeaderText="Consolidate">
-            @GetConsolidateText(context.Consolidate)
-        </GridColumn>
-        @*Checkbox Bool*@
-
-        @* Dropdown *@
-        <GridColumn TItem="BlockTest" HeaderText="Status">
-            @GetStatus(context.Status)
-        </GridColumn>
-        @* Dropdown *@
-        @* Dropdown *@
-        <GridColumn TItem="BlockTest" HeaderText="AgreementPeriod">
-            @GetAgreementPeriod(context.AgreementPeriod)
-        </GridColumn>
-        @* Dropdown *@
-
-        @* StringInput *@
-        <GridColumn TItem="BlockTest" HeaderText="FName">
-            @context.FName
-        </GridColumn>
-        @* StringInput *@
-
-        @* StringInput *@
-        <GridColumn TItem="BlockTest" HeaderText="LName">
-            @context.LName
-        </GridColumn>
-        @* StringInput *@
-
-        @* StringInput *@
-        <GridColumn TItem="BlockTest" HeaderText="NetID">
-            @context.NetID
-        </GridColumn>
-        @* StringInput *@
-
-        @*  Contract Date Time Stamp *@
-        <GridColumn TItem="BlockTest" HeaderText="Contract Date">
-            @(context.ContractDate.ToString() ?? "Not Set")
-        </GridColumn>
-        @*  Contract Date Time Stamp *@
-
-
-        @* Dropdown *@
-        <GridColumn TItem="BlockTest" HeaderText="ContractingReqMet">
-            @GetContractingReqMet(context.ContractingReqMet)
-        </GridColumn>
-        @* Dropdown *@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <GridColumn TItem="BlockTest" HeaderText="Action">
-            <Button @onclick="() => EditObject(context)">
-                <Icon Name="IconName.Pencil" />
-            </Button>
-            <Button @onclick="() => DeleteObject(context)">
-                <Icon Name="IconName.Trash3" />
-            </Button>
-        </GridColumn>
-    </Grid>
+    <button class="btn btn-primary" @onclick="FetchBlockTestData">Load BlockTest Data</button>
 </div>
+
+<div class="scroll-container">
+    @if (BlockTestList != null && BlockTestList.Any())
+    {
+        <div class="block-container">
+            @foreach (var group in BlockTestList.GroupBy(b => b.BedspaceCode))
+            {
+                <div class="block-row">
+                    @foreach (var block in group.OrderBy(b => b.StartDate))
+                    {
+                          <Button @onclick="() => ShowEditItemModal(block)" Class="btn p-0 border-0">
+
+                            <div class="block-item"
+                                 style="width:@CalculateBlockWidth(block.StartDate, block.EndDate); background-color:@GetBackgroundColor(block.OccupantType)">
+                                Bedspace: @block.Name | Area: @GetAreaDescription(block.Area)
+                                | Buidling: @GetBuidlingDescription(block.Building)
+                                | Floor: @block.Floor
+                                | Wing: @(block.Wing.HasValue ? block.Wing.ToString() : "NA")
+                                | Stair Well: @(block.StairWell.HasValue ? block.StairWell.ToString() : "NA")
+                                <br />
+                                Contract Start: @(block.StartDate.HasValue ? block.StartDate.Value.ToString("yyyy-MM-dd HH:mm") : "No Start Date")
+                                Contract End: @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : "No End Date")
+                                <br />
+                                Occupant Type: @GetOccupantTypeDescription(block.OccupantType)
+                                | First Name: @(string.IsNullOrWhiteSpace(block.FName) ? "Empty" : block.FName)
+                                | Last Name: @(string.IsNullOrWhiteSpace(block.LName) ? "Empty" : block.LName)
+                                | NetId: @(string.IsNullOrWhiteSpace(block.NetID) ? "Empty" : block.NetID)
+                                | ID: @block.Id
+
+                                <br />
+                                Flags :
+                            </div>
+                        </Button>
+                    }
+                </div>
+            }
+        </div>
+    }
+    else if (BlockTestList != null)
+    {
+        <div class="alert alert-warning">
+            No data found in the BlockTest table.
+        </div>
+    }
+</div>
+
+
+
+
+
 
 <Modal @ref="ObjectAdditionModal" Title="Add/Edit BlockTest">
     <BodyTemplate>
@@ -244,8 +76,6 @@
                     BlockTest ID: @SelectedObject.Id
                 </p>
             }
-
-
             <table>
                 <tr>
                     <td><label for="nameInput">Name:</label></td>
@@ -486,7 +316,7 @@
                     <td> <label class="mt-3">Active</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isActive" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.Active" class="form-check-input" />
 
                         </div>
                     </td>
@@ -495,8 +325,7 @@
                     <td> <label class="mt-3">ESA</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isESA" class="form-check-input" />
-
+                            <InputCheckbox @bind-Value="SelectedObject.ESA" class="form-check-input" />
                         </div>
                     </td>
                 </tr>
@@ -504,7 +333,7 @@
                     <td> <label class="mt-3">Athlete</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isAthlete" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.Athlete" class="form-check-input" />
 
                         </div>
                     </td>
@@ -513,8 +342,7 @@
                     <td> <label class="mt-3">ADA</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isADA" class="form-check-input" />
-
+                            <InputCheckbox @bind-Value="SelectedObject.ADA" class="form-check-input" />
                         </div>
                     </td>
                 </tr>
@@ -522,7 +350,7 @@
                     <td> <label class="mt-3">InternationalScholarship</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isInternationalScholarship" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.InternationalScholarship" class="form-check-input" />
 
                         </div>
                     </td>
@@ -531,7 +359,7 @@
                     <td> <label class="mt-3">Wheatley</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isWheatley" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.Wheatley" class="form-check-input" />
 
                         </div>
                     </td>
@@ -540,7 +368,7 @@
                     <td> <label class="mt-3">NoAnimal</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isNoAnimal" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.NoAnimal" class="form-check-input" />
 
                         </div>
                     </td>
@@ -549,7 +377,7 @@
                     <td> <label class="mt-3">IsolateQuarantine</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isIsolateQuarantine" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.IsolateQuarantine" class="form-check-input" />
 
                         </div>
                     </td>
@@ -558,7 +386,7 @@
                     <td> <label class="mt-3">FLEXGE</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isFLEXGE" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.FLEXGE" class="form-check-input" />
 
                         </div>
                     </td>
@@ -567,7 +395,7 @@
                     <td> <label class="mt-3">POSTBacc</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isPOSTBacc" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.POSTBacc" class="form-check-input" />
 
                         </div>
                     </td>
@@ -576,7 +404,7 @@
                     <td> <label class="mt-3">Freeze</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isFreeze" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.Freeze" class="form-check-input" />
 
                         </div>
                     </td>
@@ -585,7 +413,7 @@
                     <td> <label class="mt-3">WaitingList</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isWaitingList" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.WaitingList" class="form-check-input" />
 
                         </div>
                     </td>
@@ -594,7 +422,7 @@
                     <td> <label class="mt-3">Consolidate</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isConsolidate" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.Consolidate" class="form-check-input" />
 
                         </div>
                     </td>
@@ -627,66 +455,8 @@
                         <TimeInput TValue="TimeOnly" @bind-Value="ContractTime" />
                     </td>
                 </tr>
-
-                <tr>
-                    <td><label for="contractingReqMetSelect" class="mt-3">Contracting Req Met:</label></td>
-                    <td>
-                        <select class="form-control mt-3" @bind="SelectedObject.ContractingReqMet">
-                            @* <option value="0">None</option> *@
-                            <option value="1">Yes</option>
-                            <option value="2">No</option>
-                            <option value="3">Any</option>
-                        </select>
-                    </td>
-                </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             </table>
-
-
-
-
-            
-
             <br />
-            
-
-
         </div>
     </BodyTemplate>
     <FooterTemplate>
@@ -694,13 +464,54 @@
         <Button Color="ButtonColor.Primary" @onclick="UpsertObject">Save changes</Button>
     </FooterTemplate>
 </Modal>
+<style>
+    .scroll-container {
+        position: relative;
+        width: 100%;
+        height: calc(100vh - 100px);
+        overflow: auto;
+        border: 1px solid #ccc;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .block-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .block-row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 0;
+        min-width: max-content;
+    }
+
+    .block-item {
+        border: 1px solid black;
+        padding: 0;
+        margin: 0;
+        display: inline-block;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    /* Style for buttons */
+    button {
+        margin-bottom: 10px;
+    }
+</style>
+
+
 
 @code {
-    private List<BlockTest> AllObjects = [];
-    private Modal ObjectAdditionModal = default!;
-    private BlockTest SelectedObject = new BlockTest();
 
-    // Start Date
+    #region Instantiations
+    private List<BlockTest> BlockTestList { get; set; } = new List<BlockTest>();
+    private BlockTest SelectedObject = new BlockTest();
+    private Modal ObjectAdditionModal = default!;
     private DateOnly StartDate = DateOnly.FromDateTime(DateTime.Now);
     private TimeOnly StartTime = TimeOnly.FromDateTime(DateTime.Now);
     private DateOnly EndDate = DateOnly.FromDateTime(DateTime.Now);
@@ -708,85 +519,85 @@
     private DateOnly ContractDate = DateOnly.FromDateTime(DateTime.Now);
     private TimeOnly ContractTime = TimeOnly.FromDateTime(DateTime.Now);
 
+ 
 
-    protected override void OnInitialized()
-    {
-        AllObjects = GenService.GetModel<BlockTest>().ToList();
-    }
+    #endregion
 
-    private void UpdateObjects()
-    {
-        AllObjects = GenService.GetModel<BlockTest>().ToList();
-    }
+    #region CRUD Operations
 
-    private async Task AddRow()
+    private async Task ShowEditItemModal(BlockTest block)
     {
-        SelectedObject = new BlockTest
-        {
-            OccupantType = 0,
-            Area = 0,
-            Building = 1,
-            Community = 1,
-            Sex = 0,
-            Active = false,
-            ESA = false,
-            Athlete = false,
-            ADA = false,
-            InternationalScholarship = false,
-            Wheatley = false,
-            NoAnimal = false,
-            IsolateQuarantine = false,
-            FLEXGE = false,
-            POSTBacc = false,
-            Freeze = false,
-            WaitingList = false,
-            Consolidate = false,
-            Status = 1,
-            AgreementPeriod = 0,
-            ContractingReqMet =1
-        };
-        await OnShowModalClick();
-    }
-
-    private async Task OnShowModalClick()
-    {
+        SelectedObject = block;
+        StartDate = DateOnly.FromDateTime(block.StartDate ?? DateTime.Now);
+        StartTime = TimeOnly.FromDateTime(block.StartDate ?? DateTime.Now);
+        EndDate = DateOnly.FromDateTime(block.EndDate ?? DateTime.Now);
+        EndTime = TimeOnly.FromDateTime(block.EndDate ?? DateTime.Now);
+        ContractDate = DateOnly.FromDateTime(block.ContractDate?.Date ?? DateTime.Now);
+        ContractTime = TimeOnly.FromDateTime(block.ContractDate?.Date ?? DateTime.Now);
         await ObjectAdditionModal.ShowAsync();
-    }
-
-    private async Task OnHideModalClick()
-    {
-        await ObjectAdditionModal.HideAsync();
     }
 
     private async Task UpsertObject()
     {
-        //SelectedObject.Start = selectedDateTime;
-        SelectedObject.StartDate = DateTime.SpecifyKind(StartDate.ToDateTime(StartTime), DateTimeKind.Utc);
-        SelectedObject.EndDate = DateTime.SpecifyKind(EndDate.ToDateTime(EndTime), DateTimeKind.Utc);
-        SelectedObject.ContractDate = DateTime.SpecifyKind(ContractDate.ToDateTime(ContractTime), DateTimeKind.Utc);
+        SelectedObject.StartDate = StartDate.ToDateTime(StartTime);
+        SelectedObject.EndDate = EndDate.ToDateTime(EndTime);
+        SelectedObject.ContractDate = ContractDate.ToDateTime(ContractTime);
+
         GenService.Upsert<BlockTest>(SelectedObject);
-        await OnHideModalClick();
-        UpdateObjects();
+        await ObjectAdditionModal.HideAsync();
     }
 
-    private async Task EditObject(BlockTest varObject)
+    private async Task OnHideModalClick() => await ObjectAdditionModal.HideAsync();
+    #endregion
+
+
+    // Dictionary to store the filter options
+    private Dictionary<int, string> AreaFilterOptions = new()
     {
-        SelectedObject = varObject;
-        await OnShowModalClick();
-    }
+        { 1, "HELAMAN" },
+        { 2, "HERITAGE" },
+        { 3, "RIVIERA" },
+        { 4, "WYVIEW" },
+        { 5, "LISR" }
+    };
 
-    private void DeleteObject(BlockTest varObject)
+    // Dictionary to track selected filter checkboxes
+    private Dictionary<int, bool> SelectedAreas = new()
     {
-        GenService.Remove<BlockTest>(varObject);
-        GenService.SaveChanges();
-        UpdateObjects();
+        { 1, false },
+        { 2, false },
+        { 3, false },
+        { 4, false },
+        { 5, false }
+    };
+
+    private async Task FetchBlockTestData()
+    {
+        // Get the list of selected area keys
+        var selectedAreaKeys = SelectedAreas.Where(kvp => kvp.Value).Select(kvp => kvp.Key).ToList();
+
+        // Fetch filtered data from the service
+        BlockTestList = await Task.Run(() =>
+            GenService.GetModel<BlockTest>()
+                      .AsQueryable()
+                      .Where(b => selectedAreaKeys.Contains(b.Area ?? 0)) // Handle null areas with ?? 0
+                      .ToList());
     }
 
-    private string GetOccupantType(int? occupantType)
+    private string CalculateBlockWidth(DateTime? startDate, DateTime? endDate)
+    {
+        if (startDate.HasValue && endDate.HasValue)
+        {
+            var duration = (endDate.Value - startDate.Value).TotalHours;
+            return $"{Math.Max(1, duration)}px";
+        }
+        return "1px";
+    }
+
+    private string GetOccupantTypeDescription(int? occupantType)
     {
         return occupantType switch
         {
-            // 0 => "None",
             1 => "Single",
             2 => "Family",
             3 => "Conference",
@@ -797,45 +608,32 @@
             8 => "Available if Needed",
             9 => "Special",
             10 => "Employee",
-            _=> "Unknown"
-        };
-    }
-    private string GetAgreementPeriod(int? agreementPeriod)
-    {
-        return agreementPeriod switch
-        {
-            // 0 => "None",
-            1 => "Fall Winter 2024",
-            2 => "Winter 2025",
-            3 => "Spring 2025",
-            4 => "Summer 2025",
-            5 => "Fall Wintere 2025",
-            6 => "Winter 2026",
-            _ => "Unknown"
-        };
-    }
-    private string GetStatus(int? status)
-    {
-        return status switch
-        {
-            // 0 => "None",
-            1 => "Admin Freeze",
-            2 => "Admin Setup",
-            3 => "Contractable",
-            4 => "Pending Contract",
-            5 => "Contracted",
-            6 => "Seeking Termination",
-            7 => "Cancelled",
-            8 => "Closed",
             _ => "Unknown"
         };
     }
 
-    private string GetArea(int? area)
+    private string GetBackgroundColor(int? occupantType)
+    {
+        return occupantType switch
+        {
+            1 => "lightblue",
+            2 => "lightgreen",
+            3 => "yellow",
+            4 => "brown",
+            5 => "red",
+            6 => "purple",
+            7 => "pink",
+            8 => "tan",
+            9 => "turquoise",
+            10 => "orange",
+            _ => "gray"
+        };
+    }
+
+    private string GetAreaDescription(int? area)
     {
         return area switch
         {
-            // 0 => "None",
             1 => "HELAMAN",
             2 => "HERITAGE",
             3 => "RIVIERA",
@@ -845,30 +643,7 @@
         };
     }
 
-    private string GetSex(int? sex)
-    {
-        return sex switch
-        {
-            1 => "M",
-            2 => "F",
-            3 => "NA",
-            _=> "NA"
-        };
-    }
-
-    private string GetCommunity(int? community)
-    {
-        return community switch
-        {
-            1 => "18-",
-            2 => "18+",
-            3 => "19+",
-            4 => "Any",
-            _ => "NA"
-        };
-    }
-
-    private string GetBuilding(int? building)
+    private string GetBuidlingDescription(int? building)
     {
         return building switch
         {
@@ -947,278 +722,4 @@
             _ => "NA"
         };
     }
-
-    private bool isActive
-    {
-        get => SelectedObject.Active ?? false;
-        set => SelectedObject.Active = value;
-    }
-
-    private string GetActiveText(bool? active)
-    {
-        return active switch
-        {
-            true => "Yes",
-            false => "No",
-            null => "Unknown"
-        };
-    }
-
-    private bool isESA
-    {
-        get => SelectedObject.ESA ?? false;
-        set => SelectedObject.ESA = value;
-    }
-
-    private string GetESAText(bool? esa)
-    {
-        return esa switch
-        {
-            true => "Yes",
-            false => "No",
-            null => "Unknown"
-        };
-    }
-
-    private bool isAthlete
-    {
-        get => SelectedObject.Athlete ?? false;
-        set => SelectedObject.Athlete = value;
-    }
-
-    private string GetAthleteText(bool? athlete)
-    {
-        return athlete switch
-        {
-            true => "Yes",
-            false => "No",
-            null => "Unknown"
-        };
-    }
-    private bool isADA
-    {
-        get => SelectedObject.ADA ?? false;
-        set => SelectedObject.ADA = value;
-    }
-
-    private string GetADAText(bool? ada)
-    {
-        return ada switch
-        {
-            true => "Yes",
-            false => "No",
-            null => "Unknown"
-        };
-    }
-    private bool isInternationalScholarship
-    {
-        get => SelectedObject.InternationalScholarship ?? false;
-        set => SelectedObject.InternationalScholarship = value;
-    }
-
-    private string GetInternationalScholarshipText(bool? internationalScholarship)
-    {
-        return internationalScholarship switch
-        {
-            true => "Yes",
-            false => "No",
-            null => "Unknown"
-        };
-    }
-    private bool isWheatley
-    {
-        get => SelectedObject.Wheatley ?? false;
-        set => SelectedObject.Wheatley = value;
-    }
-
-    private string GetWheatleyText(bool? wheatley)
-    {
-        return wheatley switch
-        {
-            true => "Yes",
-            false => "No",
-            null => "Unknown"
-        };
-    }
-    private bool isNoAnimal
-    {
-        get => SelectedObject.NoAnimal ?? false;
-        set => SelectedObject.NoAnimal = value;
-    }
-
-    private string GetNoAnimalText(bool? noAnimal)
-    {
-        return noAnimal switch
-        {
-            true => "Yes",
-            false => "No",
-            null => "Unknown"
-        };
-    }
-
-    private bool isIsolateQuarantine
-    {
-        get => SelectedObject.IsolateQuarantine ?? false;
-        set => SelectedObject.IsolateQuarantine = value;
-    }
-
-    private string GetIsolateQuarantineText(bool? isolateQuarantine)
-    {
-        return isolateQuarantine switch
-        {
-            true => "Yes",
-            false => "No",
-            null => "Unknown"
-        };
-    }
-
-    private bool isFLEXGE
-    {
-        get => SelectedObject.FLEXGE ?? false;
-        set => SelectedObject.FLEXGE = value;
-    }
-
-    private string GetFLEXGEText(bool? fLEXGE)
-    {
-        return fLEXGE switch
-        {
-            true => "Yes",
-            false => "No",
-            null => "Unknown"
-        };
-    }
-
-    private bool isPOSTBacc
-    {
-        get => SelectedObject.POSTBacc ?? false;
-        set => SelectedObject.POSTBacc = value;
-    }
-
-    private string GetPOSTBaccText(bool? pOSTBacc)
-    {
-        return pOSTBacc switch
-        {
-            true => "Yes",
-            false => "No",
-            null => "Unknown"
-        };
-    }
-
-    private bool isFreeze
-    {
-        get => SelectedObject.Freeze ?? false;
-        set => SelectedObject.Freeze = value;
-    }
-
-    private string GetFreezeText(bool? freeze)
-    {
-        return freeze switch
-        {
-            true => "Yes",
-            false => "No",
-            null => "Unknown"
-        };
-    }
-
-    private bool isWaitingList
-    {
-        get => SelectedObject.WaitingList ?? false;
-        set => SelectedObject.WaitingList = value;
-    }
-
-    private string GetWaitingListText(bool? waitingList)
-    {
-        return waitingList switch
-        {
-            true => "Yes",
-            false => "No",
-            null => "Unknown"
-        };
-    }
-    private bool isConsolidate
-    {
-        get => SelectedObject.Consolidate ?? false;
-        set => SelectedObject.Consolidate = value;
-    }
-
-    private string GetConsolidateText(bool? consolidate)
-    {
-        return consolidate switch
-        {
-            true => "Yes",
-            false => "No",
-            null => "Unknown"
-        };
-    }
-
-    private string GetContractingReqMet(int? contractingReqMet)
-    {
-        return contractingReqMet switch
-        {
-            // 0 => "None",
-            1 => "Yes",
-            2 => "No",
-            3 => "Any",
-            _ => "Unknown"
-        };
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

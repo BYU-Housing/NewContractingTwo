@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Authentication;
 using ReslifeFiveBackEnd.Model;
 using ReslifeFiveBusinessLayer.Service;
 using System.Security.Claims;
+using System.Net.NetworkInformation;
+using System.Data;
+
 
 namespace ReslifeFiveFrontEnd.Application.Authentication
 {
@@ -30,6 +33,10 @@ namespace ReslifeFiveFrontEnd.Application.Authentication
             else if (context.Request.Path == "/Logout")
             {
                 await FullLogout(context);
+            }
+            else if (context.Request.Path == "/dev-login")
+            {
+                await DevLogin(context);
             }
             else
             {
@@ -65,26 +72,25 @@ MIIDHTCCAgWgAwIBAgIUKGn04Kl01bFUug79PAw2A0sPDz0wDQYJKoZIhvcNAQELBQAwGjEYMBYGA1UE
                 {
                     var genService = scope.ServiceProvider.GetRequiredService<IGenService>();
 
-                    var user = genService.GetModel<User>().FirstOrDefault(x => x.NetID == netId);
+                    var user = genService.GetModel<User>().FirstOrDefault(x => x.NetId == netId);
 
-                    var username = samlResponse.GetNameID() ?? user?.FName;
+                    var username = user?.PreferredFirstName + " " + user?.Surname;
 
 
                     if (user != null)
                     {
-                        var roleName = genService.GetModel<Role>().FirstOrDefault(x => x.Id == user.RoleID && x.Active == true)?.Name;
+                        var role = genService.GetModel<Role>().FirstOrDefault(x => x.Id == user.RoleId && x.Active == true);
 
 
 
                         List<Claim> claims = new List<Claim>
                         {
-                            new Claim(ClaimTypes.Name, username ?? "No Name From SAML Or DB"),
-                            new Claim(ClaimTypes.Role, roleName ?? "Guest")
+                            new Claim(ClaimTypes.NameIdentifier, user.NetId ?? "No Netid found"),
+                            new Claim(ClaimTypes.Name, user.PreferredFirstName ?? "No Name found."),
+                            new Claim(ClaimTypes.Role, role?.Name ?? "No Role found."),
+                            new Claim(ClaimTypes.GivenName, user.RestOfName),
+                            new Claim(ClaimTypes.Surname, user.Surname ?? "No Surname found.")
                         };
-
-
-
-
 
                         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
@@ -119,6 +125,63 @@ MIIDHTCCAgWgAwIBAgIUKGn04Kl01bFUug79PAw2A0sPDz0wDQYJKoZIhvcNAQELBQAwGjEYMBYGA1UE
 
             // Redirect the user to the CAS logout page (logging them out of CAS entirely)
             context.Response.Redirect("https://cas.byu.edu/cas/logout");
+        }
+
+
+
+
+
+
+        private async Task DevLogin(HttpContext context)
+        {
+            var env = context.RequestServices.GetRequiredService<IWebHostEnvironment>();
+
+            if (env.IsDevelopment())
+            {
+                var netId = context.Request.Query["netId"];
+                var netIdString = netId.ToString();
+
+                using (var scope = _scopeFactory.CreateScope())
+                {
+                    var genService = scope.ServiceProvider.GetRequiredService<IGenService>();
+
+                    var user = genService.GetModel<User>().FirstOrDefault(x => x.NetId == netIdString);
+                    if (user != null)
+                    {
+                        var role = genService.GetModel<Role>().FirstOrDefault(x => x.Id == user.RoleId);
+
+                        if (role != null)
+                        {
+                            var claims = new List<Claim>
+                            {
+                                new Claim(ClaimTypes.GivenName, user.RestOfName ?? "Legal Name Not Found"),
+                                new Claim(ClaimTypes.Name, user.PreferredFirstName ?? "No Name found."),
+                                new Claim(ClaimTypes.Surname, user.Surname ?? "No Surname found."),
+                                new Claim(ClaimTypes.NameIdentifier, user.NetId ?? "No Netid found"),
+                                new Claim(ClaimTypes.Role, role.Name ?? "No Role found."),
+                            };
+                            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+                            await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+                        }
+                        else
+                        {
+                            _logger.LogInformation("Role was null (dev login attempt).");
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogInformation("User was null upon dev login attempt.");
+                    }
+                    context.Response.Redirect("/");
+                }
+            }
+            else
+            {
+                context.Response.StatusCode = 401;
+                await context.Response.WriteAsync("Unauthorized: Dev login only available in development environment.");
+            }
         }
     }
 }

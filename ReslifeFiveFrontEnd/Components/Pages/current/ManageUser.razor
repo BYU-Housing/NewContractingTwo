@@ -1,0 +1,186 @@
+﻿@page "/manageUser"
+@inject IGenService genService
+
+<h2>Manage Users and Permissions</h2>
+
+
+<div>
+    <Button Color="ButtonColor.Primary" @onclick="AddUser">Add New User </Button>
+</div>
+
+<div class="container-fluid vh-100">
+    <Grid Id="blazorGrid" TItem="User"
+          DataProvider="UserDataProvider"
+          Class="w-100 table table-hovor table-bordered table-striped"
+          AllowPaging="true"
+          FixedHeader="true"
+          PageSize="15"
+          Responsive="true">
+        <GridColumn TItem="User" HeaderText="Id">
+            @context.Id
+        </GridColumn>
+        <GridColumn TItem="User" HeaderText="PersonId">
+            @context.PersonId
+        </GridColumn>
+        <GridColumn TItem="User" HeaderText="Surname">
+            @context.Surname
+        </GridColumn>
+        <GridColumn TItem="User" HeaderText="Rest Of Name">
+            @context.RestOfName
+        </GridColumn>
+        <GridColumn TItem=" User" HeaderText="Preferred Name">
+            @context.PreferredFirstName
+        </GridColumn>
+        <GridColumn TItem="User" HeaderText="Gender">
+            @if (context.Gender == 0)
+            {
+                <span>M</span>
+            }
+            else
+            {
+                <span>F</span>
+            }
+        </GridColumn>
+        <GridColumn TItem="User" HeaderText="Role">
+            @(context.Role?.Name ?? "Role Not Loaded")
+        </GridColumn>
+        <GridColumn TItem="User" HeaderText="Action">
+            <Button @onclick="() => EditUser(context)">
+                <Icon Name="IconName.Pencil" />
+            </Button>
+            <Button @onclick="() => DeleteUser(context)">
+                <Icon Name="IconName.Trash3" />
+            </Button>
+        </GridColumn>
+        <GridColumn TItem="User" HeaderText="BYU ID">
+            @context.ByuId
+        </GridColumn>
+        <GridColumn TItem="User" HeaderText="Net ID">
+            @context.NetId
+        </GridColumn>
+        <GridColumn TItem="User" HeaderText="Date Of Birth">
+            @context.DateOfBirth
+        </GridColumn>
+        <GridColumn TItem="User" HeaderText="Marital Status">
+            @context.MaritalStatus
+        </GridColumn>
+        <GridColumn TItem="User" HeaderText="Restricted">
+            @context.IsRestricted
+        </GridColumn>
+        <GridColumn TItem="User" HeaderText="Citizenship Country">
+            @context.CitizenshipCountry
+        </GridColumn>
+    </Grid>
+</div>
+
+
+<Modal @ref="ObjectAdditionModal" Title="Add/Edit User">
+    <BodyTemplate>
+        @if (SelectedUser.Id != 0)
+        {
+            <h4>Id: @SelectedUser.Id</h4>
+        }
+        @if (SelectedUser.PersonId != 0)
+        {
+            <h4>PersonId: @SelectedUser.PersonId</h4>
+        }
+        <h4>Surname: <input type="text" @bind-value="SelectedUser.Surname" maxlength="40"/></h4>
+        <h4>Rest Of Name: <input type="text" @bind-value="SelectedUser.RestOfName" maxlength="80"/></h4>
+        <h4>Preferred Name: <input type="text" @bind-value="SelectedUser.PreferredFirstName" maxlength="25"/></h4>
+        <h4>Gender: <select @bind="SelectedUser.Gender"><option value="0">M</option><option value="1">F</option></select></h4>
+        <h4>Date Of Birth: <input type="date" @bind-value="SelectedUser.DateOfBirth" /></h4>
+        <h4>Marital Status: <input type="text" @bind-value="SelectedUser.MaritalStatus" maxlength="1"/></h4>
+        <h4>BYU ID: <input type="text" @bind-value="SelectedUser.ByuId" maxlength="9"/></h4>
+        <h4>Net Id: <input type="text" @bind-value="SelectedUser.NetId" maxlength="15"/> </h4>
+        <h4>Restricted: <select @bind="SelectedUser.IsRestricted"><option value="true">True</option><option value="false">False</option></select></h4>
+        <h4>Citizenship Country: <input type="text" @bind-value="SelectedUser.CitizenshipCountry" maxlength="3"/></h4>
+        <h4>Role: <select @bind=SelectedUser.RoleId>@foreach (var role in Roles){<option value="@role.Id">@role.Name</option>}</select></h4>
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
+        <Button Color="ButtonColor.Primary" @onclick="UpsertObject">Save changes</Button>
+    </FooterTemplate>
+</Modal>
+
+<ConfirmDialog @ref="dialog" />
+@code {
+
+    #region Instantiations
+    public List<User> usersList = new List<User>();
+    public IEnumerable<User>? users;
+    public User SelectedUser { get; set; } = new User();
+    public List<Role> Roles { get; set; } = [];
+    private Modal ObjectAdditionModal = default!;
+    private ConfirmDialog dialog = default!;
+
+
+    protected override void OnInitialized()
+    {
+        Roles = genService.GetModel<Role>().ToList();
+        _ = genService.GetModelInBatchesAsync<User>(usersList,50, x => x.Id);
+    }
+    private async Task<GridDataProviderResult<User>> UserDataProvider(GridDataProviderRequest<User> request)
+    {
+        if (users is null)
+            users = genService.GetModel<User>();
+        return await Task.FromResult(request.ApplyTo(users));
+    }
+    #endregion
+
+    #region CRUD Operations
+    private async Task AddUser()
+    {
+        SelectedUser = new User();
+        await ObjectAdditionModal.ShowAsync();
+    }
+    private async Task EditUser(User user)
+    {
+        SelectedUser = user;
+        await ObjectAdditionModal.ShowAsync();
+
+    }
+
+    private async Task DeleteUser(User user)
+    {
+        var options = new ConfirmDialogOptions()
+            {
+                YesButtonText = "Yes",
+                NoButtonText = "No"
+            };
+        var confirmation = await dialog.ShowAsync(
+            title: "Delete User?",
+            message1: "Are you sure you want to delete this user? This action cannot be reversed.",
+            confirmDialogOptions: options);
+
+        if (confirmation)
+        {
+            genService.Remove<User>(user);
+            genService.SaveChanges();
+            usersList.Remove(user);
+            StateHasChanged();
+        }
+    }
+
+
+    private async Task UpsertObject()
+    {
+        if (users != null)
+        {
+            users.Append<User>(SelectedUser);
+        }
+        SelectedUser.DateOfBirth = SelectedUser.DateOfBirth.ToUniversalTime();
+
+
+        genService.Upsert<User>(SelectedUser);
+        usersList.Add(SelectedUser);
+        users = usersList;
+        await ObjectAdditionModal.HideAsync();
+        
+    }
+
+    private async Task OnHideModalClick()
+    {
+        await ObjectAdditionModal.HideAsync();
+    }
+    #endregion
+}
