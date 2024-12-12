@@ -9,13 +9,13 @@
 </div>
 
 <div class="container-fluid vh-100">
-    <Grid TItem="User"
+    <Grid Id="blazorGrid" TItem="User"
           DataProvider="UserDataProvider"
           Class="w-100 table table-hovor table-bordered table-striped"
           AllowPaging="true"
+          FixedHeader="true"
           PageSize="15"
           Responsive="true">
-
         <GridColumn TItem="User" HeaderText="Id">
             @context.Id
         </GridColumn>
@@ -28,7 +28,7 @@
         <GridColumn TItem="User" HeaderText="Rest Of Name">
             @context.RestOfName
         </GridColumn>
-        <GridColumn TItem="User" HeaderText="Preferred Name">
+        <GridColumn TItem=" User" HeaderText="Preferred Name">
             @context.PreferredFirstName
         </GridColumn>
         <GridColumn TItem="User" HeaderText="Gender">
@@ -64,7 +64,6 @@
         <GridColumn TItem="User" HeaderText="Marital Status">
             @context.MaritalStatus
         </GridColumn>
-
         <GridColumn TItem="User" HeaderText="Restricted">
             @context.IsRestricted
         </GridColumn>
@@ -85,20 +84,17 @@
         {
             <h4>PersonId: @SelectedUser.PersonId</h4>
         }
-        <h4>Surname: <input type="text" @bind-value="SelectedUser.Surname" /></h4>
-        <h4>Rest Of Name: <input type="text" @bind-value="SelectedUser.RestOfName" /></h4>
-        <h4>Preferred Name: <input type="text" @bind-value="SelectedUser.PreferredFirstName" /></h4>
+        <h4>Surname: <input type="text" @bind-value="SelectedUser.Surname" maxlength="40"/></h4>
+        <h4>Rest Of Name: <input type="text" @bind-value="SelectedUser.RestOfName" maxlength="80"/></h4>
+        <h4>Preferred Name: <input type="text" @bind-value="SelectedUser.PreferredFirstName" maxlength="25"/></h4>
         <h4>Gender: <select @bind="SelectedUser.Gender"><option value="0">M</option><option value="1">F</option></select></h4>
-        <h4>Date Of Birth: @SelectedUser.DateOfBirth</h4>
-        <h4>Marital Status: <input type="text" @bind-value="SelectedUser.MaritalStatus" /></h4>
-        <h4>BYU ID: <input type="text" @bind-value="SelectedUser.ByuId" /></h4>
-        <h4>Net Id: <input type="text" @bind-value="SelectedUser.NetId" /> </h4>
+        <h4>Date Of Birth: <input type="date" @bind-value="SelectedUser.DateOfBirth" /></h4>
+        <h4>Marital Status: <input type="text" @bind-value="SelectedUser.MaritalStatus" maxlength="1"/></h4>
+        <h4>BYU ID: <input type="text" @bind-value="SelectedUser.ByuId" maxlength="9"/></h4>
+        <h4>Net Id: <input type="text" @bind-value="SelectedUser.NetId" maxlength="15"/> </h4>
         <h4>Restricted: <select @bind="SelectedUser.IsRestricted"><option value="true">True</option><option value="false">False</option></select></h4>
-        <h4>Citizenship Country: <input type="text" @bind-value="SelectedUser.CitizenshipCountry" /></h4>
-        <h4>Role: <select @bind=SelectedUser.RoleId>@foreach (var role in Roles)
-                {
-                    <option value="@role.Id">@role.Name</option>
-                }</select></h4>
+        <h4>Citizenship Country: <input type="text" @bind-value="SelectedUser.CitizenshipCountry" maxlength="3"/></h4>
+        <h4>Role: <select @bind=SelectedUser.RoleId>@foreach (var role in Roles){<option value="@role.Id">@role.Name</option>}</select></h4>
     </BodyTemplate>
     <FooterTemplate>
         <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
@@ -169,8 +165,10 @@
         {
             users.Append<User>(SelectedUser);
         }
+        SelectedUser.DateOfBirth = SelectedUser.DateOfBirth.ToUniversalTime();
         genService.Upsert<User>(SelectedUser);
         await ObjectAdditionModal.HideAsync();
+        
     }
 
     private async Task OnHideModalClick()
