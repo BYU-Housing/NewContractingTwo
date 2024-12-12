@@ -4,6 +4,7 @@
 <div>
     <!-- Filter Section -->
     <div>
+        <h5>Edit Blocks</h5>
         <h5>Filter by Area</h5>
         @foreach (var area in AreaFilterOptions)
         {
@@ -26,26 +27,28 @@
                 <div class="block-row">
                     @foreach (var block in group.OrderBy(b => b.StartDate))
                     {
-                        <div class="block-item"
-                             style="width:@CalculateBlockWidth(block.StartDate, block.EndDate); background-color:@GetBackgroundColor(block.OccupantType)">
-                            Bedspace: @block.Name | Area: @GetAreaDescription(block.Area) 
-                            | Buidling: @GetBuidlingDescription(block.Building)
-                            | Floor: @block.Floor
-                            | Wing: @(block.Wing.HasValue ? block.Wing.ToString() : "NA")
-                            | Stair Well: @(block.StairWell.HasValue ? block.StairWell.ToString() : "NA")
-                            <br />
-                            Contract Start: @(block.StartDate.HasValue ? block.StartDate.Value.ToString("yyyy-MM-dd HH:mm") : "No Start Date") 
-                            Contract End: @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : "No End Date") 
-                            <br />
-                            Occupant Type: @GetOccupantTypeDescription(block.OccupantType)
-                            | First Name: @(string.IsNullOrWhiteSpace(block.FName) ? "Empty" : block.FName)
-                            | Last Name: @(string.IsNullOrWhiteSpace(block.LName) ? "Empty" : block.LName)
-                            | NetId: @(string.IsNullOrWhiteSpace(block.NetID) ? "Empty" : block.NetID)
-                            | ID: @block.Id
+                       
 
-                            <br />
-                            Flags :
-                        </div>
+                            <div class="block-item"
+                                 style="width:@CalculateBlockWidth(block.StartDate, block.EndDate); background-color:@GetBackgroundColor(block.OccupantType)">
+                                Bedspace: @block.Name | Area: @GetAreaDescription(block.Area)
+                                | Buidling: @GetBuidlingDescription(block.Building)
+                                | Floor: @block.Floor
+                                | Wing: @(block.Wing.HasValue ? block.Wing.ToString() : "NA")
+                                | Stair Well: @(block.StairWell.HasValue ? block.StairWell.ToString() : "NA")
+                                <br />
+                                Contract Start: @(block.StartDate.HasValue ? block.StartDate.Value.ToString("yyyy-MM-dd HH:mm") : "No Start Date")
+                                Contract End: @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : "No End Date")
+                                <br />
+                                Occupant Type: @GetOccupantTypeDescription(block.OccupantType)
+                                | First Name: @(string.IsNullOrWhiteSpace(block.FName) ? "Empty" : block.FName)
+                                | Last Name: @(string.IsNullOrWhiteSpace(block.LName) ? "Empty" : block.LName)
+                                | NetId: @(string.IsNullOrWhiteSpace(block.NetID) ? "Empty" : block.NetID)
+                                | ID: @block.Id
+
+                                <br />
+                                Flags :
+                            </div>
                     }
                 </div>
             }
@@ -58,6 +61,11 @@
         </div>
     }
 </div>
+
+
+
+
+
 
 <style>
     .scroll-container {
@@ -99,8 +107,26 @@
     }
 </style>
 
+
+
 @code {
+
+    #region Instantiations
     private List<BlockTest> BlockTestList { get; set; } = new List<BlockTest>();
+
+
+
+
+    #endregion
+
+
+
+
+
+
+
+
+
 
     // Dictionary to store the filter options
     private Dictionary<int, string> AreaFilterOptions = new()

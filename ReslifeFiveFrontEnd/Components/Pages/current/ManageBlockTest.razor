@@ -207,23 +207,6 @@
         </GridColumn>
         @* Dropdown *@
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         <GridColumn TItem="BlockTest" HeaderText="Action">
             <Button @onclick="() => EditObject(context)">
                 <Icon Name="IconName.Pencil" />
@@ -486,7 +469,7 @@
                     <td> <label class="mt-3">Active</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isActive" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.Active" class="form-check-input" />
 
                         </div>
                     </td>
@@ -495,7 +478,7 @@
                     <td> <label class="mt-3">ESA</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isESA" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.ESA" class="form-check-input" />
 
                         </div>
                     </td>
@@ -504,7 +487,7 @@
                     <td> <label class="mt-3">Athlete</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isAthlete" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.Athlete" class="form-check-input" />
 
                         </div>
                     </td>
@@ -513,7 +496,7 @@
                     <td> <label class="mt-3">ADA</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isADA" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.ADA" class="form-check-input" />
 
                         </div>
                     </td>
@@ -522,7 +505,7 @@
                     <td> <label class="mt-3">InternationalScholarship</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isInternationalScholarship" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.InternationalScholarship" class="form-check-input" />
 
                         </div>
                     </td>
@@ -531,7 +514,7 @@
                     <td> <label class="mt-3">Wheatley</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isWheatley" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.Wheatley" class="form-check-input" />
 
                         </div>
                     </td>
@@ -540,7 +523,7 @@
                     <td> <label class="mt-3">NoAnimal</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isNoAnimal" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.NoAnimal" class="form-check-input" />
 
                         </div>
                     </td>
@@ -549,7 +532,7 @@
                     <td> <label class="mt-3">IsolateQuarantine</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isIsolateQuarantine" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.IsolateQuarantine" class="form-check-input" />
 
                         </div>
                     </td>
@@ -558,7 +541,7 @@
                     <td> <label class="mt-3">FLEXGE</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isFLEXGE" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.FLEXGE" class="form-check-input" />
 
                         </div>
                     </td>
@@ -567,7 +550,7 @@
                     <td> <label class="mt-3">POSTBacc</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isPOSTBacc" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.POSTBacc" class="form-check-input" />
 
                         </div>
                     </td>
@@ -576,7 +559,7 @@
                     <td> <label class="mt-3">Freeze</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isFreeze" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.Freeze" class="form-check-input" />
 
                         </div>
                     </td>
@@ -585,7 +568,7 @@
                     <td> <label class="mt-3">WaitingList</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isWaitingList" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.WaitingList" class="form-check-input" />
 
                         </div>
                     </td>
@@ -594,7 +577,7 @@
                     <td> <label class="mt-3">Consolidate</label></td>
                     <td>
                         <div class="form-check mt-3">
-                            <InputCheckbox @bind-Value="isConsolidate" class="form-check-input" />
+                            <InputCheckbox @bind-Value="SelectedObject.Consolidate" class="form-check-input" />
 
                         </div>
                     </td>
@@ -639,39 +622,6 @@
                         </select>
                     </td>
                 </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -948,11 +898,6 @@
         };
     }
 
-    private bool isActive
-    {
-        get => SelectedObject.Active ?? false;
-        set => SelectedObject.Active = value;
-    }
 
     private string GetActiveText(bool? active)
     {
@@ -964,11 +909,7 @@
         };
     }
 
-    private bool isESA
-    {
-        get => SelectedObject.ESA ?? false;
-        set => SelectedObject.ESA = value;
-    }
+
 
     private string GetESAText(bool? esa)
     {
@@ -980,11 +921,6 @@
         };
     }
 
-    private bool isAthlete
-    {
-        get => SelectedObject.Athlete ?? false;
-        set => SelectedObject.Athlete = value;
-    }
 
     private string GetAthleteText(bool? athlete)
     {
@@ -995,11 +931,7 @@
             null => "Unknown"
         };
     }
-    private bool isADA
-    {
-        get => SelectedObject.ADA ?? false;
-        set => SelectedObject.ADA = value;
-    }
+
 
     private string GetADAText(bool? ada)
     {
@@ -1010,11 +942,7 @@
             null => "Unknown"
         };
     }
-    private bool isInternationalScholarship
-    {
-        get => SelectedObject.InternationalScholarship ?? false;
-        set => SelectedObject.InternationalScholarship = value;
-    }
+
 
     private string GetInternationalScholarshipText(bool? internationalScholarship)
     {
@@ -1025,11 +953,7 @@
             null => "Unknown"
         };
     }
-    private bool isWheatley
-    {
-        get => SelectedObject.Wheatley ?? false;
-        set => SelectedObject.Wheatley = value;
-    }
+
 
     private string GetWheatleyText(bool? wheatley)
     {
@@ -1040,11 +964,7 @@
             null => "Unknown"
         };
     }
-    private bool isNoAnimal
-    {
-        get => SelectedObject.NoAnimal ?? false;
-        set => SelectedObject.NoAnimal = value;
-    }
+
 
     private string GetNoAnimalText(bool? noAnimal)
     {
@@ -1056,11 +976,7 @@
         };
     }
 
-    private bool isIsolateQuarantine
-    {
-        get => SelectedObject.IsolateQuarantine ?? false;
-        set => SelectedObject.IsolateQuarantine = value;
-    }
+
 
     private string GetIsolateQuarantineText(bool? isolateQuarantine)
     {
@@ -1072,11 +988,7 @@
         };
     }
 
-    private bool isFLEXGE
-    {
-        get => SelectedObject.FLEXGE ?? false;
-        set => SelectedObject.FLEXGE = value;
-    }
+
 
     private string GetFLEXGEText(bool? fLEXGE)
     {
@@ -1088,11 +1000,6 @@
         };
     }
 
-    private bool isPOSTBacc
-    {
-        get => SelectedObject.POSTBacc ?? false;
-        set => SelectedObject.POSTBacc = value;
-    }
 
     private string GetPOSTBaccText(bool? pOSTBacc)
     {
@@ -1104,11 +1011,7 @@
         };
     }
 
-    private bool isFreeze
-    {
-        get => SelectedObject.Freeze ?? false;
-        set => SelectedObject.Freeze = value;
-    }
+
 
     private string GetFreezeText(bool? freeze)
     {
@@ -1120,11 +1023,7 @@
         };
     }
 
-    private bool isWaitingList
-    {
-        get => SelectedObject.WaitingList ?? false;
-        set => SelectedObject.WaitingList = value;
-    }
+
 
     private string GetWaitingListText(bool? waitingList)
     {
@@ -1135,11 +1034,7 @@
             null => "Unknown"
         };
     }
-    private bool isConsolidate
-    {
-        get => SelectedObject.Consolidate ?? false;
-        set => SelectedObject.Consolidate = value;
-    }
+
 
     private string GetConsolidateText(bool? consolidate)
     {
@@ -1163,62 +1058,4 @@
         };
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

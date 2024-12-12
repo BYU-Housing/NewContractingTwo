@@ -1,0 +1,725 @@
+﻿@page "/editGridBlockJ"
+@inject IGenService GenService
+
+<div>
+    <!-- Filter Section -->
+    <div>
+        <h5>Filter by Area</h5>
+        @foreach (var area in AreaFilterOptions)
+        {
+            <div>
+                <input type="checkbox" id="@area.Value" @bind="@SelectedAreas[area.Key]" />
+                <label for="@area.Value">@area.Value</label>
+            </div>
+        }
+    </div>
+
+    <button class="btn btn-primary" @onclick="FetchBlockTestData">Load BlockTest Data</button>
+</div>
+
+<div class="scroll-container">
+    @if (BlockTestList != null && BlockTestList.Any())
+    {
+        <div class="block-container">
+            @foreach (var group in BlockTestList.GroupBy(b => b.BedspaceCode))
+            {
+                <div class="block-row">
+                    @foreach (var block in group.OrderBy(b => b.StartDate))
+                    {
+                          <Button @onclick="() => ShowEditItemModal(block)" Class="btn p-0 border-0">
+
+                            <div class="block-item"
+                                 style="width:@CalculateBlockWidth(block.StartDate, block.EndDate); background-color:@GetBackgroundColor(block.OccupantType)">
+                                Bedspace: @block.Name | Area: @GetAreaDescription(block.Area)
+                                | Buidling: @GetBuidlingDescription(block.Building)
+                                | Floor: @block.Floor
+                                | Wing: @(block.Wing.HasValue ? block.Wing.ToString() : "NA")
+                                | Stair Well: @(block.StairWell.HasValue ? block.StairWell.ToString() : "NA")
+                                <br />
+                                Contract Start: @(block.StartDate.HasValue ? block.StartDate.Value.ToString("yyyy-MM-dd HH:mm") : "No Start Date")
+                                Contract End: @(block.EndDate.HasValue ? block.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : "No End Date")
+                                <br />
+                                Occupant Type: @GetOccupantTypeDescription(block.OccupantType)
+                                | First Name: @(string.IsNullOrWhiteSpace(block.FName) ? "Empty" : block.FName)
+                                | Last Name: @(string.IsNullOrWhiteSpace(block.LName) ? "Empty" : block.LName)
+                                | NetId: @(string.IsNullOrWhiteSpace(block.NetID) ? "Empty" : block.NetID)
+                                | ID: @block.Id
+
+                                <br />
+                                Flags :
+                            </div>
+                        </Button>
+                    }
+                </div>
+            }
+        </div>
+    }
+    else if (BlockTestList != null)
+    {
+        <div class="alert alert-warning">
+            No data found in the BlockTest table.
+        </div>
+    }
+</div>
+
+
+
+
+
+
+<Modal @ref="ObjectAdditionModal" Title="Add/Edit BlockTest">
+    <BodyTemplate>
+        <div>
+            @if (SelectedObject.Id != 0)
+            {
+                <p>
+                    BlockTest ID: @SelectedObject.Id
+                </p>
+            }
+            <table>
+                <tr>
+                    <td><label for="nameInput">Name:</label></td>
+                    <td><input type="text" @bind="SelectedObject.Name" /></td>
+                </tr>
+                <tr>
+                    <td><label for="bedspaceCodeInput" class="my-3">Bedspace Code:</label></td>
+                    <td><InputNumber @bind-Value="SelectedObject.BedspaceCode" class="form-control mt-3" placeholder="Bedspace Code" /></td>
+                </tr>
+
+                <tr>
+                    <td><label for="occupantTypeSelect" class="mt-3">Occupant Type:</label></td>
+                    <td>
+                        <select class="form-control mt-3" @bind="SelectedObject.OccupantType">
+                            @* <option value="0">None</option> *@
+                            <option value="1">Single</option>
+                            <option value="2">Family</option>
+                            <option value="3">Conference</option>
+                            <option value="4">LISR</option>
+                            <option value="5">Off Campus</option>
+                            <option value="6">Closed For Maintenance</option>
+                            <option value="7">Not Available</option>
+                            <option value="8">Available if Needed</option>
+                            <option value="9">Special</option>
+                            <option value="10">Employee</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><label for="statusSelect" class="mt-3">Status:</label></td>
+                    <td>
+                        <select class="form-control mt-3" @bind="SelectedObject.Status">
+                            <option value="1">Admin Freeze</option>
+                            <option value="2">Admin Setup</option>
+                            <option value="3">Contractable</option>
+                            <option value="4">Pending Contract</option>
+                            <option value="5">Contracted</option>
+                            <option value="6">Seeking Termination</option>
+                            <option value="7">Cancelled</option>
+                            <option value="8">Closed</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="agreementPeriodSelect" class="mt-3">AgreementPeriod:</label></td>
+                    <td>
+                        <select class="form-control mt-3" @bind="SelectedObject.AgreementPeriod">
+                            <option value="1">Fall Winter 2024</option>
+                            <option value="2">Winter 2025</option>
+                            <option value="3">Spring 2025</option>
+                            <option value="4">Summer 2025</option>
+                            <option value="5">Fall Wintere 2025</option>
+                            <option value="6">Winter 2026</option>
+                        </select>
+                    </td>
+                </tr>
+
+
+
+
+                <tr>
+                    <td><br /></td>
+                    <td><br /></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><b>Location Properties</b></td>
+                </tr>
+                <tr>
+                    <td><label for="areaSelect" class="mt-3">Area:</label></td>
+                    <td>
+                        <select class="form-control mt-3" @bind="SelectedObject.Area">
+                            @* <option value="0">None</option> *@
+                            <option value="1">HELAMAN</option>
+                            <option value="2">HERITAGE</option>
+                            <option value="3">RIVIERA</option>
+                            <option value="4">WYVIEW</option>
+                            <option value="5">LISR</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="buildingSelect" class="mt-3">Building:</label></td>
+                    <td>
+                        <select class="form-control mt-3" @bind="SelectedObject.Building">
+                            @* <option value="0">None</option> *@
+                            <option value="1">LI A</option>
+                            <option value="2">LI B</option>
+                            <option value="3">LI C</option>
+                            <option value="4">LI D</option>
+                            <option value="5">LI E</option>
+                            <option value="6">HL Hinckley</option>
+                            <option value="7">HL Chipman</option>
+                            <option value="8">HL David John</option>
+                            <option value="9">HL Taylor</option>
+                            <option value="10">HL Stover</option>
+                            <option value="11">HL Budge</option>
+                            <option value="12">HL Merrill</option>
+                            <option value="13">HL May</option>
+                            <option value="14">HL B9</option>
+                            <option value="15">HR02</option>
+                            <option value="16">HR03</option>
+                            <option value="17">HR04</option>
+                            <option value="18">HR05</option>
+                            <option value="19">HR06</option>
+                            <option value="20">HR07</option>
+                            <option value="21">HR08</option>
+                            <option value="22">HR09</option>
+                            <option value="23">HR10</option>
+                            <option value="24">HR11</option>
+                            <option value="25">HR12</option>
+                            <option value="26">HR13</option>
+                            <option value="27">HR14</option>
+                            <option value="28">HR15</option>
+                            <option value="29">HR16</option>
+                            <option value="30">RI A</option>
+                            <option value="31">RI B</option>
+                            <option value="32">RI C</option>
+                            <option value="33">RI D</option>
+                            <option value="34">RI E</option>
+                            <option value="35">RI F</option>
+                            <option value="36">RI G</option>
+                            <option value="37">RI H</option>
+                            <option value="38">RI I</option>
+                            <option value="39">RI J</option>
+                            <option value="40">RI K</option>
+                            <option value="41">RI L</option>
+                            <option value="42">WP 1</option>
+                            <option value="43">WP 2</option>
+                            <option value="44">WP 3</option>
+                            <option value="45">WP 4</option>
+                            <option value="46">WP 5</option>
+                            <option value="47">WP 6</option>
+                            <option value="48">WP 7</option>
+                            <option value="49">WP 8</option>
+                            <option value="50">WP 9</option>
+                            <option value="51">WP 10</option>
+                            <option value="52">WP 11</option>
+                            <option value="53">WP 12</option>
+                            <option value="54">WP 13</option>
+                            <option value="55">WP 14</option>
+                            <option value="56">WP 15</option>
+                            <option value="57">WP 16</option>
+                            <option value="58">WP 17</option>
+                            <option value="59">WP 18</option>
+                            <option value="60">WP 19</option>
+                            <option value="61">WP 20</option>
+                            <option value="62">WP 21</option>
+                            <option value="63">WP 22</option>
+                            <option value="64">WP 23</option>
+                            <option value="65">WP 24</option>
+                            <option value="66">WP 25</option>
+                            <option value="67">WP 26</option>
+                            <option value="68">WP 27</option>
+                            <option value="69">WP 28</option>
+                            <option value="70">WP 29</option>
+                            <option value="71">WP 30</option>
+                            <option value="72">RI 0</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="floorInput" class="my-3">Floor :</label></td>
+                    <td><InputNumber @bind-Value="SelectedObject.Floor" class="form-control mt-3" placeholder="Floor" /></td>
+                </tr>
+                <tr>
+                    <td><label for="wingInput" class="my-3">Wing :</label></td>
+                    <td><InputNumber @bind-Value="SelectedObject.Wing" class="form-control mt-3" placeholder="Wing" /></td>
+                </tr>
+                <tr>
+                    <td><label for="stairWellInput" class="my-3">StairWell :</label></td>
+                    <td><InputNumber @bind-Value="SelectedObject.StairWell" class="form-control mt-3" placeholder="StairWell" /></td>
+                </tr>
+                <tr>
+                    <td><label for="roomNumberInput" class="my-3">Room Number:</label></td>
+                    <td><InputNumber @bind-Value="SelectedObject.RoomNumber" class="form-control mt-3" placeholder="Room Number" /></td>
+                </tr>
+                <tr>
+                    <td><label for="appartmentUnitInput" class="my-3">AppartmentUnit :</label></td>
+                    <td><InputNumber @bind-Value="SelectedObject.ApartmentUnit" class="form-control mt-3" placeholder="AppartmentUnit" /></td>
+                </tr>
+                <tr>
+                    <td><br /></td>
+                    <td><br /></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><b>Bedspace Setup</b></td>
+                </tr>
+                <tr>
+                    <td><label for="startDateInput" class="mt-3">Start Date:</label></td>
+                    <td>
+                        <DateInput TValue="DateOnly" @bind-Value="StartDate" />
+                        <TimeInput TValue="TimeOnly" @bind-Value="StartTime" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="endDateInput" class="mt-3">End Date:</label></td>
+                    <td>
+                        <DateInput TValue="DateOnly" @bind-Value="EndDate" />
+                        <TimeInput TValue="TimeOnly" @bind-Value="EndTime" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><br /></td>
+                    <td><br /></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><b>Bedspace Flags</b></td>
+                </tr>
+
+                <tr>
+                    <td><label for="sexSelect" class="mt-3">Sex:</label></td>
+                    <td>
+                        <select class="form-control mt-3" @bind="SelectedObject.Sex">
+                            @* <option value="0">None</option> *@
+                            <option value="1">M</option>
+                            <option value="2">F</option>
+                            <option value="3">NA</option>
+
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="communitySelect" class="mt-3">Community:</label></td>
+                    <td>
+
+                        <select class="form-control mt-3" @bind="SelectedObject.Community">
+                            @* <option value="0">None</option> *@
+                            <option value="1">18-</option>
+                            <option value="2">18+</option>
+                            <option value="3">19+</option>
+                            <option value="4">Any</option>
+
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">Active</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="SelectedObject.Active" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">ESA</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="SelectedObject.ESA" class="form-check-input" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">Athlete</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="SelectedObject.Athlete" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">ADA</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="SelectedObject.ADA" class="form-check-input" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">InternationalScholarship</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="SelectedObject.InternationalScholarship" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">Wheatley</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="SelectedObject.Wheatley" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">NoAnimal</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="SelectedObject.NoAnimal" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">IsolateQuarantine</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="SelectedObject.IsolateQuarantine" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">FLEXGE</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="SelectedObject.FLEXGE" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">POSTBacc</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="SelectedObject.POSTBacc" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">Freeze</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="SelectedObject.Freeze" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">WaitingList</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="SelectedObject.WaitingList" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <label class="mt-3">Consolidate</label></td>
+                    <td>
+                        <div class="form-check mt-3">
+                            <InputCheckbox @bind-Value="SelectedObject.Consolidate" class="form-check-input" />
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><br /></td>
+                    <td><br /></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><b>User Actions</b></td>
+                </tr>
+                <tr>
+                    <td><label for="nameInput">First Name:</label></td>
+                    <td><input type="text" @bind="SelectedObject.FName" /></td>
+                </tr>
+
+                <tr>
+                    <td><label for="nameInput">Last Name:</label></td>
+                    <td><input type="text" @bind="SelectedObject.LName" /></td>
+                </tr>
+
+                <tr>
+                    <td><label for="nameInput">NetID:</label></td>
+                    <td><input type="text" @bind="SelectedObject.NetID" /></td>
+                </tr>
+                <tr>
+                    <td><label for="contractDateInput" class="mt-3">Contract Date:</label></td>
+                    <td>
+                        <DateInput TValue="DateOnly" @bind-Value="ContractDate" />
+                        <TimeInput TValue="TimeOnly" @bind-Value="ContractTime" />
+                    </td>
+                </tr>
+            </table>
+            <br />
+        </div>
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
+        <Button Color="ButtonColor.Primary" @onclick="UpsertObject">Save changes</Button>
+    </FooterTemplate>
+</Modal>
+<style>
+    .scroll-container {
+        position: relative;
+        width: 100%;
+        height: calc(100vh - 100px);
+        overflow: auto;
+        border: 1px solid #ccc;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .block-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .block-row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 0;
+        min-width: max-content;
+    }
+
+    .block-item {
+        border: 1px solid black;
+        padding: 0;
+        margin: 0;
+        display: inline-block;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    /* Style for buttons */
+    button {
+        margin-bottom: 10px;
+    }
+</style>
+
+
+
+@code {
+
+    #region Instantiations
+    private List<BlockTest> BlockTestList { get; set; } = new List<BlockTest>();
+    private BlockTest SelectedObject = new BlockTest();
+    private Modal ObjectAdditionModal = default!;
+    private DateOnly StartDate = DateOnly.FromDateTime(DateTime.Now);
+    private TimeOnly StartTime = TimeOnly.FromDateTime(DateTime.Now);
+    private DateOnly EndDate = DateOnly.FromDateTime(DateTime.Now);
+    private TimeOnly EndTime = TimeOnly.FromDateTime(DateTime.Now);
+    private DateOnly ContractDate = DateOnly.FromDateTime(DateTime.Now);
+    private TimeOnly ContractTime = TimeOnly.FromDateTime(DateTime.Now);
+
+
+
+    #endregion
+
+    #region CRUD Operations
+
+    private async Task ShowEditItemModal(BlockTest block)
+    {
+        SelectedObject = block;
+        StartDate = DateOnly.FromDateTime(block.StartDate ?? DateTime.Now);
+        StartTime = TimeOnly.FromDateTime(block.StartDate ?? DateTime.Now);
+        EndDate = DateOnly.FromDateTime(block.EndDate ?? DateTime.Now);
+        EndTime = TimeOnly.FromDateTime(block.EndDate ?? DateTime.Now);
+        ContractDate = DateOnly.FromDateTime(block.ContractDate?.Date ?? DateTime.Now);
+        ContractTime = TimeOnly.FromDateTime(block.ContractDate?.Date ?? DateTime.Now);
+        await ObjectAdditionModal.ShowAsync();
+    }
+
+    private async Task UpsertObject()
+    {
+        SelectedObject.StartDate = StartDate.ToDateTime(StartTime);
+        SelectedObject.EndDate = EndDate.ToDateTime(EndTime);
+        SelectedObject.ContractDate = ContractDate.ToDateTime(ContractTime);
+
+        GenService.Upsert<BlockTest>(SelectedObject);
+        await ObjectAdditionModal.HideAsync();
+    }
+
+    private async Task OnHideModalClick() => await ObjectAdditionModal.HideAsync();
+    #endregion
+
+
+    // Dictionary to store the filter options
+    private Dictionary<int, string> AreaFilterOptions = new()
+    {
+        { 1, "HELAMAN" },
+        { 2, "HERITAGE" },
+        { 3, "RIVIERA" },
+        { 4, "WYVIEW" },
+        { 5, "LISR" }
+    };
+
+    // Dictionary to track selected filter checkboxes
+    private Dictionary<int, bool> SelectedAreas = new()
+    {
+        { 1, false },
+        { 2, false },
+        { 3, false },
+        { 4, false },
+        { 5, false }
+    };
+
+    private async Task FetchBlockTestData()
+    {
+        // Get the list of selected area keys
+        var selectedAreaKeys = SelectedAreas.Where(kvp => kvp.Value).Select(kvp => kvp.Key).ToList();
+
+        // Fetch filtered data from the service
+        BlockTestList = await Task.Run(() =>
+            GenService.GetModel<BlockTest>()
+                      .AsQueryable()
+                      .Where(b => selectedAreaKeys.Contains(b.Area ?? 0)) // Handle null areas with ?? 0
+                      .ToList());
+    }
+
+    private string CalculateBlockWidth(DateTime? startDate, DateTime? endDate)
+    {
+        if (startDate.HasValue && endDate.HasValue)
+        {
+            var duration = (endDate.Value - startDate.Value).TotalHours;
+            return $"{Math.Max(1, duration)}px";
+        }
+        return "1px";
+    }
+
+    private string GetOccupantTypeDescription(int? occupantType)
+    {
+        return occupantType switch
+        {
+            1 => "Single",
+            2 => "Family",
+            3 => "Conference",
+            4 => "LISR",
+            5 => "Off Campus",
+            6 => "Closed For Maintenance",
+            7 => "Not Available",
+            8 => "Available if Needed",
+            9 => "Special",
+            10 => "Employee",
+            _ => "Unknown"
+        };
+    }
+
+    private string GetBackgroundColor(int? occupantType)
+    {
+        return occupantType switch
+        {
+            1 => "lightblue",
+            2 => "lightgreen",
+            3 => "yellow",
+            4 => "brown",
+            5 => "red",
+            6 => "purple",
+            7 => "pink",
+            8 => "tan",
+            9 => "turquoise",
+            10 => "orange",
+            _ => "gray"
+        };
+    }
+
+    private string GetAreaDescription(int? area)
+    {
+        return area switch
+        {
+            1 => "HELAMAN",
+            2 => "HERITAGE",
+            3 => "RIVIERA",
+            4 => "WYVIEW",
+            5 => "LISR",
+            _ => "Unknown"
+        };
+    }
+
+    private string GetBuidlingDescription(int? building)
+    {
+        return building switch
+        {
+            1 => "LI A",
+            2 => "LI B",
+            3 => "LI C",
+            4 => "LI D",
+            5 => "LI E",
+            6 => "HL Hinckley",
+            7 => "HL Chipman",
+            8 => "HL David John",
+            9 => "HL Taylor",
+            10 => "HL Stover",
+            11 => "HL Budge",
+            12 => "HL Merrill",
+            13 => "HL May",
+            14 => "HL B9",
+            15 => "HR02",
+            16 => "HR03",
+            17 => "HR04",
+            18 => "HR05",
+            19 => "HR06",
+            20 => "HR07",
+            21 => "HR08",
+            22 => "HR09",
+            23 => "HR10",
+            24 => "HR11",
+            25 => "HR12",
+            26 => "HR13",
+            27 => "HR14",
+            28 => "HR15",
+            29 => "HR16",
+            30 => "RI A",
+            31 => "RI B",
+            32 => "RI C",
+            33 => "RI D",
+            34 => "RI E",
+            35 => "RI F",
+            36 => "RI G",
+            37 => "RI H",
+            38 => "RI I",
+            39 => "RI J",
+            40 => "RI K",
+            41 => "RI L",
+            42 => "WP 1",
+            43 => "WP 2",
+            44 => "WP 3",
+            45 => "WP 4",
+            46 => "WP 5",
+            47 => "WP 6",
+            48 => "WP 7",
+            49 => "WP 8",
+            50 => "WP 9",
+            51 => "WP 10",
+            52 => "WP 11",
+            53 => "WP 12",
+            54 => "WP 13",
+            55 => "WP 14",
+            56 => "WP 15",
+            57 => "WP 16",
+            58 => "WP 17",
+            59 => "WP 18",
+            60 => "WP 19",
+            61 => "WP 20",
+            62 => "WP 21",
+            63 => "WP 22",
+            64 => "WP 23",
+            65 => "WP 24",
+            66 => "WP 25",
+            67 => "WP 26",
+            68 => "WP 27",
+            69 => "WP 28",
+            70 => "WP 29",
+            71 => "WP 30",
+            72 => "RI O",
+            _ => "NA"
+        };
+    }
+}
