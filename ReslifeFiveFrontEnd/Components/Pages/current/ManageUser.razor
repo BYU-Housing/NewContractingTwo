@@ -9,11 +9,13 @@
 </div>
 
 <div class="container-fluid vh-100">
-    <Grid Id="blazorGrid" TItem="User"
+    <Grid @ref="userGrid" TItem="User"
           DataProvider="UserDataProvider"
           Class="w-100 table table-hovor table-bordered table-striped"
           AllowPaging="true"
           FixedHeader="true"
+          AllowRowClick="true"
+          OnRowDoubleClick="EditUser"
           PageSize="15"
           Responsive="true">
         <GridColumn TItem="User" HeaderText="Id">
@@ -44,10 +46,7 @@
         <GridColumn TItem="User" HeaderText="Role">
             @(context.Role?.Name ?? "Role Not Loaded")
         </GridColumn>
-        <GridColumn TItem="User" HeaderText="Action">
-            <Button @onclick="() => EditUser(context)">
-                <Icon Name="IconName.Pencil" />
-            </Button>
+        <GridColumn TItem="User" HeaderText="Delete">
             <Button @onclick="() => DeleteUser(context)">
                 <Icon Name="IconName.Trash3" />
             </Button>
@@ -106,23 +105,27 @@
 @code {
 
     #region Instantiations
-    public List<User> usersList = new List<User>();
+    private Grid<User> userGrid;
     public IEnumerable<User>? users;
     public User SelectedUser { get; set; } = new User();
     public List<Role> Roles { get; set; } = [];
     private Modal ObjectAdditionModal = default!;
     private ConfirmDialog dialog = default!;
+    private bool gridUpdate = false;
 
 
     protected override void OnInitialized()
     {
         Roles = genService.GetModel<Role>().ToList();
-        _ = genService.GetModelInBatchesAsync<User>(usersList,50, x => x.Id);
     }
     private async Task<GridDataProviderResult<User>> UserDataProvider(GridDataProviderRequest<User> request)
     {
-        if (users is null)
+        if (users is null || gridUpdate == true)
+        {
             users = genService.GetModel<User>();
+            gridUpdate = false;
+        }
+        
         return await Task.FromResult(request.ApplyTo(users));
     }
     #endregion
@@ -133,9 +136,9 @@
         SelectedUser = new User();
         await ObjectAdditionModal.ShowAsync();
     }
-    private async Task EditUser(User user)
+    private async Task EditUser(GridRowEventArgs<User> args)
     {
-        SelectedUser = user;
+        SelectedUser = args.Item;
         await ObjectAdditionModal.ShowAsync();
 
     }
@@ -156,7 +159,8 @@
         {
             genService.Remove<User>(user);
             genService.SaveChanges();
-            usersList.Remove(user);
+            gridUpdate = true;
+            userGrid.RefreshDataAsync();
             StateHasChanged();
         }
     }
@@ -172,8 +176,8 @@
 
 
         genService.Upsert<User>(SelectedUser);
-        usersList.Add(SelectedUser);
-        users = usersList;
+        gridUpdate = true;
+        userGrid.RefreshDataAsync();
         await ObjectAdditionModal.HideAsync();
         
     }
