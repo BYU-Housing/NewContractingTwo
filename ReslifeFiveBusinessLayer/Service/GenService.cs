@@ -32,7 +32,44 @@ namespace ReslifeFiveBusinessLayer.Service
 
             return query;
         }
+        public async Task GetModelInBatchesAsync<T>(List<T> targetList, int batchSize, Func<T, int> keySelector) where T : class
+        {
 
+            int offset = 0;
+            bool hasMoreData = true;
+            targetList.Clear();
+
+            while (hasMoreData)
+            {
+                var batch = _repo.Set<T>()
+                                       .OrderBy(keySelector)
+                                       .Skip(offset)
+                                       .Take(batchSize)
+                                       .ToList();
+
+
+                if (batch.Count == 0)
+                {
+                    hasMoreData = false; // No more data to load
+                }
+                else
+                {
+                    // Add the batch to the target list
+                    targetList.AddRange(batch);
+                    //foreach (var item in batch)
+                    //{
+                    //    targetList.Add(item);
+                    //}                   
+
+                    offset += batchSize;
+
+                    // Trigger UI updates
+                    await Task.Yield();
+
+                }
+            }
+
+        }
         public async Task<T> GetByIdAsync<T>(int id) where T : class
         {
             //retrieves the ID property from the class that you pass in

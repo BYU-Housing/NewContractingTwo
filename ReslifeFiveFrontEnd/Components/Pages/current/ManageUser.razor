@@ -106,6 +106,7 @@
 @code {
 
     #region Instantiations
+    public List<User> usersList = new List<User>();
     public IEnumerable<User>? users;
     public User SelectedUser { get; set; } = new User();
     public List<Role> Roles { get; set; } = [];
@@ -116,6 +117,7 @@
     protected override void OnInitialized()
     {
         Roles = genService.GetModel<Role>().ToList();
+        _ = genService.GetModelInBatchesAsync<User>(usersList,50, x => x.Id);
     }
     private async Task<GridDataProviderResult<User>> UserDataProvider(GridDataProviderRequest<User> request)
     {
@@ -154,6 +156,7 @@
         {
             genService.Remove<User>(user);
             genService.SaveChanges();
+            usersList.Remove(user);
             StateHasChanged();
         }
     }
@@ -166,7 +169,11 @@
             users.Append<User>(SelectedUser);
         }
         SelectedUser.DateOfBirth = SelectedUser.DateOfBirth.ToUniversalTime();
+
+
         genService.Upsert<User>(SelectedUser);
+        usersList.Add(SelectedUser);
+        users = usersList;
         await ObjectAdditionModal.HideAsync();
         
     }
