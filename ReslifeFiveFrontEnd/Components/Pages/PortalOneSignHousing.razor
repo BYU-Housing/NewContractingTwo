@@ -2,10 +2,46 @@
 @inject NavigationManager NavigationManager
 @using Microsoft.AspNetCore.WebUtilities
 
+<h3>PortalOneSignHousing</h3>
+
 <p>Adobe Sign</p>
 
-<iframe src="https://byusign.na2.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhDM3zCrudXhWDBOpRpgO3eb81DCYxg860qVofVXyHDFouQU9N84_ViVlbBrUb_eldc*&hosted=false#Prop1=Area" width="100%" height="100%" frameborder="0" style="border: 0; overflow: hidden; min-height: 500px; min-width: 600px;"></iframe>
+@if (parameters != null && parameters.Any())
+{
+    <h4>URL Parameters:</h4>
+    <ul>
+        @foreach (var param in parameters)
+        {
+            <li>@param.Key: @param.Value</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No parameters were passed to this page.</p>
+}
+
+<iframe src="@iframeSrc"
+        width="100%"
+        height="100%"
+        frameborder="0"
+        style="border: 0; overflow: hidden; min-height: 500px; min-width: 600px;">
+</iframe>
 
 @code {
-  
+    private Dictionary<string, string> parameters = new();
+    private string iframeSrc;
+
+    protected override void OnInitialized()
+    {
+        var uri = new Uri(NavigationManager.Uri);
+        parameters = QueryHelpers.ParseQuery(uri.Query)
+                                  .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToString());
+
+        // Extract Area parameter value
+        var areaValue = parameters.ContainsKey("Area") ? parameters["Area"] : "DefaultArea";
+
+        // Replace Area in the Adobe Sign iframe URL
+        iframeSrc = $"https://byusign.na2.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhDM3zCrudXhWDBOpRpgO3eb81DCYxg860qVofVXyHDFouQU9N84_ViVlbBrUb_eldc*&hosted=false#Prop1={areaValue}";
+    }
 }
