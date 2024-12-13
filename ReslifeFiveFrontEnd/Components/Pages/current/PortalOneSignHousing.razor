@@ -1,48 +1,59 @@
 ﻿@page "/portalOneSignHousing"
 @inject NavigationManager NavigationManager
-@inject IGenService GenService
-@using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.WebUtilities
 
-<h3>Sign Housing Agreement</h3>
+<h3>PortalOneSignHousing</h3>
 
-<div class="progress mb-3">
-    <div class="progress-bar"
-         role="progressbar"
-         style="width: 70%;"
-         aria-valuenow="70"
-         aria-valuemin="0"
-         aria-valuemax="100">
-        Step 7 of 10
-    </div>
-</div>
+<p>Adobe Sign</p>
 
-<div class="iframe-container">
-    <iframe src="https://byusign.na2.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhCRGXCoNOZTWZqIBFqheJBgO9aSC88qeixZ2W5qPPYHatMzvNZ5hghHC8yispuAwQo*&hosted=false"
-            width="100%"
-            height="100%"
-            frameborder="0"
-            style="border: 0; overflow: hidden; min-height: 500px; min-width: 600px;">
-    </iframe>
-</div>
+@if (parameters != null && parameters.Any())
+{
+    <h4>URL Parameters:</h4>
+    <ul>
+        @foreach (var param in parameters)
+        {
+            <li>@param.Key: @param.Value</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No parameters were passed to this page.</p>
+}
 
-<style>
-    .iframe-container {
-        width: 100%;
-        min-height: 500px;
-        border: none;
-        overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #f8f9fa; /* Optional background color */
-    }
-
-    iframe {
-        flex-grow: 1;
-    }
-</style>
+<iframe src="@iframeSrc"
+        width="100%"
+        height="100%"
+        frameborder="0"
+        style="border: 0; overflow: hidden; min-height: 500px; min-width: 600px;">
+</iframe>
 
 @code {
+    private Dictionary<string, string> parameters = new();
+    private string iframeSrc;
 
+    protected override void OnInitialized()
+    {
+        var uri = new Uri(NavigationManager.Uri);
+        parameters = QueryHelpers.ParseQuery(uri.Query)
+                                  .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToString());
+
+        // Extract Area parameter value
+        var areaValue = parameters.ContainsKey("Area") ? parameters["Area"] : "0";
+
+        // Map Area to the appropriate name
+        string areaName = areaValue switch
+        {
+            "1" => "Helaman",
+            "2" => "Heritage",
+            "3" => "Riviera",
+            "4" => "Wyview",
+            _ => "Unknown"
+        };
+
+        // Replace Area in the Adobe Sign iframe URL
+        iframeSrc = $"https://byusign.na2.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhDM3zCrudXhWDBOpRpgO3eb81DCYxg860qVofVXyHDFouQU9N84_ViVlbBrUb_eldc*&hosted=false#Prop1={areaName}";
+
+    }
 }
+
