@@ -5,7 +5,7 @@ using ReslifeFiveBackEnd.Repository;
 using ReslifeFiveBusinessLayer.Service;
 using ReslifeFiveFrontEnd.Application.Authentication;
 using ReslifeFiveFrontEnd.Components;
-
+using ReslifeFiveFrontEnd.Application.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -18,6 +18,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<ISamlService, SamlService>();
 builder.Services.AddScoped<IGenRepository,GenRepository>();
 builder.Services.AddScoped<IGenService, GenService>();
+builder.Services.AddScoped<ITimeZoneService, TimeZoneService>();
 builder.Services.AddBlazorBootstrap();
 
 
