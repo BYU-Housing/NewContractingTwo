@@ -1,12 +1,18 @@
 ﻿@page "/manageUser"
 @inject IGenService genService
-
+@inject IJSRuntime JS
+@inject ITimeZoneService timeZone
 <h2>Manage Users and Permissions</h2>
 
 
 <div>
     <Button Color="ButtonColor.Primary" @onclick="AddUser">Add New User </Button>
+    <span class="d-flex justify-content-end">All Times Displayed in @_localTimeZone?.DaylightName</span>
 </div>
+
+
+
+
 
 <div class="container-fluid vh-100">
     <Grid @ref="userGrid" TItem="User"
@@ -58,7 +64,7 @@
             @context.NetId
         </GridColumn>
         <GridColumn TItem="User" HeaderText="Date Of Birth">
-            @context.DateOfBirth
+            @(timeZone.ConvertUtcToLocal(context.DateOfBirth))
         </GridColumn>
         <GridColumn TItem="User" HeaderText="Marital Status">
             @context.MaritalStatus
@@ -103,21 +109,27 @@
 
 <ConfirmDialog @ref="dialog" />
 @code {
-
     #region Instantiations
-    private Grid<User> userGrid;
+    private Grid<User> userGrid = default!;
     public IEnumerable<User>? users;
     public User SelectedUser { get; set; } = new User();
     public List<Role> Roles { get; set; } = [];
     private Modal ObjectAdditionModal = default!;
     private ConfirmDialog dialog = default!;
     private bool gridUpdate = false;
+    private TimeZoneInfo? _localTimeZone;
+    private DateTime testDateTime = DateTime.Now;
+    private DateTime testUtcDateTime = DateTime.Now;
+    private string localTimeZoneName = string.Empty;
 
-
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         Roles = genService.GetModel<Role>().ToList();
+        _localTimeZone = await timeZone.GetUserTimeZoneAsync();
+        localTimeZoneName = await timeZone.GetUserTimeZoneNameAsync();
     }
+
+
     private async Task<GridDataProviderResult<User>> UserDataProvider(GridDataProviderRequest<User> request)
     {
         if (users is null || gridUpdate == true)
@@ -160,7 +172,7 @@
             genService.Remove<User>(user);
             genService.SaveChanges();
             gridUpdate = true;
-            userGrid.RefreshDataAsync();
+            await userGrid.RefreshDataAsync();
             StateHasChanged();
         }
     }
@@ -173,11 +185,9 @@
             users.Append<User>(SelectedUser);
         }
         SelectedUser.DateOfBirth = SelectedUser.DateOfBirth.ToUniversalTime();
-
-
         genService.Upsert<User>(SelectedUser);
         gridUpdate = true;
-        userGrid.RefreshDataAsync();
+        await userGrid.RefreshDataAsync();
         await ObjectAdditionModal.HideAsync();
         
     }
