@@ -11,6 +11,11 @@
     </div>
 
     <div>
+        <label>Enter NetID:</label>
+        <input type="text" @bind="netID" class="form-control" placeholder="Enter your NetID" />
+    </div>
+
+    <div>
         <label>Select Eligibility:</label>
         <input type="radio" name="eligibility" value="true" @onchange="e => OnEligibilityChanged(true)" checked="@(eligibility == true)" /> Yes
         <input type="radio" name="eligibility" value="false" @onchange="e => OnEligibilityChanged(false)" checked="@(eligibility == false)" /> No
@@ -86,13 +91,14 @@
     </div>
 
     <button type="button" @onclick="NavigateToStepOne" class="btn btn-primary"
-            disabled="@(string.IsNullOrWhiteSpace(name) || eligibility == null || ageGroup == null || Mnr == null || REQ == null || agreementPeriod == null || sexAtBirth == null || Parameters.Any(kvp => kvp.Value == null))">
+            disabled="@(string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(netID) || eligibility == null || ageGroup == null || Mnr == null || REQ == null || agreementPeriod == null || sexAtBirth == null || Parameters.Any(kvp => kvp.Value == null))">
         Go To Select Area
     </button>
 </form>
 
 @code {
-    private string name { get; set; } = string.Empty; // New property for Name
+    private string name { get; set; } = string.Empty; // Property for Name
+    private string netID { get; set; } = string.Empty; // Property for NetID
     private bool? eligibility = false;
     private bool? ageGroup = false;
     private bool? Mnr = false;
@@ -155,6 +161,7 @@
         var queryParams = new List<string>
         {
             $"Name={Uri.EscapeDataString(name)}",
+            $"NetID={Uri.EscapeDataString(netID)}",
             $"Ebt={(eligibility ?? false ? "true" : "false")}",
             $"AgeGroup={(ageGroup ?? false ? "true" : "false")}",
             $"Mnr={(Mnr ?? false ? "true" : "false")}",
