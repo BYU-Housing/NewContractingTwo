@@ -22,13 +22,13 @@
 <div>
     <label>
         <input type="radio" name="ageGroup" value="true" @onchange="OnAgeGroupChanged" checked="@((ageGroup == true))" />
-        Minor
+        18-
     </label>
 </div>
 <div>
     <label>
         <input type="radio" name="ageGroup" value="false" @onchange="OnAgeGroupChanged" checked="@((ageGroup == false))" />
-        Not Minor
+        19+
     </label>
 </div>
 
@@ -61,7 +61,7 @@
 </p>
 
 <p>
-    Selected Age Group: @(ageGroup.HasValue ? (ageGroup.Value ? "Minor" : "Not Minor") : "Not Selected")
+    Selected Age Group: @(ageGroup.HasValue ? (ageGroup.Value ? "18-" : "19+") : "Not Selected")
 </p>
 
 <p>
@@ -82,7 +82,7 @@
 
 @code {
     private bool? eligibility = null;
-    private bool? ageGroup = null; // True = Minor, False = Not Minor
+    private bool? ageGroup = null; // True = 18-, False = 19+
     private DateTime? PDHL = null; // Priority Date Helaman Halls
     private DateTime? PDHR = null; // Priority Date Heritage Halls
     private DateTime? CDRI = null; // Priority Date CDRI
