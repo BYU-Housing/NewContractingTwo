@@ -1,8 +1,23 @@
 ﻿@page "/dynamicPortalStepOneSelectArea"
-@inject IGenService GenService
 @inject NavigationManager NavigationManager
+
 <h3>DynamicPortalStepOneSelectArea</h3>
 
-@code {
+<p>
+    Eligibility: @(eligibility.HasValue ? (eligibility.Value ? "Yes" : "No") : "Not Provided")
+</p>
 
+@code {
+    private bool? eligibility;
+
+    protected override void OnInitialized()
+    {
+        var uri = new Uri(NavigationManager.Uri);
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+
+        if (query.TryGetValue("Ebt", out var value) && bool.TryParse(value, out var result))
+        {
+            eligibility = result;
+        }
+    }
 }
