@@ -4,147 +4,83 @@
 
 <h3>DynamicPortal</h3>
 
-<p>Select Eligibility:</p>
-<div>
-    <label>
-        <input type="radio" name="eligibility" value="true" @onchange="OnEligibilityChanged" checked="@((eligibility == true))" />
-        Yes
-    </label>
-</div>
-<div>
-    <label>
-        <input type="radio" name="eligibility" value="false" @onchange="OnEligibilityChanged" checked="@((eligibility == false))" />
-        No
-    </label>
-</div>
-
-<p>Select Age Group:</p>
-<div>
-    <label>
-        <input type="radio" name="ageGroup" value="true" @onchange="OnAgeGroupChanged" checked="@((ageGroup == true))" />
-        18-
-    </label>
-</div>
-<div>
-    <label>
-        <input type="radio" name="ageGroup" value="false" @onchange="OnAgeGroupChanged" checked="@((ageGroup == false))" />
-        19+
-    </label>
-</div>
-
-<p>Select Minor Status:</p>
-<div>
-    <label>
-        <input type="radio" name="Mnr" value="true" @onchange="OnMnrChanged" checked="@((Mnr == true))" />
-        Yes
-    </label>
-</div>
-<div>
-    <label>
-        <input type="radio" name="Mnr" value="false" @onchange="OnMnrChanged" checked="@((Mnr == false))" />
-        No
-    </label>
-</div>
-
-<p>Select Requirement Status:</p>
-<div>
-    <label>
-        <input type="radio" name="REQ" value="true" @onchange="OnReqChanged" checked="@((REQ == true))" />
-        Met
-    </label>
-</div>
-<div>
-    <label>
-        <input type="radio" name="REQ" value="false" @onchange="OnReqChanged" checked="@((REQ == false))" />
-        Not Met
-    </label>
-</div>
-
-@foreach (var param in Parameters)
-{
-    <p>Select @param.Key Status:</p>
+<form>
     <div>
-        <label>
-            <input type="radio" name="@param.Key" value="true" @onchange="@(e => OnParamChanged(param.Key, true))" />
-            Yes
-        </label>
+        <label>Select Eligibility:</label>
+        <input type="radio" name="eligibility" value="true" @onchange="e => OnEligibilityChanged(true)" checked="@(eligibility == true)" /> Yes
+        <input type="radio" name="eligibility" value="false" @onchange="e => OnEligibilityChanged(false)" checked="@(eligibility == false)" /> No
     </div>
+
     <div>
-        <label>
-            <input type="radio" name="@param.Key" value="false" @onchange="@(e => OnParamChanged(param.Key, false))" />
-            No
-        </label>
+        <label>Select Age Group:</label>
+        <input type="radio" name="ageGroup" value="true" @onchange="e => OnAgeGroupChanged(true)" checked="@(ageGroup == true)" /> 18-
+        <input type="radio" name="ageGroup" value="false" @onchange="e => OnAgeGroupChanged(false)" checked="@(ageGroup == false)" /> 19+
     </div>
-}
 
-<p>
-    Select Priority Date Helaman Halls Timestamp:
-    <input type="datetime-local" @bind="PDHL" class="form-control" />
-</p>
+    <div>
+        <label>Select Minor Status:</label>
+        <input type="radio" name="Mnr" value="true" @onchange="e => OnMnrChanged(true)" checked="@(Mnr == true)" /> Yes
+        <input type="radio" name="Mnr" value="false" @onchange="e => OnMnrChanged(false)" checked="@(Mnr == false)" /> No
+    </div>
 
-<p>
-    Select Priority Date Heritage Halls Timestamp:
-    <input type="datetime-local" @bind="PDHR" class="form-control" />
-</p>
+    <div>
+        <label>Select Requirement Status:</label>
+        <input type="radio" name="REQ" value="true" @onchange="e => OnReqChanged(true)" checked="@(REQ == true)" /> Met
+        <input type="radio" name="REQ" value="false" @onchange="e => OnReqChanged(false)" checked="@(REQ == false)" /> Not Met
+    </div>
 
-<p>
-    Select Priority Date CDRI Timestamp:
-    <input type="datetime-local" @bind="CDRI" class="form-control" />
-</p>
+    @foreach (var param in Parameters)
+    {
+        <div>
+            <label>Select @param.Key Status:</label>
+            <input type="radio" name="@param.Key" value="true" @onchange="e => OnParamChanged(param.Key, true)" checked="@(param.Value == true)" /> Yes
+            <input type="radio" name="@param.Key" value="false" @onchange="e => OnParamChanged(param.Key, false)" checked="@(param.Value == false)" /> No
+        </div>
+    }
 
-<p>
-    Select Priority Date CDWP Timestamp:
-    <input type="datetime-local" @bind="CDWP" class="form-control" />
-</p>
+    <div>
+        <label>Select Agreement Period:</label>
+        <select @onchange="OnAgreementPeriodChanged" class="form-control">
+            <option value="">-- Select --</option>
+            <option value="1">Fall Winter 2025</option>
+            <option value="2">Winter 2026</option>
+            <option value="3">Spring 2025</option>
+            <option value="4">Summer 2025</option>
+        </select>
+    </div>
 
-<p>
-    <button @onclick="NavigateToStepOne" class="btn btn-primary" disabled="@(eligibility == null || ageGroup == null || Mnr == null || REQ == null || Parameters.Any(kvp => kvp.Value == null))">
+    <div>
+        <label>Select Priority Date Helaman Halls:</label>
+        <input type="datetime-local" @bind="PDHL" />
+    </div>
+
+    <div>
+        <label>Select Priority Date Heritage Halls:</label>
+        <input type="datetime-local" @bind="PDHR" />
+    </div>
+
+    <div>
+        <label>Select Priority Date CDRI:</label>
+        <input type="datetime-local" @bind="CDRI" />
+    </div>
+
+    <div>
+        <label>Select Priority Date CDWP:</label>
+        <input type="datetime-local" @bind="CDWP" />
+    </div>
+
+    <button type="button" @onclick="NavigateToStepOne" class="btn btn-primary"
+            disabled="@(eligibility == null || ageGroup == null || Mnr == null || REQ == null || Parameters.Any(kvp => kvp.Value == null) || agreementPeriod == null)">
         Go To Select Area
     </button>
-</p>
-
-<p>
-    Selected Eligibility: @(eligibility.HasValue ? (eligibility.Value ? "Yes" : "No") : "Not Selected")
-</p>
-
-<p>
-    Selected Age Group: @(ageGroup.HasValue ? (ageGroup.Value ? "18-" : "19+") : "Not Selected")
-</p>
-
-<p>
-    Selected Minor Status: @(Mnr.HasValue ? (Mnr.Value ? "Yes" : "No") : "Not Selected")
-</p>
-
-<p>
-    Selected Requirement Status: @(REQ.HasValue ? (REQ.Value ? "Met" : "Not Met") : "Not Selected")
-</p>
-
-@foreach (var param in Parameters)
-{
-    <p>@param.Key: @(param.Value.HasValue ? (param.Value.Value ? "Yes" : "No") : "Not Selected")</p>
-}
-
-<p>
-    Selected Priority Date Helaman Halls: @(PDHL.HasValue ? PDHL.Value.ToString("yyyy-MM-dd HH:mm:ss") : "Not Set")
-</p>
-
-<p>
-    Selected Priority Date Heritage Halls: @(PDHR.HasValue ? PDHR.Value.ToString("yyyy-MM-dd HH:mm:ss") : "Not Set")
-</p>
-
-<p>
-    Selected Priority Date CDRI: @(CDRI.HasValue ? CDRI.Value.ToString("yyyy-MM-dd HH:mm:ss") : "Not Set")
-</p>
-
-<p>
-    Selected Priority Date CDWP: @(CDWP.HasValue ? CDWP.Value.ToString("yyyy-MM-dd HH:mm:ss") : "Not Set")
-</p>
+</form>
 
 @code {
     private bool? eligibility = null;
     private bool? ageGroup = null;
     private bool? Mnr = null;
     private bool? REQ = null;
+    private int? agreementPeriod = null; // Selected Agreement Period
 
     private Dictionary<string, bool?> Parameters = new()
     {
@@ -164,30 +100,23 @@
     private DateTime? CDRI = null;
     private DateTime? CDWP = null;
 
-    private void OnEligibilityChanged(ChangeEventArgs e)
-    {
-        eligibility = bool.TryParse(e.Value?.ToString(), out var result) ? result : null;
-    }
-
-    private void OnAgeGroupChanged(ChangeEventArgs e)
-    {
-        ageGroup = bool.TryParse(e.Value?.ToString(), out var result) ? result : null;
-    }
-
-    private void OnMnrChanged(ChangeEventArgs e)
-    {
-        Mnr = bool.TryParse(e.Value?.ToString(), out var result) ? result : null;
-    }
-
-    private void OnReqChanged(ChangeEventArgs e)
-    {
-        REQ = bool.TryParse(e.Value?.ToString(), out var result) ? result : null;
-    }
+    private void OnEligibilityChanged(bool value) => eligibility = value;
+    private void OnAgeGroupChanged(bool value) => ageGroup = value;
+    private void OnMnrChanged(bool value) => Mnr = value;
+    private void OnReqChanged(bool value) => REQ = value;
 
     private void OnParamChanged(string param, bool value)
     {
         if (Parameters.ContainsKey(param))
             Parameters[param] = value;
+    }
+
+    private void OnAgreementPeriodChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var value))
+        {
+            agreementPeriod = value;
+        }
     }
 
     private void NavigateToStepOne()
@@ -203,6 +132,7 @@
             $"AgeGroup={(ageGroup ?? false ? "true" : "false")}",
             $"Mnr={(Mnr ?? false ? "true" : "false")}",
             $"REQ={(REQ ?? false ? "true" : "false")}",
+            $"AGRPRD={agreementPeriod}",
             $"PDHL={PDHL.Value:yyyy-MM-ddTHH:mm:ss}",
             $"PDHR={PDHR.Value:yyyy-MM-ddTHH:mm:ss}",
             $"CDRI={CDRI.Value:yyyy-MM-ddTHH:mm:ss}",
