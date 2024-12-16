@@ -1,0 +1,67 @@
+﻿@page "/viewUserInfo"
+@inject AuthenticationStateProvider authState
+@inject IGenService genService
+@inject IWebHostEnvironment Env
+@inject NavigationManager navigation
+
+<h2>View User Info</h2>
+
+
+<div>
+
+    @if (IsUserAuthenticated)
+    {
+        <h3>Name: @loggedInUser.RestOfName @loggedInUser.Surname</h3>
+        <h3>Role: @loggedInUser.Role?.Name</h3>
+        <h3>Date of Birth:  @loggedInUser.DateOfBirth</h3>
+        <h3>Marital Status: @loggedInUser.MaritalStatus </h3>
+        <h3>Country: @loggedInUser.CitizenshipCountry</h3>
+        <h3>NetId: @loggedInUser.NetId</h3>
+    }
+
+    else
+    {
+        <h3>User not logged in. Please log in to view user information</h3>
+        <Button Color="ButtonColor.Primary" @onclick="NavigateToLogin">Go To Login</Button>
+    }
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+@code {
+    private bool IsUserAuthenticated = false;
+    private User loggedInUser = new User();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await authState.GetAuthenticationStateAsync();
+        var user = auth.User;
+
+        IsUserAuthenticated = user.Identity != null && user.Identity.IsAuthenticated;
+
+        if (IsUserAuthenticated && user != null)
+        {
+            var netid = user.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value;
+            loggedInUser = genService.GetModel<User>().FirstOrDefault(x => x.NetId == netid) ?? new User();
+        }
+    }
+
+    private void NavigateToLogin()
+    {
+        navigation.NavigateTo("Login");
+    }
+
+
+
+}
