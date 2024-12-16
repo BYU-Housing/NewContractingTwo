@@ -6,6 +6,11 @@
 
 <form>
     <div>
+        <label>Enter Name:</label>
+        <input type="text" @bind="name" class="form-control" placeholder="Enter your name" />
+    </div>
+
+    <div>
         <label>Select Eligibility:</label>
         <input type="radio" name="eligibility" value="true" @onchange="e => OnEligibilityChanged(true)" checked="@(eligibility == true)" /> Yes
         <input type="radio" name="eligibility" value="false" @onchange="e => OnEligibilityChanged(false)" checked="@(eligibility == false)" /> No
@@ -81,18 +86,19 @@
     </div>
 
     <button type="button" @onclick="NavigateToStepOne" class="btn btn-primary"
-            disabled="@(eligibility == null || ageGroup == null || Mnr == null || REQ == null || agreementPeriod == null || sexAtBirth == null || Parameters.Any(kvp => kvp.Value == null))">
+            disabled="@(string.IsNullOrWhiteSpace(name) || eligibility == null || ageGroup == null || Mnr == null || REQ == null || agreementPeriod == null || sexAtBirth == null || Parameters.Any(kvp => kvp.Value == null))">
         Go To Select Area
     </button>
 </form>
 
 @code {
+    private string name { get; set; } = string.Empty; // New property for Name
     private bool? eligibility = false;
     private bool? ageGroup = false;
     private bool? Mnr = false;
     private bool? REQ = false;
     private int? agreementPeriod = null;
-    private int? sexAtBirth = null; // New property for SexAtBirth
+    private int? sexAtBirth = null;
 
     private Dictionary<string, bool?> Parameters = new()
     {
@@ -148,6 +154,7 @@
 
         var queryParams = new List<string>
         {
+            $"Name={Uri.EscapeDataString(name)}",
             $"Ebt={(eligibility ?? false ? "true" : "false")}",
             $"AgeGroup={(ageGroup ?? false ? "true" : "false")}",
             $"Mnr={(Mnr ?? false ? "true" : "false")}",
