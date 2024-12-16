@@ -24,6 +24,10 @@
 </p>
 
 <p>
+    <button class="btn btn-primary" @onclick="NavigateToDynamicPortal">Dynamic Portal</button>
+</p>
+
+<p>
     <button class="btn btn-primary" @onclick="NavigateToCancelContracts">Go to Test Cancel Contract</button>
 </p>
 
@@ -66,5 +70,10 @@
     private void NavigateToTestMyPetitions()
     {
         NavigationManager.NavigateTo("/testMyPetitions");
+    }
+
+    private void NavigateToDynamicPortal()
+    {
+        NavigationManager.NavigateTo("/dynamicPortal");
     }
 }
