@@ -18,9 +18,7 @@
     </label>
 </div>
 
-<p>
-    Selected Eligibility: @(eligibility.HasValue ? (eligibility.Value ? "Yes" : "No") : "Not Selected")
-</p>
+
 
 <p>
     Select PDHL Timestamp:
@@ -32,7 +30,11 @@
 </p>
 
 <p>
-    Selected PDHL: @(PDHL.HasValue ? PDHL.Value.ToString("yyyy-MM-dd HH:mm:ss") : "Not Set")
+    Selected Eligibility: @(eligibility.HasValue ? (eligibility.Value ? "Yes" : "No") : "Not Selected")
+</p>
+
+<p>
+    Selected Priority Date Helaman Halls: @(PDHL.HasValue ? PDHL.Value.ToString("yyyy-MM-dd HH:mm:ss") : "Not Set")
 </p>
 
 @code {
