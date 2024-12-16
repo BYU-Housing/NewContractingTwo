@@ -26,6 +26,16 @@
     </div>
 
     <div>
+        <label>Enter NDONE:</label>
+        <input type="number" @bind="NDONE" class="form-control" placeholder="Enter NDONE value" />
+    </div>
+
+    <div>
+        <label>Enter NDTWO:</label>
+        <input type="number" @bind="NDTWO" class="form-control" placeholder="Enter NDTWO value" />
+    </div>
+
+    <div>
         <label>Select Eligibility:</label>
         <input type="radio" name="eligibility" value="true" @onchange="e => OnEligibilityChanged(true)" checked="@(eligibility == true)" /> Yes
         <input type="radio" name="eligibility" value="false" @onchange="e => OnEligibilityChanged(false)" checked="@(eligibility == false)" /> No
@@ -101,7 +111,7 @@
     </div>
 
     <button type="button" @onclick="NavigateToStepOne" class="btn btn-primary"
-            disabled="@(string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(netID) || dailyRate == null || monthlyPrice == null || eligibility == null || ageGroup == null || Mnr == null || REQ == null || agreementPeriod == null || sexAtBirth == null || Parameters.Any(kvp => kvp.Value == null))">
+            disabled="@(string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(netID) || dailyRate == null || monthlyPrice == null || NDONE == null || NDTWO == null || eligibility == null || ageGroup == null || Mnr == null || REQ == null || agreementPeriod == null || sexAtBirth == null || Parameters.Any(kvp => kvp.Value == null))">
         Go To Select Area
     </button>
 </form>
@@ -111,6 +121,8 @@
     private string netID { get; set; } = string.Empty; // Property for NetID
     private decimal? dailyRate { get; set; } = null; // Property for DRH
     private decimal? monthlyPrice { get; set; } = null; // Property for DRMP
+    private int? NDONE { get; set; } = null; // Property for NDONE
+    private int? NDTWO { get; set; } = null; // Property for NDTWO
     private bool? eligibility = false;
     private bool? ageGroup = false;
     private bool? Mnr = false;
@@ -176,6 +188,8 @@
             $"NetID={Uri.EscapeDataString(netID)}",
             $"DRH={dailyRate:0.00}",
             $"DRMP={monthlyPrice:0.00}",
+            $"NDONE={NDONE}",
+            $"NDTWO={NDTWO}",
             $"Ebt={(eligibility ?? false ? "true" : "false")}",
             $"AgeGroup={(ageGroup ?? false ? "true" : "false")}",
             $"Mnr={(Mnr ?? false ? "true" : "false")}",
