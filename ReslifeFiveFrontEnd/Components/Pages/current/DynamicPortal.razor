@@ -39,6 +39,11 @@
 
     private void NavigateToStepOne()
     {
-        NavigationManager.NavigateTo("/dynamicPortalStepOneSelectArea");
+        if (eligibility.HasValue)
+        {
+            // Append Ebt parameter to the URL
+            var eligibilityParam = eligibility.Value ? "true" : "false";
+            NavigationManager.NavigateTo($"/dynamicPortalStepOneSelectArea?Ebt={eligibilityParam}");
+        }
     }
 }
