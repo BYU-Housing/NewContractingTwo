@@ -50,6 +50,17 @@
     </div>
 
     <div>
+        <label>Select Sex At Birth:</label>
+        <select @onchange="OnSexAtBirthChanged" class="form-control">
+            <option value="">-- Select --</option>
+            <option value="1">M</option>
+            <option value="2">F</option>
+            <option value="3">FAM</option>
+            <option value="4">Other</option>
+        </select>
+    </div>
+
+    <div>
         <label>Select Priority Date Helaman Halls:</label>
         <input type="datetime-local" @bind="PDHL" />
     </div>
@@ -70,7 +81,7 @@
     </div>
 
     <button type="button" @onclick="NavigateToStepOne" class="btn btn-primary"
-            disabled="@(eligibility == null || ageGroup == null || Mnr == null || REQ == null || agreementPeriod == null || Parameters.Any(kvp => kvp.Value == null))">
+            disabled="@(eligibility == null || ageGroup == null || Mnr == null || REQ == null || agreementPeriod == null || sexAtBirth == null || Parameters.Any(kvp => kvp.Value == null))">
         Go To Select Area
     </button>
 </form>
@@ -81,6 +92,7 @@
     private bool? Mnr = false;
     private bool? REQ = false;
     private int? agreementPeriod = null;
+    private int? sexAtBirth = null; // New property for SexAtBirth
 
     private Dictionary<string, bool?> Parameters = new()
     {
@@ -119,6 +131,14 @@
         }
     }
 
+    private void OnSexAtBirthChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var value))
+        {
+            sexAtBirth = value;
+        }
+    }
+
     private void NavigateToStepOne()
     {
         PDHL ??= DateTime.Now;
@@ -133,6 +153,7 @@
             $"Mnr={(Mnr ?? false ? "true" : "false")}",
             $"REQ={(REQ ?? false ? "true" : "false")}",
             $"AGRPRD={agreementPeriod}",
+            $"Sex={sexAtBirth}",
             $"PDHL={PDHL.Value:yyyy-MM-ddTHH:mm:ss}",
             $"PDHR={PDHR.Value:yyyy-MM-ddTHH:mm:ss}",
             $"CDRI={CDRI.Value:yyyy-MM-ddTHH:mm:ss}",
