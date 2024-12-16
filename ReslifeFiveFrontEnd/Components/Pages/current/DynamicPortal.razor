@@ -70,29 +70,29 @@
     </div>
 
     <button type="button" @onclick="NavigateToStepOne" class="btn btn-primary"
-            disabled="@(eligibility == null || ageGroup == null || Mnr == null || REQ == null || Parameters.Any(kvp => kvp.Value == null) || agreementPeriod == null)">
+            disabled="@(eligibility == null || ageGroup == null || Mnr == null || REQ == null || agreementPeriod == null || Parameters.Any(kvp => kvp.Value == null))">
         Go To Select Area
     </button>
 </form>
 
 @code {
-    private bool? eligibility = null;
-    private bool? ageGroup = null;
-    private bool? Mnr = null;
-    private bool? REQ = null;
-    private int? agreementPeriod = null; // Selected Agreement Period
+    private bool? eligibility = false;
+    private bool? ageGroup = false;
+    private bool? Mnr = false;
+    private bool? REQ = false;
+    private int? agreementPeriod = null;
 
     private Dictionary<string, bool?> Parameters = new()
     {
-        { "ADA", null },
-        { "ATH", null },
-        { "ESA", null },
-        { "LISR", null },
-        { "ISCH", null },
-        { "FLEXGE", null },
-        { "WL", null },
-        { "PB", null },
-        { "NOAML", null }
+        { "ADA", false },
+        { "ATH", false },
+        { "ESA", false },
+        { "LISR", false },
+        { "ISCH", false },
+        { "FLEXGE", false },
+        { "WL", false },
+        { "PB", false },
+        { "NOAML", false }
     };
 
     private DateTime? PDHL = null;
