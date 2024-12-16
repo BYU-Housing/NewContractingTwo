@@ -23,15 +23,25 @@
 </p>
 
 <p>
+    Select PDHL Timestamp:
+    <input type="datetime-local" @bind="PDHL" class="form-control" />
+</p>
+
+<p>
     <button @onclick="NavigateToStepOne" class="btn btn-primary" disabled="@(eligibility == null)">Go To Select Area</button>
+</p>
+
+<p>
+    Selected PDHL: @(PDHL.HasValue ? PDHL.Value.ToString("yyyy-MM-dd HH:mm:ss") : "Not Set")
 </p>
 
 @code {
     private bool? eligibility = null;
+    private DateTime? PDHL = null;
 
     private void OnEligibilityChanged(ChangeEventArgs e)
     {
-        if (bool.TryParse(e.Value.ToString(), out var result))
+        if (bool.TryParse(e.Value?.ToString(), out var result))
         {
             eligibility = result;
         }
@@ -41,9 +51,14 @@
     {
         if (eligibility.HasValue)
         {
-            // Append Ebt parameter to the URL
+            // If PDHL is not set, default it to the current time
+            PDHL ??= DateTime.Now;
+
+            // Append parameters to the URL
             var eligibilityParam = eligibility.Value ? "true" : "false";
-            NavigationManager.NavigateTo($"/dynamicPortalStepOneSelectArea?Ebt={eligibilityParam}");
+            var pdhlParam = PDHL.Value.ToString("yyyy-MM-ddTHH:mm:ss");
+            NavigationManager.NavigateTo($"/dynamicPortalStepOneSelectArea?Ebt={eligibilityParam}&PDHL={pdhlParam}");
         }
     }
 }
+

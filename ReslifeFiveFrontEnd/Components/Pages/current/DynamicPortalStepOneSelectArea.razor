@@ -7,17 +7,29 @@
     Eligibility: @(eligibility.HasValue ? (eligibility.Value ? "Yes" : "No") : "Not Provided")
 </p>
 
+<p>
+    PDHL Timestamp: @(PDHL.HasValue ? PDHL.Value.ToString("yyyy-MM-dd HH:mm:ss") : "Not Provided")
+</p>
+
 @code {
     private bool? eligibility;
+    private DateTime? PDHL;
 
     protected override void OnInitialized()
     {
         var uri = new Uri(NavigationManager.Uri);
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
 
+        // Extract Eligibility (Ebt) from the query string
         if (query.TryGetValue("Ebt", out var value) && bool.TryParse(value, out var result))
         {
             eligibility = result;
+        }
+
+        // Extract PDHL timestamp from the query string
+        if (query.TryGetValue("PDHL", out var pdhlValue) && DateTime.TryParse(pdhlValue, out var parsedDate))
+        {
+            PDHL = parsedDate;
         }
     }
 }
