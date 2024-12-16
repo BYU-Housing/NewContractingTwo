@@ -166,68 +166,51 @@
 
     private void OnEligibilityChanged(ChangeEventArgs e)
     {
-        if (bool.TryParse(e.Value?.ToString(), out var result))
-        {
-            eligibility = result;
-        }
+        eligibility = bool.TryParse(e.Value?.ToString(), out var result) ? result : null;
     }
 
     private void OnAgeGroupChanged(ChangeEventArgs e)
     {
-        if (bool.TryParse(e.Value?.ToString(), out var result))
-        {
-            ageGroup = result;
-        }
+        ageGroup = bool.TryParse(e.Value?.ToString(), out var result) ? result : null;
     }
 
     private void OnMnrChanged(ChangeEventArgs e)
     {
-        if (bool.TryParse(e.Value?.ToString(), out var result))
-        {
-            Mnr = result;
-        }
+        Mnr = bool.TryParse(e.Value?.ToString(), out var result) ? result : null;
     }
 
     private void OnReqChanged(ChangeEventArgs e)
     {
-        if (bool.TryParse(e.Value?.ToString(), out var result))
-        {
-            REQ = result;
-        }
+        REQ = bool.TryParse(e.Value?.ToString(), out var result) ? result : null;
     }
 
     private void OnParamChanged(string param, bool value)
     {
         if (Parameters.ContainsKey(param))
-        {
             Parameters[param] = value;
-        }
     }
 
     private void NavigateToStepOne()
     {
-        if (eligibility.HasValue && ageGroup.HasValue && Mnr.HasValue && REQ.HasValue && Parameters.All(kvp => kvp.Value.HasValue))
+        PDHL ??= DateTime.Now;
+        PDHR ??= DateTime.Now;
+        CDRI ??= DateTime.Now;
+        CDWP ??= DateTime.Now;
+
+        var queryParams = new List<string>
         {
-            PDHL ??= DateTime.Now;
-            PDHR ??= DateTime.Now;
-            CDRI ??= DateTime.Now;
-            CDWP ??= DateTime.Now;
+            $"Ebt={(eligibility ?? false ? "true" : "false")}",
+            $"AgeGroup={(ageGroup ?? false ? "true" : "false")}",
+            $"Mnr={(Mnr ?? false ? "true" : "false")}",
+            $"REQ={(REQ ?? false ? "true" : "false")}",
+            $"PDHL={PDHL.Value:yyyy-MM-ddTHH:mm:ss}",
+            $"PDHR={PDHR.Value:yyyy-MM-ddTHH:mm:ss}",
+            $"CDRI={CDRI.Value:yyyy-MM-ddTHH:mm:ss}",
+            $"CDWP={CDWP.Value:yyyy-MM-ddTHH:mm:ss}"
+        };
 
-            var queryParams = new List<string>
-            {
-                $"Ebt={(eligibility.Value ? "true" : "false")}",
-                $"AgeGroup={(ageGroup.Value ? "true" : "false")}",
-                $"Mnr={(Mnr.Value ? "true" : "false")}",
-                $"REQ={(REQ.Value ? "true" : "false")}",
-                $"PDHL={PDHL.Value:yyyy-MM-ddTHH:mm:ss}",
-                $"PDHR={PDHR.Value:yyyy-MM-ddTHH:mm:ss}",
-                $"CDRI={CDRI.Value:yyyy-MM-ddTHH:mm:ss}",
-                $"CDWP={CDWP.Value:yyyy-MM-ddTHH:mm:ss}"
-            };
+        queryParams.AddRange(Parameters.Select(kvp => $"{kvp.Key}={(kvp.Value ?? false ? "true" : "false")}"));
 
-            queryParams.AddRange(Parameters.Select(kvp => $"{kvp.Key}={(kvp.Value.Value ? "true" : "false")}"));
-
-            NavigationManager.NavigateTo($"/dynamicPortalStepOneSelectArea?{string.Join("&", queryParams)}");
-        }
+        NavigationManager.NavigateTo($"/dynamicPortalStepOneSelectArea?{string.Join("&", queryParams)}");
     }
 }
