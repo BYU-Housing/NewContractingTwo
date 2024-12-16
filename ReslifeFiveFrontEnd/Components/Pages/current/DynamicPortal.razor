@@ -204,6 +204,6 @@
 
         queryParams.AddRange(Parameters.Select(kvp => $"{kvp.Key}={(kvp.Value ?? false ? "true" : "false")}"));
 
-        NavigationManager.NavigateTo($"/dynamicPortalStepOneSelectArea?{string.Join("&", queryParams)}");
+        NavigationManager.NavigateTo($"/stepOneSelectStartDate?{string.Join("&", queryParams)}");
     }
 }
