@@ -18,11 +18,14 @@
     </label>
 </div>
 
-
-
 <p>
     Select PDHL Timestamp:
     <input type="datetime-local" @bind="PDHL" class="form-control" />
+</p>
+
+<p>
+    Select PDHR Timestamp (Priority Date Heritage Halls):
+    <input type="datetime-local" @bind="PDHR" class="form-control" />
 </p>
 
 <p>
@@ -37,9 +40,14 @@
     Selected Priority Date Helaman Halls: @(PDHL.HasValue ? PDHL.Value.ToString("yyyy-MM-dd HH:mm:ss") : "Not Set")
 </p>
 
+<p>
+    Selected Priority Date Heritage Halls: @(PDHR.HasValue ? PDHR.Value.ToString("yyyy-MM-dd HH:mm:ss") : "Not Set")
+</p>
+
 @code {
     private bool? eligibility = null;
-    private DateTime? PDHL = null;
+    private DateTime? PDHL = null; // Priority Date Helaman Halls
+    private DateTime? PDHR = null; // Priority Date Heritage Halls
 
     private void OnEligibilityChanged(ChangeEventArgs e)
     {
@@ -53,14 +61,17 @@
     {
         if (eligibility.HasValue)
         {
-            // If PDHL is not set, default it to the current time
+            // If timestamps are not set, default them to the current time
             PDHL ??= DateTime.Now;
+            PDHR ??= DateTime.Now;
 
             // Append parameters to the URL
             var eligibilityParam = eligibility.Value ? "true" : "false";
             var pdhlParam = PDHL.Value.ToString("yyyy-MM-ddTHH:mm:ss");
-            NavigationManager.NavigateTo($"/dynamicPortalStepOneSelectArea?Ebt={eligibilityParam}&PDHL={pdhlParam}");
+            var pdhrParam = PDHR.Value.ToString("yyyy-MM-ddTHH:mm:ss");
+            NavigationManager.NavigateTo($"/dynamicPortalStepOneSelectArea?Ebt={eligibilityParam}&PDHL={pdhlParam}&PDHR={pdhrParam}");
         }
     }
 }
+
 
