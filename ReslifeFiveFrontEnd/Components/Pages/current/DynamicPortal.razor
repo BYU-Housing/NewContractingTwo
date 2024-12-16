@@ -60,19 +60,22 @@
     </label>
 </div>
 
-<p>Select ADA Status:</p>
-<div>
-    <label>
-        <input type="radio" name="ADA" value="true" @onchange="OnAdaChanged" checked="@((ADA == true))" />
-        Yes
-    </label>
-</div>
-<div>
-    <label>
-        <input type="radio" name="ADA" value="false" @onchange="OnAdaChanged" checked="@((ADA == false))" />
-        No
-    </label>
-</div>
+@foreach (var param in Parameters)
+{
+    <p>Select @param.Key Status:</p>
+    <div>
+        <label>
+            <input type="radio" name="@param.Key" value="true" @onchange="@(e => OnParamChanged(param.Key, true))" />
+            Yes
+        </label>
+    </div>
+    <div>
+        <label>
+            <input type="radio" name="@param.Key" value="false" @onchange="@(e => OnParamChanged(param.Key, false))" />
+            No
+        </label>
+    </div>
+}
 
 <p>
     Select Priority Date Helaman Halls Timestamp:
@@ -95,7 +98,9 @@
 </p>
 
 <p>
-    <button @onclick="NavigateToStepOne" class="btn btn-primary" disabled="@(eligibility == null || ageGroup == null || Mnr == null || REQ == null || ADA == null)">Go To Select Area</button>
+    <button @onclick="NavigateToStepOne" class="btn btn-primary" disabled="@(eligibility == null || ageGroup == null || Mnr == null || REQ == null || Parameters.Any(kvp => kvp.Value == null))">
+        Go To Select Area
+    </button>
 </p>
 
 <p>
@@ -114,9 +119,10 @@
     Selected Requirement Status: @(REQ.HasValue ? (REQ.Value ? "Met" : "Not Met") : "Not Selected")
 </p>
 
-<p>
-    Selected ADA Status: @(ADA.HasValue ? (ADA.Value ? "Yes" : "No") : "Not Selected")
-</p>
+@foreach (var param in Parameters)
+{
+    <p>@param.Key: @(param.Value.HasValue ? (param.Value.Value ? "Yes" : "No") : "Not Selected")</p>
+}
 
 <p>
     Selected Priority Date Helaman Halls: @(PDHL.HasValue ? PDHL.Value.ToString("yyyy-MM-dd HH:mm:ss") : "Not Set")
@@ -136,14 +142,27 @@
 
 @code {
     private bool? eligibility = null;
-    private bool? ageGroup = null; // True = 18-, False = 19+
-    private bool? Mnr = null; // True = Yes, False = No
-    private bool? REQ = null; // True = Met, False = Not Met
-    private bool? ADA = null; // True = Yes, False = No
-    private DateTime? PDHL = null; // Priority Date Helaman Halls
-    private DateTime? PDHR = null; // Priority Date Heritage Halls
-    private DateTime? CDRI = null; // Priority Date CDRI
-    private DateTime? CDWP = null; // Priority Date CDWP
+    private bool? ageGroup = null;
+    private bool? Mnr = null;
+    private bool? REQ = null;
+
+    private Dictionary<string, bool?> Parameters = new()
+    {
+        { "ADA", null },
+        { "ATH", null },
+        { "ESA", null },
+        { "LISR", null },
+        { "ISCH", null },
+        { "FLEXGE", null },
+        { "WL", null },
+        { "PB", null },
+        { "NOAML", null }
+    };
+
+    private DateTime? PDHL = null;
+    private DateTime? PDHR = null;
+    private DateTime? CDRI = null;
+    private DateTime? CDWP = null;
 
     private void OnEligibilityChanged(ChangeEventArgs e)
     {
@@ -177,36 +196,38 @@
         }
     }
 
-    private void OnAdaChanged(ChangeEventArgs e)
+    private void OnParamChanged(string param, bool value)
     {
-        if (bool.TryParse(e.Value?.ToString(), out var result))
+        if (Parameters.ContainsKey(param))
         {
-            ADA = result;
+            Parameters[param] = value;
         }
     }
 
     private void NavigateToStepOne()
     {
-        if (eligibility.HasValue && ageGroup.HasValue && Mnr.HasValue && REQ.HasValue && ADA.HasValue)
+        if (eligibility.HasValue && ageGroup.HasValue && Mnr.HasValue && REQ.HasValue && Parameters.All(kvp => kvp.Value.HasValue))
         {
-            // If timestamps are not set, default them to the current time
             PDHL ??= DateTime.Now;
             PDHR ??= DateTime.Now;
             CDRI ??= DateTime.Now;
             CDWP ??= DateTime.Now;
 
-            // Append parameters to the URL
-            var eligibilityParam = eligibility.Value ? "true" : "false";
-            var ageGroupParam = ageGroup.Value ? "true" : "false";
-            var mnrParam = Mnr.Value ? "true" : "false";
-            var reqParam = REQ.Value ? "true" : "false";
-            var adaParam = ADA.Value ? "true" : "false";
-            var pdhlParam = PDHL.Value.ToString("yyyy-MM-ddTHH:mm:ss");
-            var pdhrParam = PDHR.Value.ToString("yyyy-MM-ddTHH:mm:ss");
-            var cdriParam = CDRI.Value.ToString("yyyy-MM-ddTHH:mm:ss");
-            var cdwpParam = CDWP.Value.ToString("yyyy-MM-ddTHH:mm:ss");
+            var queryParams = new List<string>
+            {
+                $"Ebt={(eligibility.Value ? "true" : "false")}",
+                $"AgeGroup={(ageGroup.Value ? "true" : "false")}",
+                $"Mnr={(Mnr.Value ? "true" : "false")}",
+                $"REQ={(REQ.Value ? "true" : "false")}",
+                $"PDHL={PDHL.Value:yyyy-MM-ddTHH:mm:ss}",
+                $"PDHR={PDHR.Value:yyyy-MM-ddTHH:mm:ss}",
+                $"CDRI={CDRI.Value:yyyy-MM-ddTHH:mm:ss}",
+                $"CDWP={CDWP.Value:yyyy-MM-ddTHH:mm:ss}"
+            };
 
-            NavigationManager.NavigateTo($"/dynamicPortalStepOneSelectArea?Ebt={eligibilityParam}&AgeGroup={ageGroupParam}&Mnr={mnrParam}&REQ={reqParam}&ADA={adaParam}&PDHL={pdhlParam}&PDHR={pdhrParam}&CDRI={cdriParam}&CDWP={cdwpParam}");
+            queryParams.AddRange(Parameters.Select(kvp => $"{kvp.Key}={(kvp.Value.Value ? "true" : "false")}"));
+
+            NavigationManager.NavigateTo($"/dynamicPortalStepOneSelectArea?{string.Join("&", queryParams)}");
         }
     }
 }
