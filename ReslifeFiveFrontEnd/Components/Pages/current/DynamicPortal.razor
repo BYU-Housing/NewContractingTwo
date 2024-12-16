@@ -29,6 +29,11 @@
 </p>
 
 <p>
+    Select Priority Date CDRI Timestamp:
+    <input type="datetime-local" @bind="CDRI" class="form-control" />
+</p>
+
+<p>
     <button @onclick="NavigateToStepOne" class="btn btn-primary" disabled="@(eligibility == null)">Go To Select Area</button>
 </p>
 
@@ -44,10 +49,15 @@
     Selected Priority Date Heritage Halls: @(PDHR.HasValue ? PDHR.Value.ToString("yyyy-MM-dd HH:mm:ss") : "Not Set")
 </p>
 
+<p>
+    Selected Priority Date CDRI: @(CDRI.HasValue ? CDRI.Value.ToString("yyyy-MM-dd HH:mm:ss") : "Not Set")
+</p>
+
 @code {
     private bool? eligibility = null;
     private DateTime? PDHL = null; // Priority Date Helaman Halls
     private DateTime? PDHR = null; // Priority Date Heritage Halls
+    private DateTime? CDRI = null; // Priority Date CDRI
 
     private void OnEligibilityChanged(ChangeEventArgs e)
     {
@@ -64,14 +74,14 @@
             // If timestamps are not set, default them to the current time
             PDHL ??= DateTime.Now;
             PDHR ??= DateTime.Now;
+            CDRI ??= DateTime.Now;
 
             // Append parameters to the URL
             var eligibilityParam = eligibility.Value ? "true" : "false";
             var pdhlParam = PDHL.Value.ToString("yyyy-MM-ddTHH:mm:ss");
             var pdhrParam = PDHR.Value.ToString("yyyy-MM-ddTHH:mm:ss");
-            NavigationManager.NavigateTo($"/dynamicPortalStepOneSelectArea?Ebt={eligibilityParam}&PDHL={pdhlParam}&PDHR={pdhrParam}");
+            var cdriParam = CDRI.Value.ToString("yyyy-MM-ddTHH:mm:ss");
+            NavigationManager.NavigateTo($"/dynamicPortalStepOneSelectArea?Ebt={eligibilityParam}&PDHL={pdhlParam}&PDHR={pdhrParam}&CDRI={cdriParam}");
         }
     }
 }
-
-
