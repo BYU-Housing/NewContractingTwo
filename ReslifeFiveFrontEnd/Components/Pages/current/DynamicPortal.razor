@@ -18,6 +18,20 @@
     </label>
 </div>
 
+<p>Select Age Group:</p>
+<div>
+    <label>
+        <input type="radio" name="ageGroup" value="true" @onchange="OnAgeGroupChanged" checked="@((ageGroup == true))" />
+        Minor
+    </label>
+</div>
+<div>
+    <label>
+        <input type="radio" name="ageGroup" value="false" @onchange="OnAgeGroupChanged" checked="@((ageGroup == false))" />
+        Not Minor
+    </label>
+</div>
+
 <p>
     Select Priority Date Helaman Halls Timestamp:
     <input type="datetime-local" @bind="PDHL" class="form-control" />
@@ -39,11 +53,15 @@
 </p>
 
 <p>
-    <button @onclick="NavigateToStepOne" class="btn btn-primary" disabled="@(eligibility == null)">Go To Select Area</button>
+    <button @onclick="NavigateToStepOne" class="btn btn-primary" disabled="@(eligibility == null || ageGroup == null)">Go To Select Area</button>
 </p>
 
 <p>
     Selected Eligibility: @(eligibility.HasValue ? (eligibility.Value ? "Yes" : "No") : "Not Selected")
+</p>
+
+<p>
+    Selected Age Group: @(ageGroup.HasValue ? (ageGroup.Value ? "Minor" : "Not Minor") : "Not Selected")
 </p>
 
 <p>
@@ -64,6 +82,7 @@
 
 @code {
     private bool? eligibility = null;
+    private bool? ageGroup = null; // True = Minor, False = Not Minor
     private DateTime? PDHL = null; // Priority Date Helaman Halls
     private DateTime? PDHR = null; // Priority Date Heritage Halls
     private DateTime? CDRI = null; // Priority Date CDRI
@@ -77,9 +96,17 @@
         }
     }
 
+    private void OnAgeGroupChanged(ChangeEventArgs e)
+    {
+        if (bool.TryParse(e.Value?.ToString(), out var result))
+        {
+            ageGroup = result;
+        }
+    }
+
     private void NavigateToStepOne()
     {
-        if (eligibility.HasValue)
+        if (eligibility.HasValue && ageGroup.HasValue)
         {
             // If timestamps are not set, default them to the current time
             PDHL ??= DateTime.Now;
@@ -89,11 +116,12 @@
 
             // Append parameters to the URL
             var eligibilityParam = eligibility.Value ? "true" : "false";
+            var ageGroupParam = ageGroup.Value ? "true" : "false";
             var pdhlParam = PDHL.Value.ToString("yyyy-MM-ddTHH:mm:ss");
             var pdhrParam = PDHR.Value.ToString("yyyy-MM-ddTHH:mm:ss");
             var cdriParam = CDRI.Value.ToString("yyyy-MM-ddTHH:mm:ss");
             var cdwpParam = CDWP.Value.ToString("yyyy-MM-ddTHH:mm:ss");
-            NavigationManager.NavigateTo($"/dynamicPortalStepOneSelectArea?Ebt={eligibilityParam}&PDHL={pdhlParam}&PDHR={pdhrParam}&CDRI={cdriParam}&CDWP={cdwpParam}");
+            NavigationManager.NavigateTo($"/dynamicPortalStepOneSelectArea?Ebt={eligibilityParam}&AgeGroup={ageGroupParam}&PDHL={pdhlParam}&PDHR={pdhrParam}&CDRI={cdriParam}&CDWP={cdwpParam}");
         }
     }
 }
