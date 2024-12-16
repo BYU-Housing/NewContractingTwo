@@ -16,6 +16,11 @@
     </div>
 
     <div>
+        <label>Enter Daily Rate:</label>
+        <input type="number" @bind="dailyRate" step="0.01" class="form-control" placeholder="Enter daily rate" />
+    </div>
+
+    <div>
         <label>Select Eligibility:</label>
         <input type="radio" name="eligibility" value="true" @onchange="e => OnEligibilityChanged(true)" checked="@(eligibility == true)" /> Yes
         <input type="radio" name="eligibility" value="false" @onchange="e => OnEligibilityChanged(false)" checked="@(eligibility == false)" /> No
@@ -91,7 +96,7 @@
     </div>
 
     <button type="button" @onclick="NavigateToStepOne" class="btn btn-primary"
-            disabled="@(string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(netID) || eligibility == null || ageGroup == null || Mnr == null || REQ == null || agreementPeriod == null || sexAtBirth == null || Parameters.Any(kvp => kvp.Value == null))">
+            disabled="@(string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(netID) || dailyRate == null || eligibility == null || ageGroup == null || Mnr == null || REQ == null || agreementPeriod == null || sexAtBirth == null || Parameters.Any(kvp => kvp.Value == null))">
         Go To Select Area
     </button>
 </form>
@@ -99,6 +104,7 @@
 @code {
     private string name { get; set; } = string.Empty; // Property for Name
     private string netID { get; set; } = string.Empty; // Property for NetID
+    private decimal? dailyRate { get; set; } = null; // Property for Daily Rate
     private bool? eligibility = false;
     private bool? ageGroup = false;
     private bool? Mnr = false;
@@ -162,6 +168,7 @@
         {
             $"Name={Uri.EscapeDataString(name)}",
             $"NetID={Uri.EscapeDataString(netID)}",
+            $"DailyRate={dailyRate:0.00}",
             $"Ebt={(eligibility ?? false ? "true" : "false")}",
             $"AgeGroup={(ageGroup ?? false ? "true" : "false")}",
             $"Mnr={(Mnr ?? false ? "true" : "false")}",
