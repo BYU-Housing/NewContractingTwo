@@ -16,8 +16,13 @@
     </div>
 
     <div>
-        <label>Enter Daily Rate:</label>
-        <input type="number" @bind="dailyRate" step="0.01" class="form-control" placeholder="Enter daily rate" />
+        <label>Enter Daily Rate (DRH):</label>
+        <input type="number" @bind="dailyRate" step="0.01" class="form-control" placeholder="Enter daily rate per hour" />
+    </div>
+
+    <div>
+        <label>Enter Monthly Price (DRMP):</label>
+        <input type="number" @bind="monthlyPrice" step="0.01" class="form-control" placeholder="Enter daily rate monthly price" />
     </div>
 
     <div>
@@ -96,7 +101,7 @@
     </div>
 
     <button type="button" @onclick="NavigateToStepOne" class="btn btn-primary"
-            disabled="@(string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(netID) || dailyRate == null || eligibility == null || ageGroup == null || Mnr == null || REQ == null || agreementPeriod == null || sexAtBirth == null || Parameters.Any(kvp => kvp.Value == null))">
+            disabled="@(string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(netID) || dailyRate == null || monthlyPrice == null || eligibility == null || ageGroup == null || Mnr == null || REQ == null || agreementPeriod == null || sexAtBirth == null || Parameters.Any(kvp => kvp.Value == null))">
         Go To Select Area
     </button>
 </form>
@@ -104,7 +109,8 @@
 @code {
     private string name { get; set; } = string.Empty; // Property for Name
     private string netID { get; set; } = string.Empty; // Property for NetID
-    private decimal? dailyRate { get; set; } = null; // Property for Daily Rate
+    private decimal? dailyRate { get; set; } = null; // Property for DRH
+    private decimal? monthlyPrice { get; set; } = null; // Property for DRMP
     private bool? eligibility = false;
     private bool? ageGroup = false;
     private bool? Mnr = false;
@@ -168,7 +174,8 @@
         {
             $"Name={Uri.EscapeDataString(name)}",
             $"NetID={Uri.EscapeDataString(netID)}",
-            $"DailyRate={dailyRate:0.00}",
+            $"DRH={dailyRate:0.00}",
+            $"DRMP={monthlyPrice:0.00}",
             $"Ebt={(eligibility ?? false ? "true" : "false")}",
             $"AgeGroup={(ageGroup ?? false ? "true" : "false")}",
             $"Mnr={(Mnr ?? false ? "true" : "false")}",
