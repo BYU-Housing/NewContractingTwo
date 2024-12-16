@@ -1,12 +1,44 @@
 ﻿@page "/dynamicPortal"
 @inject IGenService GenService
 @inject NavigationManager NavigationManager
+
 <h3>DynamicPortal</h3>
 
+<p>Select Eligibility:</p>
+<div>
+    <label>
+        <input type="radio" name="eligibility" value="true" @onchange="OnEligibilityChanged" checked="@((eligibility == true))" />
+        Yes
+    </label>
+</div>
+<div>
+    <label>
+        <input type="radio" name="eligibility" value="false" @onchange="OnEligibilityChanged" checked="@((eligibility == false))" />
+        No
+    </label>
+</div>
+
 <p>
-    <a href="/dynamicPortalStepOneSelectArea">Go To Select Area</a>
+    Selected Eligibility: @(eligibility.HasValue ? (eligibility.Value ? "Yes" : "No") : "Not Selected")
+</p>
+
+<p>
+    <button @onclick="NavigateToStepOne" class="btn btn-primary" disabled="@(eligibility == null)">Go To Select Area</button>
 </p>
 
 @code {
+    private bool? eligibility = null;
 
+    private void OnEligibilityChanged(ChangeEventArgs e)
+    {
+        if (bool.TryParse(e.Value.ToString(), out var result))
+        {
+            eligibility = result;
+        }
+    }
+
+    private void NavigateToStepOne()
+    {
+        NavigationManager.NavigateTo("/dynamicPortalStepOneSelectArea");
+    }
 }
