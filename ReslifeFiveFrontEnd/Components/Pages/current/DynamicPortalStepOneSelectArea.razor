@@ -1,8 +1,74 @@
 ﻿@page "/dynamicPortalStepOneSelectArea"
-@inject IGenService GenService
 @inject NavigationManager NavigationManager
+
 <h3>DynamicPortalStepOneSelectArea</h3>
 
-@code {
+<p>
+    <strong>Raw URL Parameters:</strong> @urlParams
+</p>
 
+<p>
+    Eligibility: @(eligibility.HasValue ? (eligibility.Value ? "Yes" : "No") : "Not Provided")
+</p>
+
+<p>
+    Priority Date Helaman Timestamp: @(PDHL.HasValue ? PDHL.Value.ToString("yyyy-MM-dd HH:mm:ss") : "Not Provided")
+</p>
+
+<p>
+    Priority Date Heritage Timestamp: @(PDHR.HasValue ? PDHR.Value.ToString("yyyy-MM-dd HH:mm:ss") : "Not Provided")
+</p>
+
+<p>
+    Priority Date CDRI Timestamp: @(CDRI.HasValue ? CDRI.Value.ToString("yyyy-MM-dd HH:mm:ss") : "Not Provided")
+</p>
+
+<p>
+    Priority Date CDWP Timestamp: @(CDWP.HasValue ? CDWP.Value.ToString("yyyy-MM-dd HH:mm:ss") : "Not Provided")
+</p>
+
+@code {
+    private bool? eligibility;
+    private DateTime? PDHL; // Priority Date Helaman Halls
+    private DateTime? PDHR; // Priority Date Heritage Halls
+    private DateTime? CDRI; // Priority Date CDRI
+    private DateTime? CDWP; // Priority Date CDWP
+    private string urlParams = "";
+
+    protected override void OnInitialized()
+    {
+        var uri = new Uri(NavigationManager.Uri);
+        urlParams = uri.Query; // Store raw URL parameters for display
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+
+        // Extract Eligibility (Ebt) from the query string
+        if (query.TryGetValue("Ebt", out var value) && bool.TryParse(value, out var result))
+        {
+            eligibility = result;
+        }
+
+        // Extract PDHL timestamp from the query string
+        if (query.TryGetValue("PDHL", out var pdhlValue) && DateTime.TryParse(pdhlValue, out var parsedDate))
+        {
+            PDHL = parsedDate;
+        }
+
+        // Extract PDHR timestamp from the query string
+        if (query.TryGetValue("PDHR", out var pdhrValue) && DateTime.TryParse(pdhrValue, out var parsedDateHeritage))
+        {
+            PDHR = parsedDateHeritage;
+        }
+
+        // Extract CDRI timestamp from the query string
+        if (query.TryGetValue("CDRI", out var cdriValue) && DateTime.TryParse(cdriValue, out var parsedDateCdri))
+        {
+            CDRI = parsedDateCdri;
+        }
+
+        // Extract CDWP timestamp from the query string
+        if (query.TryGetValue("CDWP", out var cdwpValue) && DateTime.TryParse(cdwpValue, out var parsedDateCdwp))
+        {
+            CDWP = parsedDateCdwp;
+        }
+    }
 }
