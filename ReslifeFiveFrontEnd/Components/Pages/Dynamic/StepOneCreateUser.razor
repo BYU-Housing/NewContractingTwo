@@ -56,8 +56,13 @@
         <input type="datetime-local" @bind="HelamanPriorityDate" class="form-control" />
     </div>
 
+    <div>
+        <label>Heritage Priority Date:</label>
+        <input type="datetime-local" @bind="HeritagePriorityDate" class="form-control" />
+    </div>
+
     <button type="button" @onclick="NavigateToSelectAgreementPeriod" class="btn btn-primary"
-            disabled="@(string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(NetID) || AgreementPeriod == null || ApplicationEligible == null || ContractEligible == null || HelamanPriorityDate == null)">
+            disabled="@(string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(NetID) || AgreementPeriod == null || ApplicationEligible == null || ContractEligible == null || HelamanPriorityDate == null || HeritagePriorityDate == null)">
         Submit
     </button>
 </form>
@@ -69,6 +74,7 @@
     private bool? ApplicationEligible { get; set; } = null; // Application Eligible input
     private bool? ContractEligible { get; set; } = null; // Contract Eligible input
     private DateTime? HelamanPriorityDate { get; set; } = null; // Helaman Priority Date input
+    private DateTime? HeritagePriorityDate { get; set; } = null; // Heritage Priority Date input
 
     private void OnAgreementPeriodChanged(ChangeEventArgs e)
     {
@@ -98,9 +104,11 @@
             $"AgreementPeriod={AgreementPeriod}",
             $"ApplicationEligible={(ApplicationEligible?.ToString().ToLower() ?? "false")}",
             $"ContractEligible={(ContractEligible?.ToString().ToLower() ?? "false")}",
-            $"HelamanPriorityDate={HelamanPriorityDate?.ToString("yyyy-MM-ddTHH:mm:ss")}"
+            $"HelamanPriorityDate={HelamanPriorityDate?.ToString("yyyy-MM-ddTHH:mm:ss")}",
+            $"HeritagePriorityDate={HeritagePriorityDate?.ToString("yyyy-MM-ddTHH:mm:ss")}"
         };
 
         NavigationManager.NavigateTo($"/selectAgreementPeriod?{string.Join("&", queryParams)}");
     }
 }
+
