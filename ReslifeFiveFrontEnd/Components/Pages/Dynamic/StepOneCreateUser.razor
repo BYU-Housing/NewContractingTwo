@@ -4,46 +4,77 @@
 
 <h3>Create Test User</h3>
 
-<div>
-    <label for="nameInput">Enter Name:</label>
-    <input @bind="Name" @bind:event="oninput" id="nameInput" placeholder="Enter a name" />
-</div>
+<form>
+    <div>
+        <label>Enter Name:</label>
+        <input type="text" @bind="Name" class="form-control" placeholder="Enter your name" />
+    </div>
 
-<div>
-    <label for="netIdInput">Enter NetID:</label>
-    <input @bind="NetID" @bind:event="oninput" id="netIdInput" placeholder="Enter a NetID" />
-</div>
+    <div>
+        <label>Enter NetID:</label>
+        <input type="text" @bind="NetID" class="form-control" placeholder="Enter your NetID" />
+    </div>
 
-<div>
-    <label for="agreementPeriodInput">Select Agreement Period:</label>
-    <select @bind="AgreementPeriod" id="agreementPeriodInput">
-        <option value="">-- Select an Agreement Period --</option>
-        <option value="3">Fall Winter 2025</option>
-        <option value="4">Winter 2025</option>
-        <option value="5">Spring 2025</option>
-        <option value="6">Summer 2025</option>
-        <option value="7">Fall Winter 2025</option>
-    </select>
-</div>
+    <div>
+        <label>Select Agreement Period:</label>
+        <select @onchange="OnAgreementPeriodChanged" class="form-control">
+            <option value="">-- Select --</option>
+            <option value="3">Fall Winter 2025</option>
+            <option value="4">Winter 2025</option>
+            <option value="5">Spring 2025</option>
+            <option value="6">Summer 2025</option>
+            <option value="7">Fall Winter 2025</option>
+        </select>
+    </div>
 
-<button @onclick="NavigateToSelectAgreementPeriod">Submit</button>
+    <div>
+        <label>Application Eligible:</label>
+        <div>
+            <input type="radio" name="ApplicationEligible" value="true" @onchange="e => OnApplicationEligibleChanged(true)" checked="@(ApplicationEligible == true)" />
+            <label>Yes</label>
+        </div>
+        <div>
+            <input type="radio" name="ApplicationEligible" value="false" @onchange="e => OnApplicationEligibleChanged(false)" checked="@(ApplicationEligible == false)" />
+            <label>No</label>
+        </div>
+    </div>
+
+    <button type="button" @onclick="NavigateToSelectAgreementPeriod" class="btn btn-primary"
+            disabled="@(string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(NetID) || AgreementPeriod == null || ApplicationEligible == null)">
+        Submit
+    </button>
+</form>
 
 @code {
-    [Parameter]
-    public string? Name { get; set; }
+    private string Name { get; set; } = string.Empty; // Name input
+    private string NetID { get; set; } = string.Empty; // NetID input
+    private int? AgreementPeriod { get; set; } = null; // Agreement Period input
+    private bool? ApplicationEligible { get; set; } = null; // Application Eligible input
 
-    [Parameter]
-    public string? NetID { get; set; }
+    private void OnAgreementPeriodChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var value))
+        {
+            AgreementPeriod = value;
+        }
+    }
 
-    [Parameter]
-    public int? AgreementPeriod { get; set; }
+    private void OnApplicationEligibleChanged(bool value)
+    {
+        ApplicationEligible = value;
+    }
 
     private void NavigateToSelectAgreementPeriod()
     {
-        // Navigate to the new page and include Name, NetID, and AgreementPeriod as query parameters
-        var newUri = $"selectAgreementPeriod?Name={Uri.EscapeDataString(Name ?? "")}" +
-                     $"&NetID={Uri.EscapeDataString(NetID ?? "")}" +
-                     $"&AgreementPeriod={AgreementPeriod}";
-        NavigationManager.NavigateTo(newUri);
+        // Construct the query string and navigate
+        var queryParams = new List<string>
+        {
+            $"Name={Uri.EscapeDataString(Name)}",
+            $"NetID={Uri.EscapeDataString(NetID)}",
+            $"AgreementPeriod={AgreementPeriod}",
+            $"ApplicationEligible={(ApplicationEligible?.ToString().ToLower() ?? "false")}"
+        };
+
+        NavigationManager.NavigateTo($"/selectAgreementPeriod?{string.Join("&", queryParams)}");
     }
 }
