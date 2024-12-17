@@ -4,8 +4,63 @@
 
 <h3>Select Agreement Period</h3>
 
-
+<table class="table">
+    <thead>
+        <tr>
+            <th>Parameter Name</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var param in UrlParameters)
+        {
+            <tr>
+                <td>@param.Key</td>
+                <td>
+                    @if (param.Key == "AgreementPeriod" && int.TryParse(param.Value, out var period))
+                    {
+                        @GetAgreementPeriodDescription(period)
+                    }
+                    else
+                    {
+                        @param.Value
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 @code {
+    // Dictionary to hold URL parameters
+    private Dictionary<string, string?> UrlParameters = new Dictionary<string, string?>();
 
+    protected override void OnInitialized()
+    {
+        // Parse the query string from the current URL
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+        // Add parameters to the dictionary
+        foreach (string key in query.Keys)
+        {
+            if (!string.IsNullOrEmpty(key))
+            {
+                UrlParameters[key] = query[key];
+            }
+        }
+    }
+
+    private string GetAgreementPeriodDescription(int agreementPeriod)
+    {
+        return agreementPeriod switch
+        {
+            3 => "Fall Winter 2025",
+            4 => "Winter 2025",
+            5 => "Spring 2025",
+            6 => "Summer 2025",
+            7 => "Fall Winter 2025",
+            _ => "Unknown Agreement Period"
+        };
+    }
 }
