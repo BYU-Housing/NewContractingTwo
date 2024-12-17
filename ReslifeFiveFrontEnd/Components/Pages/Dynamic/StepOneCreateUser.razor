@@ -39,8 +39,20 @@
         </div>
     </div>
 
+    <div>
+        <label>Contract Eligible:</label>
+        <div>
+            <input type="radio" name="ContractEligible" value="true" @onchange="e => OnContractEligibleChanged(true)" checked="@(ContractEligible == true)" />
+            <label>Yes</label>
+        </div>
+        <div>
+            <input type="radio" name="ContractEligible" value="false" @onchange="e => OnContractEligibleChanged(false)" checked="@(ContractEligible == false)" />
+            <label>No</label>
+        </div>
+    </div>
+
     <button type="button" @onclick="NavigateToSelectAgreementPeriod" class="btn btn-primary"
-            disabled="@(string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(NetID) || AgreementPeriod == null || ApplicationEligible == null)">
+            disabled="@(string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(NetID) || AgreementPeriod == null || ApplicationEligible == null || ContractEligible == null)">
         Submit
     </button>
 </form>
@@ -50,6 +62,7 @@
     private string NetID { get; set; } = string.Empty; // NetID input
     private int? AgreementPeriod { get; set; } = null; // Agreement Period input
     private bool? ApplicationEligible { get; set; } = null; // Application Eligible input
+    private bool? ContractEligible { get; set; } = null; // Contract Eligible input
 
     private void OnAgreementPeriodChanged(ChangeEventArgs e)
     {
@@ -64,6 +77,11 @@
         ApplicationEligible = value;
     }
 
+    private void OnContractEligibleChanged(bool value)
+    {
+        ContractEligible = value;
+    }
+
     private void NavigateToSelectAgreementPeriod()
     {
         // Construct the query string and navigate
@@ -72,7 +90,8 @@
             $"Name={Uri.EscapeDataString(Name)}",
             $"NetID={Uri.EscapeDataString(NetID)}",
             $"AgreementPeriod={AgreementPeriod}",
-            $"ApplicationEligible={(ApplicationEligible?.ToString().ToLower() ?? "false")}"
+            $"ApplicationEligible={(ApplicationEligible?.ToString().ToLower() ?? "false")}",
+            $"ContractEligible={(ContractEligible?.ToString().ToLower() ?? "false")}"
         };
 
         NavigationManager.NavigateTo($"/selectAgreementPeriod?{string.Join("&", queryParams)}");
