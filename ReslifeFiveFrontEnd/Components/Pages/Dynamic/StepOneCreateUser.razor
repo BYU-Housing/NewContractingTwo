@@ -7,17 +7,26 @@
 <div>
     <label for="nameInput">Enter Name:</label>
     <input @bind="Name" @bind:event="oninput" id="nameInput" placeholder="Enter a name" />
-    <button @onclick="NavigateToSelectAgreementPeriod">Submit</button>
 </div>
+
+<div>
+    <label for="netIdInput">Enter NetID:</label>
+    <input @bind="NetID" @bind:event="oninput" id="netIdInput" placeholder="Enter a NetID" />
+</div>
+
+<button @onclick="NavigateToSelectAgreementPeriod">Submit</button>
 
 @code {
     [Parameter]
     public string? Name { get; set; }
 
+    [Parameter]
+    public string? NetID { get; set; }
+
     private void NavigateToSelectAgreementPeriod()
     {
-        // Navigate to the new page and include the Name as a query parameter
-        var newUri = $"selectAgreementPeriod?Name={Uri.EscapeDataString(Name ?? "")}";
+        // Navigate to the new page and include both Name and NetID as query parameters
+        var newUri = $"selectAgreementPeriod?Name={Uri.EscapeDataString(Name ?? "")}&NetID={Uri.EscapeDataString(NetID ?? "")}";
         NavigationManager.NavigateTo(newUri);
     }
 }
