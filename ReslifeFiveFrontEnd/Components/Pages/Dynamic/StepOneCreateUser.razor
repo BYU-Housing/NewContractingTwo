@@ -2,10 +2,22 @@
 @inject IGenService GenService
 @inject NavigationManager NavigationManager
 
-
 <h3>Create Test User</h3>
 
+<div>
+    <label for="nameInput">Enter Name:</label>
+    <input @bind="Name" @bind:event="oninput" id="nameInput" placeholder="Enter a name" />
+    <button @onclick="NavigateToSelectAgreementPeriod">Submit</button>
+</div>
 
 @code {
+    [Parameter]
+    public string? Name { get; set; }
 
+    private void NavigateToSelectAgreementPeriod()
+    {
+        // Navigate to the new page and include the Name as a query parameter
+        var newUri = $"selectAgreementPeriod?Name={Uri.EscapeDataString(Name ?? "")}";
+        NavigationManager.NavigateTo(newUri);
+    }
 }
