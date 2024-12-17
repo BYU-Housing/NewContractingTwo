@@ -64,6 +64,18 @@
     </div>
 
     <div>
+        <label>Community:</label>
+        <div>
+            <input type="radio" name="Community" value="true" @onchange="e => OnCommunityChanged(true)" checked="@(Community == true)" />
+            <label>19+</label>
+        </div>
+        <div>
+            <input type="radio" name="Community" value="false" @onchange="e => OnCommunityChanged(false)" checked="@(Community == false)" />
+            <label>18-</label>
+        </div>
+    </div>
+
+    <div>
         <label>Helaman Priority Date:</label>
         <input type="datetime-local" @bind="HelamanPriorityDate" class="form-control" />
     </div>
@@ -84,7 +96,7 @@
     </div>
 
     <button type="button" @onclick="NavigateToSelectAgreementPeriod" class="btn btn-primary"
-            disabled="@(string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(NetID) || AgreementPeriod == null || ApplicationEligible == null || ContractEligible == null || SexAtBirth == null || HelamanPriorityDate == null || HeritagePriorityDate == null || WyviewParkPriorityDate == null || RivieraPriorityDate == null)">
+            disabled="@(string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(NetID) || AgreementPeriod == null || ApplicationEligible == null || ContractEligible == null || SexAtBirth == null || Community == null || HelamanPriorityDate == null || HeritagePriorityDate == null || WyviewParkPriorityDate == null || RivieraPriorityDate == null)">
         Submit
     </button>
 </form>
@@ -96,6 +108,7 @@
     private bool? ApplicationEligible { get; set; } = null; // Application Eligible input
     private bool? ContractEligible { get; set; } = null; // Contract Eligible input
     private bool? SexAtBirth { get; set; } = null; // Sex At Birth input
+    private bool? Community { get; set; } = null; // Community input
     private DateTime? HelamanPriorityDate { get; set; } = null; // Helaman Priority Date input
     private DateTime? HeritagePriorityDate { get; set; } = null; // Heritage Priority Date input
     private DateTime? WyviewParkPriorityDate { get; set; } = null; // Wyview Park Priority Date input
@@ -112,6 +125,7 @@
     private void OnApplicationEligibleChanged(bool value) => ApplicationEligible = value;
     private void OnContractEligibleChanged(bool value) => ContractEligible = value;
     private void OnSexAtBirthChanged(bool value) => SexAtBirth = value;
+    private void OnCommunityChanged(bool value) => Community = value;
 
     private void NavigateToSelectAgreementPeriod()
     {
@@ -124,6 +138,7 @@
             $"ApplicationEligible={(ApplicationEligible?.ToString().ToLower() ?? "false")}",
             $"ContractEligible={(ContractEligible?.ToString().ToLower() ?? "false")}",
             $"SexAtBirth={(SexAtBirth?.ToString().ToLower() ?? "false")}",
+            $"Community={(Community?.ToString().ToLower() ?? "false")}",
             $"HelamanPriorityDate={HelamanPriorityDate?.ToString("yyyy-MM-ddTHH:mm:ss")}",
             $"HeritagePriorityDate={HeritagePriorityDate?.ToString("yyyy-MM-ddTHH:mm:ss")}",
             $"WyviewParkPriorityDate={WyviewParkPriorityDate?.ToString("yyyy-MM-ddTHH:mm:ss")}",

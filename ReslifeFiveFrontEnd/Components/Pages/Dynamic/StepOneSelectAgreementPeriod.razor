@@ -25,6 +25,10 @@
                     {
                         @GetSexAtBirthDescription(sexAtBirth)
                     }
+                    else if (param.Key == "Community" && bool.TryParse(param.Value, out var community))
+                    {
+                        @GetCommunityDescription(community)
+                    }
                     else
                     {
                         @param.Value
@@ -71,5 +75,10 @@
     private string GetSexAtBirthDescription(bool sexAtBirth)
     {
         return sexAtBirth ? "Female" : "Male";
+    }
+
+    private string GetCommunityDescription(bool community)
+    {
+        return community ? "19+" : "18-";
     }
 }
