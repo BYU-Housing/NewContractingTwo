@@ -3,13 +3,15 @@ using System;
 
 namespace ReslifeFiveFrontEnd.Application.Services
 {
-    public class TimeZoneService: ITimeZoneService
+    public class TimeZoneService : ITimeZoneService
     {
         private readonly IJSRuntime _jsRuntime;
         private string? _timeZone;
-        public TimeZoneService(IJSRuntime jsRuntime)
+        private readonly ILogger<TimeZoneService> _logger;
+        public TimeZoneService(IJSRuntime jsRuntime, ILogger<TimeZoneService> logger)
         {
             _jsRuntime = jsRuntime;
+            _logger = logger;
         }
 
         public async Task<string> GetUserTimeZoneNameAsync()
@@ -88,47 +90,97 @@ namespace ReslifeFiveFrontEnd.Application.Services
             }
         }
 
-
+        //methods that receive a datetime parameter only
         public DateTime ConvertLocalToUtc(DateTime LocalDateTime)
         {
-            TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(_timeZone ?? throw new NullReferenceException("Time Zone Property of TimeZoneService class was not properly intialized."));
-            return TimeZoneInfo.ConvertTimeToUtc(LocalDateTime, timeZone);
+            if (LocalDateTime.Kind != DateTimeKind.Utc)
+            {
+                TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(_timeZone ?? throw new NullReferenceException("Time Zone Property of TimeZoneService class was not properly intialized."));
+                var Time = TimeZoneInfo.ConvertTimeToUtc(LocalDateTime, timeZone);
+                DateTime.SpecifyKind(Time, DateTimeKind.Utc);
+                return Time;
+            }
+            else
+            {
+                return LocalDateTime;
+            }
+
         }
         public DateTime ConvertUtcToLocal(DateTime UtcDateTime)
         {
-            TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(_timeZone ?? throw new NullReferenceException("Time Zone Property of TimeZoneService class was not properly intialized."));
-            return TimeZoneInfo.ConvertTimeFromUtc(UtcDateTime, timeZone);
+            if (UtcDateTime.Kind == DateTimeKind.Utc)
+            {
+                TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(_timeZone ?? throw new NullReferenceException("Time Zone Property of TimeZoneService class was not properly intialized."));
+                var Time = TimeZoneInfo.ConvertTimeFromUtc(UtcDateTime, timeZone);
+                DateTime.SpecifyKind(Time, DateTimeKind.Unspecified);
+                return Time;
+            }
+            else
+            {
+                return UtcDateTime;
+            }
+
         }
-        public DateTime ConvertUtcToLocal(DateTime UtcDateTime, string TimeZoneId)
+
+
+
+
+
+        //overload methods that receive a nullable datetime parameter
+        public DateTime? ConvertLocalToUtc(DateTime? LocalDateTime)
         {
-            TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(TimeZoneId);
-            return TimeZoneInfo.ConvertTimeFromUtc(UtcDateTime, timeZone);
+            if (LocalDateTime == null)
+            {
+                _logger.LogWarning($"ConvertLocalToUtc(DateTime?) received a null value ({LocalDateTime})");
+                return null; // Return null as is if input is null
+            }
+         
+                TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(
+                _timeZone ?? throw new NullReferenceException("Time Zone Property of TimeZoneService class was not properly initialized."));
+
+                // Specify DateTimeKind to avoid ambiguity
+                var Time = TimeZoneInfo.ConvertTimeToUtc(LocalDateTime.Value, timeZone);
+                Time = DateTime.SpecifyKind(Time, DateTimeKind.Utc);
+                return Time;
+          
+
         }
-        public DateTime ConvertLocalToUtc(DateTime LocalDateTime, string TimeZoneId)
+
+        public DateTime? ConvertUtcToLocal(DateTime? UtcDateTime)
         {
-            TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(TimeZoneId);
-            return TimeZoneInfo.ConvertTimeToUtc(LocalDateTime, timeZone);
+            if (UtcDateTime == null)
+            {
+                _logger.LogWarning($"ConvertUtcToLocal(DateTime?) received a null value ({UtcDateTime})");
+                return null; // Return null as is if input is null
+            }
+
+          
+                TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(
+                _timeZone ?? throw new NullReferenceException("Time Zone Property of TimeZoneService class was not properly initialized."));
+
+
+                // Specify DateTimeKind to ensure conversion works correctly
+                var Time = TimeZoneInfo.ConvertTimeFromUtc(UtcDateTime.Value, timeZone);
+                DateTime.SpecifyKind(Time, DateTimeKind.Utc);
+                return Time;
+            
         }
 
 
 
+        public DateTime? DisplayLocalTimeFromUtc(DateTime? UtcDateTime)
+        {
+            if (UtcDateTime == null)
+            {
+                return null;
+            }
 
+            TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(
+                _timeZone ?? throw new NullReferenceException("Time Zone Property of TimeZoneService class was not properly initialized."));
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            DateTime dateTime = new DateTime();
+            dateTime = TimeZoneInfo.ConvertTimeFromUtc(UtcDateTime.Value, timeZone);
+            return dateTime;
+        }
     }
 }

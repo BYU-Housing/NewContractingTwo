@@ -10,8 +10,10 @@
         Task<DateTime> ConvertLocalToUtcAsync(DateTime LocalDateTime);
         DateTime ConvertLocalToUtc(DateTime LocalDateTime);
         DateTime ConvertUtcToLocal(DateTime UtcDateTime);
-        DateTime ConvertUtcToLocal(DateTime UtcDateTime, string TimeZoneId);
-        DateTime ConvertLocalToUtc(DateTime LocalDateTime, string TimeZoneId);
+        DateTime? ConvertLocalToUtc(DateTime? LocalDateTime);
+        DateTime? ConvertUtcToLocal(DateTime? UtcDateTime);
+        DateTime? DisplayLocalTimeFromUtc(DateTime? UtcDateTime);
+
 
     }
 }
