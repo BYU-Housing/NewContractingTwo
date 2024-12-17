@@ -21,6 +21,10 @@
                     {
                         @GetAgreementPeriodDescription(period)
                     }
+                    else if (param.Key == "SexAtBirth" && bool.TryParse(param.Value, out var sexAtBirth))
+                    {
+                        @GetSexAtBirthDescription(sexAtBirth)
+                    }
                     else
                     {
                         @param.Value
@@ -62,5 +66,10 @@
             7 => "Fall Winter 2025",
             _ => "Unknown Agreement Period"
         };
+    }
+
+    private string GetSexAtBirthDescription(bool sexAtBirth)
+    {
+        return sexAtBirth ? "Female" : "Male";
     }
 }
