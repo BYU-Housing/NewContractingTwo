@@ -66,8 +66,13 @@
         <input type="datetime-local" @bind="WyviewParkPriorityDate" class="form-control" />
     </div>
 
+    <div>
+        <label>Riviera Priority Date:</label>
+        <input type="datetime-local" @bind="RivieraPriorityDate" class="form-control" />
+    </div>
+
     <button type="button" @onclick="NavigateToSelectAgreementPeriod" class="btn btn-primary"
-            disabled="@(string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(NetID) || AgreementPeriod == null || ApplicationEligible == null || ContractEligible == null || HelamanPriorityDate == null || HeritagePriorityDate == null || WyviewParkPriorityDate == null)">
+            disabled="@(string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(NetID) || AgreementPeriod == null || ApplicationEligible == null || ContractEligible == null || HelamanPriorityDate == null || HeritagePriorityDate == null || WyviewParkPriorityDate == null || RivieraPriorityDate == null)">
         Submit
     </button>
 </form>
@@ -81,6 +86,7 @@
     private DateTime? HelamanPriorityDate { get; set; } = null; // Helaman Priority Date input
     private DateTime? HeritagePriorityDate { get; set; } = null; // Heritage Priority Date input
     private DateTime? WyviewParkPriorityDate { get; set; } = null; // Wyview Park Priority Date input
+    private DateTime? RivieraPriorityDate { get; set; } = null; // Riviera Priority Date input
 
     private void OnAgreementPeriodChanged(ChangeEventArgs e)
     {
@@ -112,7 +118,8 @@
             $"ContractEligible={(ContractEligible?.ToString().ToLower() ?? "false")}",
             $"HelamanPriorityDate={HelamanPriorityDate?.ToString("yyyy-MM-ddTHH:mm:ss")}",
             $"HeritagePriorityDate={HeritagePriorityDate?.ToString("yyyy-MM-ddTHH:mm:ss")}",
-            $"WyviewParkPriorityDate={WyviewParkPriorityDate?.ToString("yyyy-MM-ddTHH:mm:ss")}"
+            $"WyviewParkPriorityDate={WyviewParkPriorityDate?.ToString("yyyy-MM-ddTHH:mm:ss")}",
+            $"RivieraPriorityDate={RivieraPriorityDate?.ToString("yyyy-MM-ddTHH:mm:ss")}"
         };
 
         NavigationManager.NavigateTo($"/selectAgreementPeriod?{string.Join("&", queryParams)}");
