@@ -14,6 +14,18 @@
     <input @bind="NetID" @bind:event="oninput" id="netIdInput" placeholder="Enter a NetID" />
 </div>
 
+<div>
+    <label for="agreementPeriodInput">Select Agreement Period:</label>
+    <select @bind="AgreementPeriod" id="agreementPeriodInput">
+        <option value="">-- Select an Agreement Period --</option>
+        <option value="3">Fall Winter 2025</option>
+        <option value="4">Winter 2025</option>
+        <option value="5">Spring 2025</option>
+        <option value="6">Summer 2025</option>
+        <option value="7">Fall Winter 2025</option>
+    </select>
+</div>
+
 <button @onclick="NavigateToSelectAgreementPeriod">Submit</button>
 
 @code {
@@ -23,10 +35,15 @@
     [Parameter]
     public string? NetID { get; set; }
 
+    [Parameter]
+    public int? AgreementPeriod { get; set; }
+
     private void NavigateToSelectAgreementPeriod()
     {
-        // Navigate to the new page and include both Name and NetID as query parameters
-        var newUri = $"selectAgreementPeriod?Name={Uri.EscapeDataString(Name ?? "")}&NetID={Uri.EscapeDataString(NetID ?? "")}";
+        // Navigate to the new page and include Name, NetID, and AgreementPeriod as query parameters
+        var newUri = $"selectAgreementPeriod?Name={Uri.EscapeDataString(Name ?? "")}" +
+                     $"&NetID={Uri.EscapeDataString(NetID ?? "")}" +
+                     $"&AgreementPeriod={AgreementPeriod}";
         NavigationManager.NavigateTo(newUri);
     }
 }
