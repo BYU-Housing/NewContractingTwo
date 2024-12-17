@@ -76,6 +76,18 @@
     </div>
 
     <div>
+        <label>Minor:</label>
+        <div>
+            <input type="radio" name="Minor" value="true" @onchange="e => OnMinorChanged(true)" checked="@(Minor == true)" />
+            <label>True</label>
+        </div>
+        <div>
+            <input type="radio" name="Minor" value="false" @onchange="e => OnMinorChanged(false)" checked="@(Minor == false)" />
+            <label>False</label>
+        </div>
+    </div>
+
+    <div>
         <label>Helaman Priority Date:</label>
         <input type="datetime-local" @bind="HelamanPriorityDate" class="form-control" />
     </div>
@@ -96,23 +108,24 @@
     </div>
 
     <button type="button" @onclick="NavigateToSelectAgreementPeriod" class="btn btn-primary"
-            disabled="@(string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(NetID) || AgreementPeriod == null || ApplicationEligible == null || ContractEligible == null || SexAtBirth == null || Community == null || HelamanPriorityDate == null || HeritagePriorityDate == null || WyviewParkPriorityDate == null || RivieraPriorityDate == null)">
+            disabled="@(string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(NetID) || AgreementPeriod == null || ApplicationEligible == null || ContractEligible == null || SexAtBirth == null || Community == null || Minor == null || HelamanPriorityDate == null || HeritagePriorityDate == null || WyviewParkPriorityDate == null || RivieraPriorityDate == null)">
         Submit
     </button>
 </form>
 
 @code {
-    private string Name { get; set; } = string.Empty; // Name input
-    private string NetID { get; set; } = string.Empty; // NetID input
-    private int? AgreementPeriod { get; set; } = null; // Agreement Period input
-    private bool? ApplicationEligible { get; set; } = null; // Application Eligible input
-    private bool? ContractEligible { get; set; } = null; // Contract Eligible input
-    private bool? SexAtBirth { get; set; } = null; // Sex At Birth input
-    private bool? Community { get; set; } = null; // Community input
-    private DateTime? HelamanPriorityDate { get; set; } = null; // Helaman Priority Date input
-    private DateTime? HeritagePriorityDate { get; set; } = null; // Heritage Priority Date input
-    private DateTime? WyviewParkPriorityDate { get; set; } = null; // Wyview Park Priority Date input
-    private DateTime? RivieraPriorityDate { get; set; } = null; // Riviera Priority Date input
+    private string Name { get; set; } = string.Empty;
+    private string NetID { get; set; } = string.Empty;
+    private int? AgreementPeriod { get; set; } = null;
+    private bool? ApplicationEligible { get; set; } = null;
+    private bool? ContractEligible { get; set; } = null;
+    private bool? SexAtBirth { get; set; } = null;
+    private bool? Community { get; set; } = null;
+    private bool? Minor { get; set; } = null; // New Minor input
+    private DateTime? HelamanPriorityDate { get; set; } = null;
+    private DateTime? HeritagePriorityDate { get; set; } = null;
+    private DateTime? WyviewParkPriorityDate { get; set; } = null;
+    private DateTime? RivieraPriorityDate { get; set; } = null;
 
     private void OnAgreementPeriodChanged(ChangeEventArgs e)
     {
@@ -126,10 +139,10 @@
     private void OnContractEligibleChanged(bool value) => ContractEligible = value;
     private void OnSexAtBirthChanged(bool value) => SexAtBirth = value;
     private void OnCommunityChanged(bool value) => Community = value;
+    private void OnMinorChanged(bool value) => Minor = value;
 
     private void NavigateToSelectAgreementPeriod()
     {
-        // Construct the query string and navigate
         var queryParams = new List<string>
         {
             $"Name={Uri.EscapeDataString(Name)}",
@@ -139,6 +152,7 @@
             $"ContractEligible={(ContractEligible?.ToString().ToLower() ?? "false")}",
             $"SexAtBirth={(SexAtBirth?.ToString().ToLower() ?? "false")}",
             $"Community={(Community?.ToString().ToLower() ?? "false")}",
+            $"Minor={(Minor?.ToString().ToLower() ?? "false")}",
             $"HelamanPriorityDate={HelamanPriorityDate?.ToString("yyyy-MM-ddTHH:mm:ss")}",
             $"HeritagePriorityDate={HeritagePriorityDate?.ToString("yyyy-MM-ddTHH:mm:ss")}",
             $"WyviewParkPriorityDate={WyviewParkPriorityDate?.ToString("yyyy-MM-ddTHH:mm:ss")}",
