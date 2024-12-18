@@ -117,12 +117,18 @@
 
     #region Instantiations
     private List<BlockTest> BlockTestList { get; set; } = new List<BlockTest>();
+    private bool firstRender = true;
 
     private TimeZoneInfo? _localTimeZone;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _localTimeZone = await timeZone.GetUserTimeZoneAsync();
+        if (firstRender)
+        {
+            _localTimeZone = await timeZone.GetUserTimeZoneAsync();
+            firstRender = false;
+            StateHasChanged();
+        }
     }
 
 

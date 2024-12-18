@@ -518,12 +518,18 @@
     private TimeOnly? StartTime;
     private TimeOnly? EndTime;
     private TimeOnly? ContractTime;
+    private bool firstRender = true;
 
     private TimeZoneInfo? _localTimeZone;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _localTimeZone = await timeZone.GetUserTimeZoneAsync();
+        if(firstRender)
+        {
+            _localTimeZone = await timeZone.GetUserTimeZoneAsync();
+            firstRender = false;
+            StateHasChanged();  
+        }
     }
 
     #endregion
@@ -556,8 +562,7 @@
     }
 
     private async Task UpsertObject()
-    {
-        
+    {   
         await ObjectAdditionModal.HideAsync();
         //the modal close event will handle the conversion of the time to UTC
         GenService.Upsert<BlockTest>(SelectedObject);
