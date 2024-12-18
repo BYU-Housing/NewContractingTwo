@@ -208,6 +208,18 @@
     </div>
 
     <div>
+        <label>Wheatley VS Scholar:</label>
+        <div>
+            <input type="radio" name="WheatleyVSScholar" value="true" @onchange="e => OnWheatleyVSScholarChanged(true)" checked="@(WheatleyVSScholar == true)" />
+            <label>True</label>
+        </div>
+        <div>
+            <input type="radio" name="WheatleyVSScholar" value="false" @onchange="e => OnWheatleyVSScholarChanged(false)" checked="@(WheatleyVSScholar == false)" />
+            <label>False</label>
+        </div>
+    </div>
+
+    <div>
         <label>Helaman Priority Date:</label>
         <input type="datetime-local" @bind="HelamanPriorityDate" class="form-control" />
     </div>
@@ -231,7 +243,8 @@
             disabled="@(string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(NetID) || AgreementPeriod == null ||
                         ApplicationEligible == null || ContractEligible == null || SexAtBirth == null || Community == null ||
                         Minor == null || Athlete == null || ADA == null || FlexGE == null || InternationalScholarship == null || 
-                        LISR == null || NoAnimal == null || PostBacc == null || REQMet == null || ServiceESA == null || FirstGeneration == null ||
+                        LISR == null || NoAnimal == null || PostBacc == null || REQMet == null || ServiceESA == null || 
+                        FirstGeneration == null || WheatleyVSScholar == null ||
                         HelamanPriorityDate == null || HeritagePriorityDate == null || WyviewParkPriorityDate == null ||
                         RivieraPriorityDate == null)">
         Submit
@@ -257,6 +270,7 @@
     private bool? REQMet { get; set; } = null;
     private bool? ServiceESA { get; set; } = null;
     private bool? FirstGeneration { get; set; } = null;
+    private bool? WheatleyVSScholar { get; set; } = null;
 
 
 
@@ -281,6 +295,7 @@
     private void OnREQMetChanged(bool value) => REQMet = value;
     private void OnServiceESAChanged(bool value) => ServiceESA = value;
     private void OnFirstGenerationChanged(bool value) => FirstGeneration = value;
+    private void OnWheatleyVSScholarChanged(bool value) => WheatleyVSScholar = value;
 
 
 
@@ -306,6 +321,7 @@
             $"REQMet={REQMet?.ToString().ToLower()}",
             $"ServiceESA={ServiceESA?.ToString().ToLower()}",
             $"FirstGeneration={FirstGeneration?.ToString().ToLower()}",
+            $"WheatleyVSScholar={WheatleyVSScholar?.ToString().ToLower()}",
 
 
             $"HelamanPriorityDate={HelamanPriorityDate:yyyy-MM-ddTHH:mm:ss}",
