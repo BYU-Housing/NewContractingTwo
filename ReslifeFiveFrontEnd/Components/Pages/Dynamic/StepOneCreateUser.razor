@@ -136,6 +136,18 @@
     </div>
 
     <div>
+        <label>LISR:</label>
+        <div>
+            <input type="radio" name="LISR" value="true" @onchange="e => OnLISRChanged(true)" checked="@(LISR == true)" />
+            <label>True</label>
+        </div>
+        <div>
+            <input type="radio" name="LISR" value="false" @onchange="e => OnLISRChanged(false)" checked="@(LISR == false)" />
+            <label>False</label>
+        </div>
+    </div>
+
+    <div>
         <label>Helaman Priority Date:</label>
         <input type="datetime-local" @bind="HelamanPriorityDate" class="form-control" />
     </div>
@@ -178,6 +190,7 @@
     private bool? ADA { get; set; } = null;
     private bool? FlexGE { get; set; } = null;
     private bool? InternationalScholarship { get; set; } = null;
+    private bool? LISR { get; set; } = null;
 
     private DateTime? HelamanPriorityDate { get; set; } = null;
     private DateTime? HeritagePriorityDate { get; set; } = null;
@@ -194,6 +207,7 @@
     private void OnADAChanged(bool value) => ADA = value;
     private void OnFlexGEChanged(bool value) => FlexGE = value;
     private void OnInternationalScholarshipChanged(bool value) => InternationalScholarship = value;
+    private void OnLISRChanged(bool value) => LISR = value;
 
     private void NavigateToSelectAgreementPeriod()
     {
@@ -211,6 +225,7 @@
             $"ADA={ADA?.ToString().ToLower()}",
             $"FlexGE={FlexGE?.ToString().ToLower()}",
             $"InternationalScholarship={InternationalScholarship?.ToString().ToLower()}",
+            $"LISR={LISR?.ToString().ToLower()}",
             $"HelamanPriorityDate={HelamanPriorityDate:yyyy-MM-ddTHH:mm:ss}",
             $"HeritagePriorityDate={HeritagePriorityDate:yyyy-MM-ddTHH:mm:ss}",
             $"WyviewParkPriorityDate={WyviewParkPriorityDate:yyyy-MM-ddTHH:mm:ss}",
