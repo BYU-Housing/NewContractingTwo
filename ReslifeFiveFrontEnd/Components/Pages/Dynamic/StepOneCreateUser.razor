@@ -124,6 +124,18 @@
     </div>
 
     <div>
+        <label>International Scholarship:</label>
+        <div>
+            <input type="radio" name="InternationalScholarship" value="true" @onchange="e => OnInternationalScholarshipChanged(true)" checked="@(InternationalScholarship == true)" />
+            <label>True</label>
+        </div>
+        <div>
+            <input type="radio" name="InternationalScholarship" value="false" @onchange="e => OnInternationalScholarshipChanged(false)" checked="@(InternationalScholarship == false)" />
+            <label>False</label>
+        </div>
+    </div>
+
+    <div>
         <label>Helaman Priority Date:</label>
         <input type="datetime-local" @bind="HelamanPriorityDate" class="form-control" />
     </div>
@@ -165,6 +177,8 @@
     private bool? Athlete { get; set; } = null;
     private bool? ADA { get; set; } = null;
     private bool? FlexGE { get; set; } = null;
+    private bool? InternationalScholarship { get; set; } = null;
+
     private DateTime? HelamanPriorityDate { get; set; } = null;
     private DateTime? HeritagePriorityDate { get; set; } = null;
     private DateTime? WyviewParkPriorityDate { get; set; } = null;
@@ -179,6 +193,7 @@
     private void OnAthleteChanged(bool value) => Athlete = value;
     private void OnADAChanged(bool value) => ADA = value;
     private void OnFlexGEChanged(bool value) => FlexGE = value;
+    private void OnInternationalScholarshipChanged(bool value) => InternationalScholarship = value;
 
     private void NavigateToSelectAgreementPeriod()
     {
@@ -195,6 +210,7 @@
             $"Athlete={Athlete?.ToString().ToLower()}",
             $"ADA={ADA?.ToString().ToLower()}",
             $"FlexGE={FlexGE?.ToString().ToLower()}",
+            $"InternationalScholarship={InternationalScholarship?.ToString().ToLower()}",
             $"HelamanPriorityDate={HelamanPriorityDate:yyyy-MM-ddTHH:mm:ss}",
             $"HeritagePriorityDate={HeritagePriorityDate:yyyy-MM-ddTHH:mm:ss}",
             $"WyviewParkPriorityDate={WyviewParkPriorityDate:yyyy-MM-ddTHH:mm:ss}",
