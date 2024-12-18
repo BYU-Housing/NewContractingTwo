@@ -184,6 +184,18 @@
     </div>
 
     <div>
+        <label>Service ESA:</label>
+        <div>
+            <input type="radio" name="ServiceESA" value="true" @onchange="e => OnServiceESAChanged(true)" checked="@(ServiceESA == true)" />
+            <label>True</label>
+        </div>
+        <div>
+            <input type="radio" name="ServiceESA" value="false" @onchange="e => OnServiceESAChanged(false)" checked="@(ServiceESA == false)" />
+            <label>False</label>
+        </div>
+    </div>
+
+    <div>
         <label>Helaman Priority Date:</label>
         <input type="datetime-local" @bind="HelamanPriorityDate" class="form-control" />
     </div>
@@ -206,8 +218,8 @@
     <button type="button" @onclick="NavigateToSelectAgreementPeriod" class="btn btn-primary"
             disabled="@(string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(NetID) || AgreementPeriod == null ||
                         ApplicationEligible == null || ContractEligible == null || SexAtBirth == null || Community == null ||
-                        Minor == null || Athlete == null || ADA == null || FlexGE == null || LISR == null || NoAnimal == null || 
-                        PostBacc == null || REQMet == null ||
+                        Minor == null || Athlete == null || ADA == null || FlexGE == null || InternationalScholarship == null || 
+                        LISR == null || NoAnimal == null || PostBacc == null || REQMet == null || ServiceESA == null ||
                         HelamanPriorityDate == null || HeritagePriorityDate == null || WyviewParkPriorityDate == null ||
                         RivieraPriorityDate == null)">
         Submit
@@ -231,6 +243,8 @@
     private bool? NoAnimal { get; set; } = null;
     private bool? PostBacc { get; set; } = null;
     private bool? REQMet { get; set; } = null;
+    private bool? ServiceESA { get; set; } = null;
+
 
 
     private DateTime? HelamanPriorityDate { get; set; } = null;
@@ -252,6 +266,8 @@
     private void OnNoAnimalChanged(bool value) => NoAnimal = value;
     private void OnPostBaccChanged(bool value) => PostBacc = value;
     private void OnREQMetChanged(bool value) => REQMet = value;
+    private void OnServiceESAChanged(bool value) => ServiceESA = value;
+
 
 
     private void NavigateToSelectAgreementPeriod()
@@ -274,6 +290,7 @@
             $"NoAnimal={NoAnimal?.ToString().ToLower()}",
             $"PostBacc={PostBacc?.ToString().ToLower()}",
             $"REQMet={REQMet?.ToString().ToLower()}",
+            $"ServiceESA={ServiceESA?.ToString().ToLower()}",
 
             $"HelamanPriorityDate={HelamanPriorityDate:yyyy-MM-ddTHH:mm:ss}",
             $"HeritagePriorityDate={HeritagePriorityDate:yyyy-MM-ddTHH:mm:ss}",
