@@ -1,12 +1,209 @@
 ﻿@page "/dynamicPortal"
 @inject IGenService GenService
 @inject NavigationManager NavigationManager
+
 <h3>DynamicPortal</h3>
 
-<p>
-    <a href="/dynamicPortalStepOneSelectArea">Go To Select Area</a>
-</p>
+<form>
+    <div>
+        <label>Enter Name:</label>
+        <input type="text" @bind="name" class="form-control" placeholder="Enter your name" />
+    </div>
+
+    <div>
+        <label>Enter NetID:</label>
+        <input type="text" @bind="netID" class="form-control" placeholder="Enter your NetID" />
+    </div>
+
+    <div>
+        <label>Enter Daily Rate (DRH):</label>
+        <input type="number" @bind="dailyRate" step="0.01" class="form-control" placeholder="Enter daily rate per hour" />
+    </div>
+
+    <div>
+        <label>Enter Monthly Price (DRMP):</label>
+        <input type="number" @bind="monthlyPrice" step="0.01" class="form-control" placeholder="Enter daily rate monthly price" />
+    </div>
+
+    <div>
+        <label>Enter NDONE:</label>
+        <input type="number" @bind="NDONE" class="form-control" placeholder="Enter NDONE value" />
+    </div>
+
+    <div>
+        <label>Enter NDTWO:</label>
+        <input type="number" @bind="NDTWO" class="form-control" placeholder="Enter NDTWO value" />
+    </div>
+
+    <div>
+        <label>Select Eligibility:</label>
+        <input type="radio" name="eligibility" value="true" @onchange="e => OnEligibilityChanged(true)" checked="@(eligibility == true)" /> Yes
+        <input type="radio" name="eligibility" value="false" @onchange="e => OnEligibilityChanged(false)" checked="@(eligibility == false)" /> No
+    </div>
+
+    <div>
+        <label>Select Age Group:</label>
+        <input type="radio" name="ageGroup" value="true" @onchange="e => OnAgeGroupChanged(true)" checked="@(ageGroup == true)" /> 18-
+        <input type="radio" name="ageGroup" value="false" @onchange="e => OnAgeGroupChanged(false)" checked="@(ageGroup == false)" /> 19+
+    </div>
+
+    <div>
+        <label>Select Minor Status:</label>
+        <input type="radio" name="Mnr" value="true" @onchange="e => OnMnrChanged(true)" checked="@(Mnr == true)" /> Yes
+        <input type="radio" name="Mnr" value="false" @onchange="e => OnMnrChanged(false)" checked="@(Mnr == false)" /> No
+    </div>
+
+    <div>
+        <label>Select Requirement Status:</label>
+        <input type="radio" name="REQ" value="true" @onchange="e => OnReqChanged(true)" checked="@(REQ == true)" /> Met
+        <input type="radio" name="REQ" value="false" @onchange="e => OnReqChanged(false)" checked="@(REQ == false)" /> Not Met
+    </div>
+
+    @foreach (var param in Parameters)
+    {
+        <div>
+            <label>Select @param.Key Status:</label>
+            <input type="radio" name="@param.Key" value="true" @onchange="e => OnParamChanged(param.Key, true)" checked="@(param.Value == true)" /> Yes
+            <input type="radio" name="@param.Key" value="false" @onchange="e => OnParamChanged(param.Key, false)" checked="@(param.Value == false)" /> No
+        </div>
+    }
+
+    <div>
+        <label>Select Agreement Period:</label>
+        <select @onchange="OnAgreementPeriodChanged" class="form-control">
+            <option value="">-- Select --</option>
+            <option value="1">Fall Winter 2025</option>
+            <option value="2">Winter 2026</option>
+            <option value="3">Spring 2025</option>
+            <option value="4">Summer 2025</option>
+        </select>
+    </div>
+
+    <div>
+        <label>Select Sex At Birth:</label>
+        <select @onchange="OnSexAtBirthChanged" class="form-control">
+            <option value="">-- Select --</option>
+            <option value="1">M</option>
+            <option value="2">F</option>
+            <option value="3">FAM</option>
+            <option value="4">Other</option>
+        </select>
+    </div>
+
+    <div>
+        <label>Select Priority Date Helaman Halls:</label>
+        <input type="datetime-local" @bind="PDHL" />
+    </div>
+
+    <div>
+        <label>Select Priority Date Heritage Halls:</label>
+        <input type="datetime-local" @bind="PDHR" />
+    </div>
+
+    <div>
+        <label>Select Priority Date CDRI:</label>
+        <input type="datetime-local" @bind="CDRI" />
+    </div>
+
+    <div>
+        <label>Select Priority Date CDWP:</label>
+        <input type="datetime-local" @bind="CDWP" />
+    </div>
+
+    <button type="button" @onclick="NavigateToStepOne" class="btn btn-primary"
+            disabled="@(string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(netID) || dailyRate == null || monthlyPrice == null || NDONE == null || NDTWO == null || eligibility == null || ageGroup == null || Mnr == null || REQ == null || agreementPeriod == null || sexAtBirth == null || Parameters.Any(kvp => kvp.Value == null))">
+        Go To Select Area
+    </button>
+</form>
 
 @code {
+    private string name { get; set; } = string.Empty; // Property for Name
+    private string netID { get; set; } = string.Empty; // Property for NetID
+    private decimal? dailyRate { get; set; } = null; // Property for DRH
+    private decimal? monthlyPrice { get; set; } = null; // Property for DRMP
+    private int? NDONE { get; set; } = null; // Property for NDONE
+    private int? NDTWO { get; set; } = null; // Property for NDTWO
+    private bool? eligibility = false;
+    private bool? ageGroup = false;
+    private bool? Mnr = false;
+    private bool? REQ = false;
+    private int? agreementPeriod = null;
+    private int? sexAtBirth = null;
 
+    private Dictionary<string, bool?> Parameters = new()
+    {
+        { "ADA", false },
+        { "ATH", false },
+        { "ESA", false },
+        { "LISR", false },
+        { "ISCH", false },
+        { "FLEXGE", false },
+        { "WL", false },
+        { "PB", false },
+        { "NOAML", false }
+    };
+
+    private DateTime? PDHL = null;
+    private DateTime? PDHR = null;
+    private DateTime? CDRI = null;
+    private DateTime? CDWP = null;
+
+    private void OnEligibilityChanged(bool value) => eligibility = value;
+    private void OnAgeGroupChanged(bool value) => ageGroup = value;
+    private void OnMnrChanged(bool value) => Mnr = value;
+    private void OnReqChanged(bool value) => REQ = value;
+
+    private void OnParamChanged(string param, bool value)
+    {
+        if (Parameters.ContainsKey(param))
+            Parameters[param] = value;
+    }
+
+    private void OnAgreementPeriodChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var value))
+        {
+            agreementPeriod = value;
+        }
+    }
+
+    private void OnSexAtBirthChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var value))
+        {
+            sexAtBirth = value;
+        }
+    }
+
+    private void NavigateToStepOne()
+    {
+        PDHL ??= DateTime.Now;
+        PDHR ??= DateTime.Now;
+        CDRI ??= DateTime.Now;
+        CDWP ??= DateTime.Now;
+
+        var queryParams = new List<string>
+        {
+            $"Name={Uri.EscapeDataString(name)}",
+            $"NetID={Uri.EscapeDataString(netID)}",
+            $"DRH={dailyRate:0.00}",
+            $"DRMP={monthlyPrice:0.00}",
+            $"NDONE={NDONE}",
+            $"NDTWO={NDTWO}",
+            $"Ebt={(eligibility ?? false ? "true" : "false")}",
+            $"AgeGroup={(ageGroup ?? false ? "true" : "false")}",
+            $"Mnr={(Mnr ?? false ? "true" : "false")}",
+            $"REQ={(REQ ?? false ? "true" : "false")}",
+            $"AGRPRD={agreementPeriod}",
+            $"Sex={sexAtBirth}",
+            $"PDHL={PDHL.Value:yyyy-MM-ddTHH:mm:ss}",
+            $"PDHR={PDHR.Value:yyyy-MM-ddTHH:mm:ss}",
+            $"CDRI={CDRI.Value:yyyy-MM-ddTHH:mm:ss}",
+            $"CDWP={CDWP.Value:yyyy-MM-ddTHH:mm:ss}"
+        };
+
+        queryParams.AddRange(Parameters.Select(kvp => $"{kvp.Key}={(kvp.Value ?? false ? "true" : "false")}"));
+
+        NavigationManager.NavigateTo($"/stepOneSelectStartDate?{string.Join("&", queryParams)}");
+    }
 }

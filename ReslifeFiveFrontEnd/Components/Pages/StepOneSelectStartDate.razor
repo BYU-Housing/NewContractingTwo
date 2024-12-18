@@ -1,0 +1,72 @@
+﻿@page "/stepOneSelectStartDate"
+@inject IGenService GenService
+@inject NavigationManager NavigationManager
+
+<h3>StepOneSelectStartDate</h3>
+
+<p><strong>All URL Parameters:</strong></p>
+<ul>
+    @foreach (var param in parsedQueryParams)
+    {
+        <li><strong>@param.Key</strong> = @param.Value</li>
+    }
+</ul>
+
+@code {
+    private Dictionary<string, string> parsedQueryParams = new();
+    private bool? eligibility;
+    private DateTime? PDHL; // Priority Date Helaman Halls
+    private DateTime? PDHR; // Priority Date Heritage Halls
+    private DateTime? CDRI; // Priority Date CDRI
+    private DateTime? CDWP; // Priority Date CDWP
+
+    protected override void OnInitialized()
+    {
+        var uri = new Uri(NavigationManager.Uri);
+
+        // Parse query parameters
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+
+        // Store parsed parameters in a dictionary safely
+        foreach (var param in query)
+        {
+            parsedQueryParams[param.Key] = param.Value.ToString() ?? string.Empty;
+        }
+
+        // Extract specific values with null safety checks
+        if (query.TryGetValue("Ebt", out var eligibilityValue) &&
+            !string.IsNullOrEmpty(eligibilityValue) &&
+            bool.TryParse(eligibilityValue, out var eligibilityResult))
+        {
+            eligibility = eligibilityResult;
+        }
+
+        if (query.TryGetValue("PDHL", out var pdhlValue) &&
+            !string.IsNullOrEmpty(pdhlValue) &&
+            DateTime.TryParse(pdhlValue, out var parsedPdhl))
+        {
+            PDHL = parsedPdhl;
+        }
+
+        if (query.TryGetValue("PDHR", out var pdhrValue) &&
+            !string.IsNullOrEmpty(pdhrValue) &&
+            DateTime.TryParse(pdhrValue, out var parsedPdhr))
+        {
+            PDHR = parsedPdhr;
+        }
+
+        if (query.TryGetValue("CDRI", out var cdriValue) &&
+            !string.IsNullOrEmpty(cdriValue) &&
+            DateTime.TryParse(cdriValue, out var parsedCdri))
+        {
+            CDRI = parsedCdri;
+        }
+
+        if (query.TryGetValue("CDWP", out var cdwpValue) &&
+            !string.IsNullOrEmpty(cdwpValue) &&
+            DateTime.TryParse(cdwpValue, out var parsedCdwp))
+        {
+            CDWP = parsedCdwp;
+        }
+    }
+}
