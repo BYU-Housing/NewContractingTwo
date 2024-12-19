@@ -148,7 +148,8 @@
     private void OnAgreementPeriodSelected(int periodId)
     {
         SelectedAgreementPeriod = periodId;
-        // Add your logic for handling the selection here
+        // Navigate to the selectStartDate page with the selected AgreementPeriod as a query parameter
+        NavigationManager.NavigateTo($"/selectStartDate?AgreementPeriod={periodId}");
     }
 
     private void NavigateBack()
