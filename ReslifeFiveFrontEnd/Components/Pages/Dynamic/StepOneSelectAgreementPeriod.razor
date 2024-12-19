@@ -148,12 +148,13 @@
     private void OnAgreementPeriodSelected(int periodId)
     {
         SelectedAgreementPeriod = periodId;
-        // Navigate to the selectStartDate page with the selected AgreementPeriod as a query parameter
-        NavigationManager.NavigateTo($"/selectStartDate?AgreementPeriod={periodId}");
+        var queryParams = string.Join("&", UrlParameters.Select(p => $"{Uri.EscapeDataString(p.Key)}={Uri.EscapeDataString(p.Value ?? string.Empty)}"));
+        NavigationManager.NavigateTo($"/selectStartDate?{queryParams}&AgreementPeriod={periodId}");
     }
 
     private void NavigateBack()
     {
-        NavigationManager.NavigateTo("/createTestUser");
+        var queryParams = string.Join("&", UrlParameters.Select(p => $"{Uri.EscapeDataString(p.Key)}={Uri.EscapeDataString(p.Value ?? string.Empty)}"));
+        NavigationManager.NavigateTo($"/createTestUser?{queryParams}");
     }
 }
