@@ -1,4 +1,7 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inject IGenService genService
+@inject ILogger<NavMenu> logger
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">ReslifeFiveFrontEnd</a>
     </div>
@@ -21,11 +24,7 @@
         </div>
 
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="Login">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Login
-            </NavLink>
-        </div>
+
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="userPortals">
@@ -42,27 +41,9 @@
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Admin Portals
             </NavLink>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="manageRole">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Manage Roles
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="manageUser">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Manage Users
-            </NavLink>
-        </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="gridBlockTestJ">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Block J Readonly
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="editGridBlockJ">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Block J Editable
-            </NavLink>
-        </div>
+
+       
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="metricContracting">
@@ -75,10 +56,122 @@
             </NavLink>
         </div>
         <div class="nav-item px-3">
+            <NavLink class="nav-link" href="Login">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Login
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
             <NavLink class="nav-link" href="viewUserInfo">
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> User Info
             </NavLink>
         </div>
+        <div class="nav-item px-3">
+            <AutoComplete @bind-Value="selectedUserName"
+                          TItem="User"
+                          DataProvider="UserDataProvider"
+                          PropertyName="NetId"
+                          Placeholder="Search for a user..."
+                          OnChanged="(User user) => SelectUser(user)" /><Button Color="ButtonColor.Primary" @onclick="ShowUserCanvas">Show User Details</Button>
+        </div>
+
+        <div class="nav-item px-3">
+            <Button class="nav-link" @onclick="ToggleManageObjectsCollapse"><span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Manage Objects</Button>
+        </div>
+        <Collapse @ref="ManageObjectsCollapse">
+            <Card class="bg-light">
+                <NavLink class="nav-link custom-nav-item custom-text" href="manageRole">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Manage Roles
+                </NavLink>
+                <NavLink class="nav-link custom-nav-item custom-text" href="manageUser">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Manage Users
+                </NavLink>
+                <NavLink class="nav-link custom-nav-item custom-text" href="gridBlockTestJ">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Block J Readonly
+                </NavLink>
+                <NavLink class="nav-link custom-nav-item custom-text" href="editGridBlockJ">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Block J Editable
+                </NavLink>
+            </Card>
+        </Collapse>
 
     </nav>
 </div>
+
+
+
+
+
+<Offcanvas @ref="userOffCanvas">
+    <BodyTemplate>
+        <div>
+            <h4>Name: @selectedUser.RestOfName @selectedUser.Surname</h4>
+            <h4>DOB: @selectedUser.DateOfBirth</h4>
+            <h4>Net ID: @selectedUser.NetId</h4>
+            <h4>BYU ID: @selectedUser.ByuId</h4>
+            <h4>Citizenship: @selectedUser.CitizenshipCountry</h4>
+        </div>
+    </BodyTemplate>
+</Offcanvas>
+@code{
+    Collapse ManageObjectsCollapse = default!;
+    public IEnumerable<User>? users;
+    private string selectedUserName = string.Empty;
+    private User selectedUser = new User();
+    private Modal userModal = default!;
+    private Offcanvas userOffCanvas = default!;
+
+    #region UI
+    private async Task ToggleManageObjectsCollapse() => await ManageObjectsCollapse.ToggleAsync();
+
+
+
+    private async Task<AutoCompleteDataProviderResult<User>> UserDataProvider(AutoCompleteDataProviderRequest<User> request)
+    {
+        var searchText = request.Filter?.Value?.ToString()?.ToLowerInvariant();
+
+
+        if(users is null)
+        {
+            users = genService.GetModel<User>();
+        }
+        logger.LogInformation($"searchtext for the autocomplete was {searchText}");
+        logger.LogInformation($"users count is {users.Count()}");
+        foreach(var user in users)
+        {
+            logger.LogInformation($"user {user.Surname} was found in users");
+        }
+        var filteredUsers = users.Where(u =>
+             (!string.IsNullOrEmpty(u.Surname) && u.Surname.ToLowerInvariant().Contains(searchText)) ||
+             (!string.IsNullOrEmpty(u.RestOfName) && u.RestOfName.ToLowerInvariant().Contains(searchText)) ||
+             (!string.IsNullOrEmpty(u.PreferredFirstName) && u.PreferredFirstName.ToLowerInvariant().Contains(searchText)) ||
+             (u.DateOfBirth.ToString("yyyy-MM=dd").ToLowerInvariant().Contains(searchText)) ||
+             (!string.IsNullOrEmpty(u.ByuId) && u.ByuId.ToLowerInvariant().Contains(searchText)) ||
+             (!string.IsNullOrEmpty(u.NetId) && u.NetId.ToLowerInvariant().Contains(searchText))
+            ).OrderBy(u => u.RestOfName);
+
+        return await Task.FromResult(request.ApplyTo(filteredUsers));
+    }
+
+
+    private void SelectUser(User user)
+    {
+        selectedUser = user;
+    }
+
+    private async Task ShowUserCanvas()
+    {
+        await userOffCanvas.ShowAsync();
+    }
+
+    #endregion
+
+
+
+
+
+
+
+
+
+
+}

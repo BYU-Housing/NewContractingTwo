@@ -1,0 +1,20 @@
+﻿
+.custom-nav-item {
+    background-color: lightgray; /* Default gray background */
+    border-radius: 5px; /* Optional: Rounded corners */
+    margin: 2px 0; /* Spacing between items */
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+    .custom-nav-item:hover {
+        background-color: #007bff; /* Blue background on hover */
+    }
+
+    .custom-nav-item .custom-text {
+        color: black !important; /* Force text color to be black */
+        text-decoration: none; /* Remove underline */
+    }
+
+    .custom-nav-item:hover .custom-text {
+        color: white !important; /* Text turns white on hover for contrast */
+    }
