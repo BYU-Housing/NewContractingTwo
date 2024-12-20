@@ -4,6 +4,37 @@
 
 <h3>Step Two: Select Start Date</h3>
 
+@if (AgreementStartDate.HasValue)
+{
+    if (AgreementStartDate.Value > DateTime.Now)
+    {
+        <div class="card">
+            <div class="card-body">
+                <h5>Future</h5>
+                <p>The Agreement Start Date is in the future.</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-body">
+                <h5>Past</h5>
+                <p>The Agreement Start Date is in the past.</p>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="card">
+        <div class="card-body">
+            <h5>Missing Date</h5>
+            <p>No Agreement Start Date found in the URL.</p>
+        </div>
+    </div>
+}
+
 <h3>Hidden Developer Notes</h3>
 <!-- Table to Display URL Parameters -->
 <div class="row">
@@ -53,9 +84,11 @@
         "HeritagePriorityDate",
         "WyviewParkPriorityDate",
         "RivieraPriorityDate",
-        "AgreementStartDate", // Added for consistent timestamp display
-        "AgreementEndDate"    // Added for consistent timestamp display
+        "AgreementStartDate", // Updated parameter name
+        "AgreementEndDate"
     };
+
+    private DateTime? AgreementStartDate;
 
     protected override void OnInitialized()
     {
@@ -68,6 +101,12 @@
             if (!string.IsNullOrEmpty(key))
             {
                 UrlParameters[key] = query[key];
+
+                // Parse AgreementStartDate if present
+                if (key == "AgreementStartDate" && DateTime.TryParse(query[key], out var startDate))
+                {
+                    AgreementStartDate = startDate;
+                }
             }
         }
     }
