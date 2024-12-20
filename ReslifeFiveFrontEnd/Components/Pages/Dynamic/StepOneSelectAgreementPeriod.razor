@@ -149,7 +149,7 @@
     {
         SelectedAgreementPeriod = periodId;
         var queryParams = string.Join("&", UrlParameters.Select(p => $"{Uri.EscapeDataString(p.Key)}={Uri.EscapeDataString(p.Value ?? string.Empty)}"));
-        NavigationManager.NavigateTo($"/selectStartDate?{queryParams}&AgreementPeriod={periodId}");
+        NavigationManager.NavigateTo($"/selectStartDate?{queryParams}");
     }
 
     private void NavigateBack()
