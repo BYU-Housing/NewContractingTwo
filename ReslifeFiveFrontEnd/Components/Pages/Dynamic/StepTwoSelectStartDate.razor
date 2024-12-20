@@ -6,16 +6,23 @@
 
 @if (AgreementStartDate.HasValue)
 {
-    <button class="btn btn-primary">
-        @if (AgreementStartDate.Value < DateTime.Now)
-        {
-            @DateTime.Now.ToString("yyyy-MM-dd")
-        }
-        else
-        {
+    if (AgreementStartDate.Value < DateTime.Now)
+    {
+        <div>
+            @for (var i = 0; i < 7; i++)
+            {
+                <button class="btn btn-primary m-1">
+                    @(DateTime.Now.AddDays(i).ToString("yyyy-MM-dd"))
+                </button>
+            }
+        </div>
+    }
+    else
+    {
+        <button class="btn btn-primary">
             @AgreementStartDate.Value.ToString("yyyy-MM-dd")
-        }
-    </button>
+        </button>
+    }
 }
 else
 {
