@@ -148,7 +148,21 @@
     private void OnAgreementPeriodSelected(int periodId)
     {
         SelectedAgreementPeriod = periodId;
+
+        // Fetch the start date of the selected agreement period
+        if (AllPossibleAgreementPeriods.TryGetValue(periodId, out var periodDetails))
+        {
+            var startDate = periodDetails.DateRange.Split('-')[0].Trim(); // Extract start date
+
+            // Update the URL parameters
+            UrlParameters["AgreementPeriod"] = periodId.ToString();
+            UrlParameters["agreementStartDate"] = startDate;
+        }
+
+        // Construct the query string using the updated UrlParameters
         var queryParams = string.Join("&", UrlParameters.Select(p => $"{Uri.EscapeDataString(p.Key)}={Uri.EscapeDataString(p.Value ?? string.Empty)}"));
+
+        // Navigate to the next page
         NavigationManager.NavigateTo($"/selectStartDate?{queryParams}");
     }
 
