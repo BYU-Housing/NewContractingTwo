@@ -6,24 +6,16 @@
 
 @if (AgreementStartDate.HasValue)
 {
-    if (AgreementStartDate.Value > DateTime.Now)
-    {
-        <div class="card">
-            <div class="card-body">
-                <h5>Future</h5>
-                <p>The Agreement Start Date is in the future.</p>
-            </div>
-        </div>
-    }
-    else
-    {
-        <div class="card">
-            <div class="card-body">
-                <h5>Past</h5>
-                <p>The Agreement Start Date is in the past.</p>
-            </div>
-        </div>
-    }
+    <button class="btn btn-primary">
+        @if (AgreementStartDate.Value < DateTime.Now)
+        {
+            @DateTime.Now.ToString("yyyy-MM-dd")
+        }
+        else
+        {
+            @AgreementStartDate.Value.ToString("yyyy-MM-dd")
+        }
+    </button>
 }
 else
 {
