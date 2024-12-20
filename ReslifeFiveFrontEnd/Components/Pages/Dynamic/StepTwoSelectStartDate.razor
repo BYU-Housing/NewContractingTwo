@@ -11,8 +11,9 @@
         <div class="d-flex flex-column align-items-center mt-5">
             @for (var i = 0; i < 7; i++)
             {
-                <button class="btn btn-primary my-2 w-50">
-                    @(DateTime.Now.AddDays(i).ToString("yyyy-MM-dd"))
+                var date = DateTime.Now.AddDays(i);
+                <button class="btn btn-primary my-2 w-50" @onclick="() => NavigateToStepThree(date)">
+                    @date.ToString("yyyy-MM-dd")
                 </button>
             }
         </div>
@@ -20,7 +21,7 @@
     else
     {
         <div class="d-flex flex-column align-items-center mt-5">
-            <button class="btn btn-primary w-50">
+            <button class="btn btn-primary w-50" @onclick="() => NavigateToStepThree(AgreementStartDate.Value)">
                 @AgreementStartDate.Value.ToString("yyyy-MM-dd")
             </button>
         </div>
@@ -110,6 +111,12 @@ else
                 }
             }
         }
+    }
+
+    private void NavigateToStepThree(DateTime selectedDate)
+    {
+        var formattedDate = selectedDate.ToString("yyyy-MM-dd");
+        NavigationManager.NavigateTo($"/stepThreeSelectArea?SelectedDate={formattedDate}");
     }
 
     private string GetAgreementPeriodDescription(int agreementPeriod)
