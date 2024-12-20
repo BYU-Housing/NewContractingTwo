@@ -149,14 +149,20 @@
     {
         SelectedAgreementPeriod = periodId;
 
-        // Fetch the start date of the selected agreement period
+        // Fetch the start and end dates of the selected agreement period
         if (AllPossibleAgreementPeriods.TryGetValue(periodId, out var periodDetails))
         {
-            var startDate = periodDetails.DateRange.Split('-')[0].Trim(); // Extract start date
+            var dates = periodDetails.DateRange.Split('-').Select(d => d.Trim()).ToArray(); // Split and trim the date range
+            if (dates.Length == 2)
+            {
+                var startDate = dates[0];
+                var endDate = dates[1];
 
-            // Update the URL parameters
-            UrlParameters["AgreementPeriod"] = periodId.ToString();
-            UrlParameters["agreementStartDate"] = startDate;
+                // Update the URL parameters
+                UrlParameters["AgreementPeriod"] = periodId.ToString();
+                UrlParameters["AgreementStartDate"] = startDate;
+                UrlParameters["AgreementEndDate"] = endDate;
+            }
         }
 
         // Construct the query string using the updated UrlParameters
