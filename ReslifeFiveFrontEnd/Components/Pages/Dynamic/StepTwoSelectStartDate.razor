@@ -2,16 +2,16 @@
 @inject IGenService GenService
 @inject NavigationManager NavigationManager
 
-<h3>Step Two: Select Start Date</h3>
+<h3 class="text-center">Step Two: Select Start Date</h3>
 
 @if (AgreementStartDate.HasValue)
 {
     if (AgreementStartDate.Value < DateTime.Now)
     {
-        <div>
+        <div class="d-flex flex-column align-items-center mt-5">
             @for (var i = 0; i < 7; i++)
             {
-                <button class="btn btn-primary m-1">
+                <button class="btn btn-primary my-2 w-50">
                     @(DateTime.Now.AddDays(i).ToString("yyyy-MM-dd"))
                 </button>
             }
@@ -19,14 +19,16 @@
     }
     else
     {
-        <button class="btn btn-primary">
-            @AgreementStartDate.Value.ToString("yyyy-MM-dd")
-        </button>
+        <div class="d-flex flex-column align-items-center mt-5">
+            <button class="btn btn-primary w-50">
+                @AgreementStartDate.Value.ToString("yyyy-MM-dd")
+            </button>
+        </div>
     }
 }
 else
 {
-    <div class="card">
+    <div class="card text-center mt-5">
         <div class="card-body">
             <h5>Missing Date</h5>
             <p>No Agreement Start Date found in the URL.</p>
@@ -34,10 +36,10 @@ else
     </div>
 }
 
-<h3>Hidden Developer Notes</h3>
+<h3 class="text-center">Hidden Developer Notes</h3>
 <!-- Table to Display URL Parameters -->
-<div class="row">
-    <div class="col-md-12">
+<div class="row justify-content-center">
+    <div class="col-md-8">
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -83,7 +85,7 @@ else
         "HeritagePriorityDate",
         "WyviewParkPriorityDate",
         "RivieraPriorityDate",
-        "AgreementStartDate", // Updated parameter name
+        "AgreementStartDate",
         "AgreementEndDate"
     };
 
