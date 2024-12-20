@@ -4,6 +4,107 @@
 
 <h3>Step Three Select Area</h3>
 
-@code {
+<h3 class="text-center">Hidden Developer Notes</h3>
+<!-- Table to Display URL Parameters -->
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Parameter Name</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var param in UrlParameters)
+                {
+                    <tr>
+                        <td>@GetFormattedParameterName(param.Key)</td>
+                        <td>
+                            @if (param.Key == "AgreementPeriod" && int.TryParse(param.Value, out var period))
+                            {
+                                @GetAgreementPeriodDescription(period)
+                            }
+                            else if ((param.Key == "SexAtBirth" || param.Key == "Community") && bool.TryParse(param.Value, out var booleanValue))
+                            {
+                                @GetBooleanDescription(param.Key, booleanValue)
+                            }
+                            else if (DateFields.Contains(param.Key) && DateTime.TryParse(param.Value, out var dateValue))
+                            {
+                                @dateValue.ToString("yyyy-MM-dd HH:mm:ss")
+                            }
+                            else
+                            {
+                                @param.Value
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
+@code {
+    private Dictionary<string, string?> UrlParameters = new Dictionary<string, string?>();
+
+    private HashSet<string> DateFields = new()
+    {
+        "HelamanPriorityDate",
+        "HeritagePriorityDate",
+        "WyviewParkPriorityDate",
+        "RivieraPriorityDate",
+        "AgreementStartDate",
+        "AgreementEndDate"
+    };
+
+    protected override void OnInitialized()
+    {
+        // Parse the query string from the URL
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+        foreach (string key in query.Keys)
+        {
+            if (!string.IsNullOrEmpty(key))
+            {
+                UrlParameters[key] = query[key];
+            }
+        }
+    }
+
+    private string GetAgreementPeriodDescription(int agreementPeriod)
+    {
+        return agreementPeriod switch
+        {
+            3 => "Fall Winter 2024 - 2025",
+            4 => "Winter 2025",
+            5 => "Spring 2025",
+            6 => "Summer 2025",
+            7 => "Fall Winter 2025",
+            _ => "Unknown Agreement Period"
+        };
+    }
+
+    private string GetBooleanDescription(string key, bool value)
+    {
+        return key switch
+        {
+            "SexAtBirth" => value ? "Female" : "Male",
+            "Community" => value ? "19+" : "18-",
+            _ => value ? "True" : "False"
+        };
+    }
+
+    private string GetFormattedParameterName(string key)
+    {
+        return key.Replace("PriorityDate", " Priority Date")
+                  .Replace("SexAtBirth", "Sex At Birth")
+                  .Replace("AgreementPeriod", "Agreement Period")
+                  .Replace("Community", "Community")
+                  .Replace("Eligible", "Eligible")
+                  .Replace("REQMet", "Requirement Met")
+                  .Replace("ESA", "Emotional Support Animal")
+                  .Replace("Scholarship", "Scholarship");
+    }
 }
