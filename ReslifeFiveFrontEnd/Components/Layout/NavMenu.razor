@@ -69,9 +69,15 @@
             <AutoComplete @bind-Value="selectedUserName"
                           TItem="User"
                           DataProvider="UserDataProvider"
-                          PropertyName="NetId"
+                          PropertyName="PreferredFullName"
                           Placeholder="Search for a user..."
-                          OnChanged="(User user) => SelectUser(user)" /><Button Color="ButtonColor.Primary" @onclick="ShowUserCanvas">Show User Details</Button>
+                          OnChanged="(User user) => SelectUser(user)" >
+       
+            </AutoComplete>
+                          
+
+
+                          <Button Color="ButtonColor.Primary" @onclick="ShowUserCanvas">Show User Details</Button>
         </div>
 
         <div class="nav-item px-3">
@@ -103,22 +109,33 @@
 
 <Offcanvas @ref="userOffCanvas">
     <BodyTemplate>
-        <div>
-            <h4>Name: @selectedUser.RestOfName @selectedUser.Surname</h4>
-            <h4>DOB: @selectedUser.DateOfBirth</h4>
-            <h4>Net ID: @selectedUser.NetId</h4>
-            <h4>BYU ID: @selectedUser.ByuId</h4>
-            <h4>Citizenship: @selectedUser.CitizenshipCountry</h4>
-        </div>
+        @if(!string.IsNullOrWhiteSpace(selectedUser.RestOfName))
+        {
+            <div>
+                <h4>Name: @selectedUser.RestOfName @selectedUser.Surname</h4>
+                <h4>DOB: @selectedUser.DateOfBirth</h4>
+                <h4>Net ID: @selectedUser.NetId</h4>
+                <h4>BYU ID: @selectedUser.ByuId</h4>
+                <h4>Citizenship: @selectedUser.CitizenshipCountry</h4>
+            </div>
+        }
+        else
+        {
+            <div>
+                <h3>No User Selected</h3>
+            </div>
+        }
+
     </BodyTemplate>
 </Offcanvas>
 @code{
     Collapse ManageObjectsCollapse = default!;
-    public IEnumerable<User>? users;
     private string selectedUserName = string.Empty;
     private User selectedUser = new User();
     private Modal userModal = default!;
     private Offcanvas userOffCanvas = default!;
+    private AutoComplete<User> UserAutoComplete = default!;
+
 
     #region UI
     private async Task ToggleManageObjectsCollapse() => await ManageObjectsCollapse.ToggleAsync();
@@ -129,33 +146,34 @@
     {
         var searchText = request.Filter?.Value?.ToString()?.ToLowerInvariant();
 
+        var query = genService.GetModel<User>();
 
-        if(users is null)
+        if (!string.IsNullOrEmpty(searchText))
         {
-            users = genService.GetModel<User>();
+            // Try parsing the search text as a date in the "mmddyyyy" format
+            DateTime? parsedDate = null;
+            if (DateTime.TryParseExact(searchText, "MMddyyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
+            {
+                parsedDate = DateTime.SpecifyKind(parsed.Date, DateTimeKind.Utc);
+            }
+            query = query.Where(u =>
+                (!string.IsNullOrEmpty(u.Surname) && u.Surname.ToLower().Contains(searchText)) ||
+                (!string.IsNullOrEmpty(u.RestOfName) && u.RestOfName.ToLower().Contains(searchText)) ||
+                (!string.IsNullOrEmpty(u.PreferredFirstName) && u.PreferredFirstName.ToLower().Contains(searchText)) ||
+                (!string.IsNullOrEmpty(u.ByuId) && u.ByuId.ToLower().Contains(searchText)) ||
+                (!string.IsNullOrEmpty(u.NetId) && u.NetId.ToLower().Contains(searchText)) ||
+                (parsedDate != null && u.DateOfBirth.Date == parsedDate.Value) // Match full birthday
+            );
         }
-        logger.LogInformation($"searchtext for the autocomplete was {searchText}");
-        logger.LogInformation($"users count is {users.Count()}");
-        foreach(var user in users)
-        {
-            logger.LogInformation($"user {user.Surname} was found in users");
-        }
-        var filteredUsers = users.Where(u =>
-             (!string.IsNullOrEmpty(u.Surname) && u.Surname.ToLowerInvariant().Contains(searchText)) ||
-             (!string.IsNullOrEmpty(u.RestOfName) && u.RestOfName.ToLowerInvariant().Contains(searchText)) ||
-             (!string.IsNullOrEmpty(u.PreferredFirstName) && u.PreferredFirstName.ToLowerInvariant().Contains(searchText)) ||
-             (u.DateOfBirth.ToString("yyyy-MM=dd").ToLowerInvariant().Contains(searchText)) ||
-             (!string.IsNullOrEmpty(u.ByuId) && u.ByuId.ToLowerInvariant().Contains(searchText)) ||
-             (!string.IsNullOrEmpty(u.NetId) && u.NetId.ToLowerInvariant().Contains(searchText))
-            ).OrderBy(u => u.RestOfName);
-
-        return await Task.FromResult(request.ApplyTo(filteredUsers));
+        var filteredUsers = query.OrderBy(u => u.RestOfName);
+        return await Task.FromResult(new AutoCompleteDataProviderResult<User> { Data = filteredUsers, TotalCount = filteredUsers.Count() });
     }
 
 
     private void SelectUser(User user)
     {
         selectedUser = user;
+        //selectedUserName = selectedUser.RestOfName + " " + selectedUser.Surname;
     }
 
     private async Task ShowUserCanvas()
