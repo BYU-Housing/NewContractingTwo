@@ -33,6 +33,10 @@
                             {
                                 @dateValue.ToString("yyyy-MM-dd HH:mm:ss")
                             }
+                            else if (param.Key == "SelectedDate" && DateTime.TryParse(param.Value, out var selectedDateValue))
+                            {
+                                @selectedDateValue.ToString("yyyy-MM-dd HH:mm:ss")
+                            }
                             else
                             {
                                 @param.Value
@@ -55,7 +59,8 @@
         "WyviewParkPriorityDate",
         "RivieraPriorityDate",
         "AgreementStartDate",
-        "AgreementEndDate"
+        "AgreementEndDate",
+        "SelectedDate" // Added to handle new timestamp
     };
 
     protected override void OnInitialized()
