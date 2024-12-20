@@ -57,7 +57,7 @@
                             }
                             else if (DateFields.Contains(param.Key) && DateTime.TryParse(param.Value, out var dateValue))
                             {
-                                @dateValue.ToString("yyyy-MM-dd HH:mm:ss")
+                                @dateValue.ToString("yyyy-MM-ddTHH:mm:ss")
                             }
                             else
                             {
@@ -152,11 +152,11 @@
         // Fetch the start and end dates of the selected agreement period
         if (AllPossibleAgreementPeriods.TryGetValue(periodId, out var periodDetails))
         {
-            var dates = periodDetails.DateRange.Split('-').Select(d => d.Trim()).ToArray(); // Split and trim the date range
+            var dates = periodDetails.DateRange.Split('-').Select(d => DateTime.Parse(d.Trim())).ToArray();
             if (dates.Length == 2)
             {
-                var startDate = dates[0];
-                var endDate = dates[1];
+                var startDate = dates[0].ToString("yyyy-MM-ddTHH:mm:ss");
+                var endDate = dates[1].ToString("yyyy-MM-ddTHH:mm:ss");
 
                 // Update the URL parameters
                 UrlParameters["AgreementPeriod"] = periodId.ToString();
