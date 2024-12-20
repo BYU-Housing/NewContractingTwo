@@ -47,7 +47,15 @@
 
 @code {
     private Dictionary<string, string?> UrlParameters = new Dictionary<string, string?>();
-    private HashSet<string> DateFields = new() { "HelamanPriorityDate", "HeritagePriorityDate", "WyviewParkPriorityDate", "RivieraPriorityDate" };
+    private HashSet<string> DateFields = new()
+    {
+        "HelamanPriorityDate",
+        "HeritagePriorityDate",
+        "WyviewParkPriorityDate",
+        "RivieraPriorityDate",
+        "AgreementStartDate", // Added for consistent timestamp display
+        "AgreementEndDate"    // Added for consistent timestamp display
+    };
 
     protected override void OnInitialized()
     {
@@ -99,4 +107,3 @@
                   .Replace("Scholarship", "Scholarship");
     }
 }
-
