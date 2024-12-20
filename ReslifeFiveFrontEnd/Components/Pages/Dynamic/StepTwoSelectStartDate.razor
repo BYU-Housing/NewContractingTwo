@@ -116,7 +116,15 @@ else
     private void NavigateToStepThree(DateTime selectedDate)
     {
         var formattedDate = selectedDate.ToString("yyyy-MM-dd");
-        NavigationManager.NavigateTo($"/stepThreeSelectArea?SelectedDate={formattedDate}");
+
+        // Add SelectedDate to the existing URL parameters
+        UrlParameters["SelectedDate"] = formattedDate;
+
+        // Construct query string from all parameters
+        var queryString = string.Join("&", UrlParameters.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value ?? string.Empty)}"));
+
+        // Navigate to the next page with all parameters
+        NavigationManager.NavigateTo($"/stepThreeSelectArea?{queryString}");
     }
 
     private string GetAgreementPeriodDescription(int agreementPeriod)
