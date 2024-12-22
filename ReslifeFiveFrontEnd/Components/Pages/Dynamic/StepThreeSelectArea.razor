@@ -91,7 +91,7 @@
     private Dictionary<string, string?> UrlParameters = new Dictionary<string, string?>();
     private string AccessMessage = "You do not have access";
     private DateTime? HelamanPriorityDate;
-    private string CountdownMessage = "";
+    private System.Threading.Timer? _timer;
 
     private HashSet<string> DateFields = new()
     {
@@ -101,7 +101,7 @@
         "RivieraPriorityDate",
         "AgreementStartDate",
         "AgreementEndDate",
-        "SelectedDate" // Added to handle new timestamp
+        "SelectedDate"
     };
 
     protected override void OnInitialized()
@@ -130,21 +130,41 @@
             }
             else
             {
-                AccessMessage = "You do not have access";
-                StartCountdown();
+                AccessMessage = "You do not have access.";
+                StartTimer();
             }
         }
     }
 
-    private void StartCountdown()
+    private void StartTimer()
     {
-        var now = DateTime.UtcNow;
-        if (HelamanPriorityDate.HasValue && HelamanPriorityDate.Value > now)
+        _timer = new System.Threading.Timer(UpdateCountdown, null, 0, 1000); // 1-second interval
+    }
+
+    private void UpdateCountdown(object? state)
+    {
+        if (HelamanPriorityDate.HasValue)
         {
+            var now = DateTime.UtcNow;
             var remaining = HelamanPriorityDate.Value - now;
-            CountdownMessage = $" Time remaining: {remaining.Days} days, {remaining.Hours} hours, {remaining.Minutes} minutes, {remaining.Seconds} seconds.";
-            AccessMessage += CountdownMessage;
+
+            if (remaining <= TimeSpan.Zero)
+            {
+                AccessMessage = "You have access";
+                _timer?.Dispose();
+                _timer = null;
+            }
+            else
+            {
+                AccessMessage = $"You do not have access. Time remaining: {remaining.Days} days, {remaining.Hours} hours, {remaining.Minutes} minutes, {remaining.Seconds} seconds.";
+                InvokeAsync(StateHasChanged); // Refresh UI
+            }
         }
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose(); // Clean up resources
     }
 
     private string GetAgreementPeriodDescription(int agreementPeriod)
