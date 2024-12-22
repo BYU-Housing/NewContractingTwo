@@ -9,7 +9,7 @@
     <div class="col-md-10">
         <div class="card">
             <div class="card-header text-center">
-                <h4>You do not have access</h4>
+                <h4>@AccessMessage</h4>
             </div>
             <div class="row no-gutters">
                 <!-- Image Section -->
@@ -89,6 +89,7 @@
 
 @code {
     private Dictionary<string, string?> UrlParameters = new Dictionary<string, string?>();
+    private string AccessMessage = "You do not have access";
 
     private HashSet<string> DateFields = new()
     {
@@ -113,6 +114,15 @@
             {
                 UrlParameters[key] = query[key];
             }
+        }
+
+        // Check HelamanPriorityDate against the current timestamp
+        if (UrlParameters.ContainsKey("HelamanPriorityDate") &&
+            DateTime.TryParse(UrlParameters["HelamanPriorityDate"], out var helamanPriorityDate))
+        {
+            AccessMessage = helamanPriorityDate <= DateTime.UtcNow
+                ? "You have access"
+                : "You do not have access";
         }
     }
 
