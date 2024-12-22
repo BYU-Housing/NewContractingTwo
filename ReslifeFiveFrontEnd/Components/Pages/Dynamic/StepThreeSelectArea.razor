@@ -90,6 +90,8 @@
 @code {
     private Dictionary<string, string?> UrlParameters = new Dictionary<string, string?>();
     private string AccessMessage = "You do not have access";
+    private DateTime? HelamanPriorityDate;
+    private string CountdownMessage = "";
 
     private HashSet<string> DateFields = new()
     {
@@ -120,9 +122,28 @@
         if (UrlParameters.ContainsKey("HelamanPriorityDate") &&
             DateTime.TryParse(UrlParameters["HelamanPriorityDate"], out var helamanPriorityDate))
         {
-            AccessMessage = helamanPriorityDate <= DateTime.UtcNow
-                ? "You have access"
-                : "You do not have access";
+            HelamanPriorityDate = helamanPriorityDate;
+
+            if (helamanPriorityDate <= DateTime.UtcNow)
+            {
+                AccessMessage = "You have access";
+            }
+            else
+            {
+                AccessMessage = "You do not have access";
+                StartCountdown();
+            }
+        }
+    }
+
+    private void StartCountdown()
+    {
+        var now = DateTime.UtcNow;
+        if (HelamanPriorityDate.HasValue && HelamanPriorityDate.Value > now)
+        {
+            var remaining = HelamanPriorityDate.Value - now;
+            CountdownMessage = $" Time remaining: {remaining.Days} days, {remaining.Hours} hours, {remaining.Minutes} minutes, {remaining.Seconds} seconds.";
+            AccessMessage += CountdownMessage;
         }
     }
 
