@@ -37,7 +37,7 @@
 
                     <!-- Navigation Button -->
                     <div class="text-center mt-3">
-                        <button class="btn btn-primary" @onclick="NavigateToStepThreeSelectBuilding">Go to Step Three: Select Building</button>
+                        <button class="btn btn-primary" @onclick="NavigateToStepFourSelectBuilding">Go to Step Four: Select Building</button>
                     </div>
                 </div>
                 <!-- Text Section -->
@@ -93,7 +93,7 @@
 
                     <!-- Navigation Button -->
                     <div class="text-center mt-3">
-                        <button class="btn btn-primary" @onclick="NavigateToStepThreeSelectBuilding">Go to Step Three: Select Building</button>
+                        <button class="btn btn-primary" @onclick="NavigateToStepFourSelectBuilding">Go to Step Four: Select Building</button>
                     </div>
                 </div>
                 <!-- Text Section -->
@@ -114,7 +114,6 @@
         </div>
     </div>
 </div>
-
 
 @code {
     private Dictionary<string, string?> UrlParameters = new Dictionary<string, string?>();
@@ -183,7 +182,6 @@
                 AccessMessage = $"Helaman Halls: You do not have access. Time remaining: {remaining.Days} days, {remaining.Hours} hours, {remaining.Minutes} minutes, {remaining.Seconds} seconds.";
             }
 
-            // Update only this section
             InvokeAsync(() => StateHasChanged());
         }
     }
@@ -210,7 +208,6 @@
                 HeritageAccessMessage = $"Heritage Halls: You do not have access. Time remaining: {remaining.Days} days, {remaining.Hours} hours, {remaining.Minutes} minutes, {remaining.Seconds} seconds.";
             }
 
-            // Update only this section
             InvokeAsync(() => StateHasChanged());
         }
     }
@@ -230,9 +227,9 @@
         return AllocationTests?.Count(a => a.Active == true && a.SeekingReplacement == true && a.Area == area) ?? 0;
     }
 
-    private void NavigateToStepThreeSelectBuilding()
+    private void NavigateToStepFourSelectBuilding()
     {
-        NavigationManager.NavigateTo("/stepThreeSelectBuilding");
+        NavigationManager.NavigateTo("/stepFourSelectBuilding");
     }
 
     public void Dispose()
