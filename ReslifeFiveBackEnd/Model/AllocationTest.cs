@@ -14,6 +14,7 @@ namespace ReslifeFiveBackEnd.Model
         public int? Floor { get; set; }
         public string Bedspace { get; set; } = string.Empty;
         public bool? Active { get; set; }
+        public bool? Swappable { get; set; }
 
     }
 }

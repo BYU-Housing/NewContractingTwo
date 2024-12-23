@@ -30,9 +30,10 @@
                         }
                     </div>
 
-                    <!-- Available Allocations with Active Count -->
+                    <!-- Available Allocations with Active and Swappable Count -->
                     <div style="text-align: left; margin-left: 0; padding-left: 0;">
                         <small>Available (@GetActiveCount() Active)</small><br />
+                        <small>Swappable (@GetSwappableCount() Swappable)</small><br />
                         <small>Seeking Replacement</small>
                     </div>
                 </div>
@@ -248,5 +249,10 @@
     private int GetActiveCount()
     {
         return AllocationTests?.Count(a => a.Active == true) ?? 0;
+    }
+
+    private int GetSwappableCount()
+    {
+        return AllocationTests?.Count(a => a.Active == true && a.Swappable == true) ?? 0;
     }
 }
