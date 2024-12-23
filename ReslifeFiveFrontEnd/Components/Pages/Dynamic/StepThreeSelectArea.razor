@@ -17,7 +17,7 @@
                     <img src="https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/HL.jpg" class="img-fluid" alt="Helaman Halls Image">
                     <h2 class="card-title mt-2">Helaman Halls</h2>
 
-                    <!-- Available Allocations with Total, Active, and Swappable Count -->
+                    <!-- Available Allocations with Total, Active, Swappable, and Seeking Replacement Count -->
                     <div style="text-align: left; margin-left: 0; padding-left: 0;">
                         @if (AllocationTests == null)
                         {
@@ -34,7 +34,7 @@
                             <small>Swappable (@GetSwappableCount() Swappable)</small>
 
                             <br />
-                            <small>Seeking Replacement</small>
+                            <small>Seeking Replacement (@GetSeekingReplacementCount())</small>
                         }
                     </div>
                 </div>
@@ -235,5 +235,10 @@
     private int GetSwappableCount()
     {
         return AllocationTests?.Count(a => a.Active == true && a.Swappable == true) ?? 0;
+    }
+
+    private int GetSeekingReplacementCount()
+    {
+        return AllocationTests?.Count(a => a.Active == true && a.SeekingReplacement == true) ?? 0;
     }
 }
