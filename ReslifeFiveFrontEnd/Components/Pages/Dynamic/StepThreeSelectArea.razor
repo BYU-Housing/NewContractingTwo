@@ -51,7 +51,7 @@
 
                         <!-- Navigation Button -->
                         <div class="text-center mt-3">
-                            <button class="btn btn-primary" @onclick="NavigateToStepFourSelectBuilding">Go to Step Four: Select Building</button>
+                            <button class="btn btn-primary" @onclick="NavigateToStepFourSelectBuilding" disabled="@IsHelamanButtonDisabled">Go to Step Four: Select Building</button>
                         </div>
                     </div>
                 </div>
@@ -106,7 +106,7 @@
 
                         <!-- Navigation Button -->
                         <div class="text-center mt-3">
-                            <button class="btn btn-primary" @onclick="NavigateToStepFourSelectBuilding">Go to Step Four: Select Building</button>
+                            <button class="btn btn-primary" @onclick="NavigateToStepFourSelectBuilding" disabled="@IsHeritageButtonDisabled">Go to Step Four: Select Building</button>
                         </div>
                     </div>
                 </div>
@@ -124,6 +124,12 @@
     private System.Threading.Timer? _timerHelaman;
     private System.Threading.Timer? _timerHeritage;
     private List<AllocationTest> AllocationTests { get; set; } = new List<AllocationTest>();
+
+    private bool IsHelamanAccessGranted = false;
+    private bool IsHeritageAccessGranted = false;
+
+    private bool IsHelamanButtonDisabled => !IsHelamanAccessGranted;
+    private bool IsHeritageButtonDisabled => !IsHeritageAccessGranted;
 
     protected override async Task OnInitializedAsync()
     {
@@ -175,6 +181,7 @@
             if (remaining <= TimeSpan.Zero)
             {
                 AccessMessage = "You have access";
+                IsHelamanAccessGranted = true;
                 _timerHelaman?.Dispose();
             }
             else
@@ -201,6 +208,7 @@
             if (remaining <= TimeSpan.Zero)
             {
                 HeritageAccessMessage = "You have access";
+                IsHeritageAccessGranted = true;
                 _timerHeritage?.Dispose();
             }
             else
