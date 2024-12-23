@@ -37,6 +37,11 @@
                             <small>Seeking Replacement (@GetSeekingReplacementCount())</small>
                         }
                     </div>
+
+                    <!-- Navigation Button -->
+                    <div class="text-center mt-3">
+                        <button class="btn btn-primary" @onclick="NavigateToStepThreeSelectBuilding">Go to Step Three: Select Building</button>
+                    </div>
                 </div>
                 <!-- Text Section -->
                 <div class="col-md-8">
@@ -241,4 +246,10 @@
     {
         return AllocationTests?.Count(a => a.Active == true && a.SeekingReplacement == true) ?? 0;
     }
+
+    private void NavigateToStepThreeSelectBuilding()
+    {
+        NavigationManager.NavigateTo("/stepThreeSelectBuilding");
+    }
 }
+
