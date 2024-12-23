@@ -35,6 +35,26 @@
                             the convenience and comfort. Rental payments encompass utilities, internet access, and
                             Residence Life activities, fostering a holistic living experience for residents.
                         </p>
+
+                        <!-- List of AllocationTest Ids -->
+                        <h5>AllocationTest IDs</h5>
+                        @if (AllocationTests == null)
+                        {
+                            <p>Loading...</p>
+                        }
+                        else if (AllocationTests.Any())
+                        {
+                            <ul>
+                                @foreach (var allocation in AllocationTests)
+                                {
+                                    <li>@allocation.Id</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p>No data found.</p>
+                        }
                     </div>
                 </div>
             </div>
@@ -92,6 +112,7 @@
     private string AccessMessage = "You do not have access";
     private DateTime? HelamanPriorityDate;
     private System.Threading.Timer? _timer;
+    private List<AllocationTest> AllocationTests { get; set; } = new List<AllocationTest>();
 
     private HashSet<string> DateFields = new()
     {
@@ -104,7 +125,7 @@
         "SelectedDate"
     };
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         // Parse the query string from the URL
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
@@ -117,6 +138,9 @@
                 UrlParameters[key] = query[key];
             }
         }
+
+        // Load AllocationTest data
+        await LoadAllocationTestsAsync();
 
         // Check HelamanPriorityDate against the current timestamp
         if (UrlParameters.ContainsKey("HelamanPriorityDate") &&
@@ -134,6 +158,11 @@
                 StartTimer();
             }
         }
+    }
+
+    private async Task LoadAllocationTestsAsync()
+    {
+        AllocationTests = await Task.Run(() => GenService.GetModel<AllocationTest>().ToList());
     }
 
     private void StartTimer()
