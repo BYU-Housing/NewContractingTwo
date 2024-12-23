@@ -4,7 +4,7 @@
 
 <h3>Step Three Select Area</h3>
 
-<!-- Large Block with Image -->
+<!-- Helaman Halls Block -->
 <div class="row justify-content-center mb-4">
     <div class="col-md-10">
         <div class="card">
@@ -17,7 +17,7 @@
                     <img src="https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/HL.jpg" class="img-fluid" alt="Helaman Halls Image">
                     <h2 class="card-title mt-2">Helaman Halls</h2>
 
-                    <!-- Available Allocations with Total, Active, Swappable, and Seeking Replacement Count -->
+                    <!-- Available Allocations -->
                     <div style="text-align: left; margin-left: 0; padding-left: 0;">
                         @if (AllocationTests == null)
                         {
@@ -25,16 +25,13 @@
                         }
                         else
                         {
-                            <small>Total: @AllocationTests.Count</small>
-
+                            <small>Total: @AllocationTests.Count(a => a.Area == 1)</small>
                             <br />
-                            <small>Available (@GetActiveCount() Active)</small>
-
+                            <small>Available (@GetActiveCount(1) Active)</small>
                             <br />
-                            <small>Swappable (@GetSwappableCount() Swappable)</small>
-
+                            <small>Swappable (@GetSwappableCount(1) Swappable)</small>
                             <br />
-                            <small>Seeking Replacement (@GetSeekingReplacementCount())</small>
+                            <small>Seeking Replacement (@GetSeekingReplacementCount(1))</small>
                         }
                     </div>
 
@@ -63,72 +60,73 @@
     </div>
 </div>
 
-<h3 class="text-center">Hidden Developer Notes</h3>
-<!-- Table to Display URL Parameters -->
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Parameter Name</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var param in UrlParameters)
-                {
-                    <tr>
-                        <td>@GetFormattedParameterName(param.Key)</td>
-                        <td>
-                            @if (param.Key == "AgreementPeriod" && int.TryParse(param.Value, out var period))
-                            {
-                                @GetAgreementPeriodDescription(period)
-                            }
-                            else if ((param.Key == "SexAtBirth" || param.Key == "Community") && bool.TryParse(param.Value, out var booleanValue))
-                            {
-                                @GetBooleanDescription(param.Key, booleanValue)
-                            }
-                            else if (DateFields.Contains(param.Key) && DateTime.TryParse(param.Value, out var dateValue))
-                            {
-                                @dateValue.ToString("yyyy-MM-dd HH:mm:ss")
-                            }
-                            else if (param.Key == "SelectedDate" && DateTime.TryParse(param.Value, out var selectedDateValue))
-                            {
-                                @selectedDateValue.ToString("yyyy-MM-dd HH:mm:ss")
-                            }
-                            else
-                            {
-                                @param.Value
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+<!-- Heritage Halls Block -->
+<div class="row justify-content-center mb-4">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header text-center">
+                <h4>@HeritageAccessMessage</h4>
+            </div>
+            <div class="row no-gutters">
+                <!-- Image Section -->
+                <div class="col-md-4 text-center">
+                    <img src="https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/HR.jpg" class="img-fluid" alt="Heritage Halls Image">
+                    <h2 class="card-title mt-2">Heritage Halls</h2>
+
+                    <!-- Available Allocations -->
+                    <div style="text-align: left; margin-left: 0; padding-left: 0;">
+                        @if (AllocationTests == null)
+                        {
+                            <small>Calculating totals...</small>
+                        }
+                        else
+                        {
+                            <small>Total: @AllocationTests.Count(a => a.Area == 2)</small>
+                            <br />
+                            <small>Available (@GetActiveCount(2) Active)</small>
+                            <br />
+                            <small>Swappable (@GetSwappableCount(2) Swappable)</small>
+                            <br />
+                            <small>Seeking Replacement (@GetSeekingReplacementCount(2))</small>
+                        }
+                    </div>
+
+                    <!-- Navigation Button -->
+                    <div class="text-center mt-3">
+                        <button class="btn btn-primary" @onclick="NavigateToStepThreeSelectBuilding">Go to Step Three: Select Building</button>
+                    </div>
+                </div>
+                <!-- Text Section -->
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <p>
+                            Heritage Halls, tailored for full-time day continuing students, presents an array of accommodations.
+                            The community adheres to credit hour requirements, with special provisions for Spring and Summer Terms.
+                            Tenants dwell in age-specific communities, including the 18 and Under Community and the 19 and Over Community.
+                            Embracing the honor code and gospel-centered ideals, Heritage Halls fosters a supportive environment.
+                            Housing options comprise shared rooms with amenities like three shared bedrooms, private desks, and kitchen appliances.
+                            Single rooms with similar amenities are also available. Various services encompass meal plans, kitchen facilities, laundry,
+                            parking, and recreational spaces, offering a comprehensive student living experience.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 @code {
     private Dictionary<string, string?> UrlParameters = new Dictionary<string, string?>();
     private string AccessMessage = "You do not have access";
+    private string HeritageAccessMessage = "You do not have access";
     private DateTime? HelamanPriorityDate;
-    private System.Threading.Timer? _timer;
+    private DateTime? HeritagePriorityDate;
+    private System.Threading.Timer? _timerHelaman;
+    private System.Threading.Timer? _timerHeritage;
     private List<AllocationTest> AllocationTests { get; set; } = new List<AllocationTest>();
-
-    private HashSet<string> DateFields = new()
-    {
-        "HelamanPriorityDate",
-        "HeritagePriorityDate",
-        "WyviewParkPriorityDate",
-        "RivieraPriorityDate",
-        "AgreementStartDate",
-        "AgreementEndDate",
-        "SelectedDate"
-    };
 
     protected override async Task OnInitializedAsync()
     {
-        // Parse the query string from the URL
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
 
@@ -140,24 +138,22 @@
             }
         }
 
-        // Load AllocationTest data
         await LoadAllocationTestsAsync();
 
-        // Check HelamanPriorityDate against the current timestamp
+        // Initialize Helaman Priority Date
         if (UrlParameters.ContainsKey("HelamanPriorityDate") &&
             DateTime.TryParse(UrlParameters["HelamanPriorityDate"], out var helamanPriorityDate))
         {
             HelamanPriorityDate = helamanPriorityDate;
+            StartCountdownForHelaman();
+        }
 
-            if (helamanPriorityDate <= DateTime.UtcNow)
-            {
-                AccessMessage = "You have access";
-            }
-            else
-            {
-                AccessMessage = "You do not have access.";
-                StartTimer();
-            }
+        // Initialize Heritage Priority Date
+        if (UrlParameters.ContainsKey("HeritagePriorityDate") &&
+            DateTime.TryParse(UrlParameters["HeritagePriorityDate"], out var heritagePriorityDate))
+        {
+            HeritagePriorityDate = heritagePriorityDate;
+            StartCountdownForHeritage();
         }
     }
 
@@ -166,12 +162,12 @@
         AllocationTests = await Task.Run(() => GenService.GetModel<AllocationTest>().ToList());
     }
 
-    private void StartTimer()
+    private void StartCountdownForHelaman()
     {
-        _timer = new System.Threading.Timer(UpdateCountdown, null, 0, 1000); // 1-second interval
+        _timerHelaman = new System.Threading.Timer(UpdateCountdownHelaman, null, 0, 1000);
     }
 
-    private void UpdateCountdown(object? state)
+    private void UpdateCountdownHelaman(object? state)
     {
         if (HelamanPriorityDate.HasValue)
         {
@@ -181,75 +177,64 @@
             if (remaining <= TimeSpan.Zero)
             {
                 AccessMessage = "You have access";
-                _timer?.Dispose();
-                _timer = null;
+                _timerHelaman?.Dispose();
             }
             else
             {
                 AccessMessage = $"You do not have access. Time remaining: {remaining.Days} days, {remaining.Hours} hours, {remaining.Minutes} minutes, {remaining.Seconds} seconds.";
-                InvokeAsync(StateHasChanged); // Refresh UI
+                InvokeAsync(StateHasChanged);
             }
         }
     }
 
-    public void Dispose()
+    private void StartCountdownForHeritage()
     {
-        _timer?.Dispose(); // Clean up resources
+        _timerHeritage = new System.Threading.Timer(UpdateCountdownHeritage, null, 0, 1000);
     }
 
-    private string GetAgreementPeriodDescription(int agreementPeriod)
+    private void UpdateCountdownHeritage(object? state)
     {
-        return agreementPeriod switch
+        if (HeritagePriorityDate.HasValue)
         {
-            3 => "Fall Winter 2024 - 2025",
-            4 => "Winter 2025",
-            5 => "Spring 2025",
-            6 => "Summer 2025",
-            7 => "Fall Winter 2025",
-            _ => "Unknown Agreement Period"
-        };
+            var now = DateTime.UtcNow;
+            var remaining = HeritagePriorityDate.Value - now;
+
+            if (remaining <= TimeSpan.Zero)
+            {
+                HeritageAccessMessage = "You have access";
+                _timerHeritage?.Dispose();
+            }
+            else
+            {
+                HeritageAccessMessage = $"You do not have access. Time remaining: {remaining.Days} days, {remaining.Hours} hours, {remaining.Minutes} minutes, {remaining.Seconds} seconds.";
+                InvokeAsync(StateHasChanged);
+            }
+        }
     }
 
-    private string GetBooleanDescription(string key, bool value)
+    private int GetActiveCount(int area)
     {
-        return key switch
-        {
-            "SexAtBirth" => value ? "Female" : "Male",
-            "Community" => value ? "19+" : "18-",
-            _ => value ? "True" : "False"
-        };
+        return AllocationTests?.Count(a => a.Active == true && a.Area == area) ?? 0;
     }
 
-    private string GetFormattedParameterName(string key)
+    private int GetSwappableCount(int area)
     {
-        return key.Replace("PriorityDate", " Priority Date")
-                  .Replace("SexAtBirth", "Sex At Birth")
-                  .Replace("AgreementPeriod", "Agreement Period")
-                  .Replace("Community", "Community")
-                  .Replace("Eligible", "Eligible")
-                  .Replace("REQMet", "Requirement Met")
-                  .Replace("ESA", "Emotional Support Animal")
-                  .Replace("Scholarship", "Scholarship");
+        return AllocationTests?.Count(a => a.Active == true && a.Swappable == true && a.Area == area) ?? 0;
     }
 
-    private int GetActiveCount()
+    private int GetSeekingReplacementCount(int area)
     {
-        return AllocationTests?.Count(a => a.Active == true) ?? 0;
-    }
-
-    private int GetSwappableCount()
-    {
-        return AllocationTests?.Count(a => a.Active == true && a.Swappable == true) ?? 0;
-    }
-
-    private int GetSeekingReplacementCount()
-    {
-        return AllocationTests?.Count(a => a.Active == true && a.SeekingReplacement == true) ?? 0;
+        return AllocationTests?.Count(a => a.Active == true && a.SeekingReplacement == true && a.Area == area) ?? 0;
     }
 
     private void NavigateToStepThreeSelectBuilding()
     {
         NavigationManager.NavigateTo("/stepThreeSelectBuilding");
     }
-}
 
+    public void Dispose()
+    {
+        _timerHelaman?.Dispose();
+        _timerHeritage?.Dispose();
+    }
+}
