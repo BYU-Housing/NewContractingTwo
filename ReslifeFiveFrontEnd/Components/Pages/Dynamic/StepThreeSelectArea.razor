@@ -50,26 +50,6 @@
                             the convenience and comfort. Rental payments encompass utilities, internet access, and
                             Residence Life activities, fostering a holistic living experience for residents.
                         </p>
-
-                        <!-- List of AllocationTest Ids -->
-                        <h5>AllocationTest IDs</h5>
-                        @if (AllocationTests == null)
-                        {
-                            <p>Loading...</p>
-                        }
-                        else if (AllocationTests.Any())
-                        {
-                            <ul>
-                                @foreach (var allocation in AllocationTests)
-                                {
-                                    <li>@allocation.Id</li>
-                                }
-                            </ul>
-                        }
-                        else
-                        {
-                            <p>No data found.</p>
-                        }
                     </div>
                 </div>
             </div>
