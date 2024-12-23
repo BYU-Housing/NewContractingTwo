@@ -17,24 +17,25 @@
                     <img src="https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/HL.jpg" class="img-fluid" alt="Helaman Halls Image">
                     <h2 class="card-title mt-2">Helaman Halls</h2>
 
-                    <!-- Total Allocations Section -->
-                    <div style="text-align: left; margin-left: 0; padding-left: 0; margin-bottom: 1rem;">
-                        <h5>Total Allocations</h5>
+                    <!-- Available Allocations with Total, Active, and Swappable Count -->
+                    <div style="text-align: left; margin-left: 0; padding-left: 0;">
                         @if (AllocationTests == null)
                         {
-                            <small>Calculating total...</small>
+                            <small>Calculating totals...</small>
                         }
                         else
                         {
                             <small>Total: @AllocationTests.Count</small>
-                        }
-                    </div>
 
-                    <!-- Available Allocations with Active and Swappable Count -->
-                    <div style="text-align: left; margin-left: 0; padding-left: 0;">
-                        <small>Available (@GetActiveCount() Active)</small><br />
-                        <small>Swappable (@GetSwappableCount() Swappable)</small><br />
-                        <small>Seeking Replacement</small>
+                            <br />
+                            <small>Available (@GetActiveCount() Active)</small>
+
+                            <br />
+                            <small>Swappable (@GetSwappableCount() Swappable)</small>
+
+                            <br />
+                            <small>Seeking Replacement</small>
+                        }
                     </div>
                 </div>
                 <!-- Text Section -->
