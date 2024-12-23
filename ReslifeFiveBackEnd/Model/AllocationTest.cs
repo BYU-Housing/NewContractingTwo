@@ -16,6 +16,7 @@ namespace ReslifeFiveBackEnd.Model
         public bool? Active { get; set; }
         public bool? Swappable { get; set; }
         public bool? SeekingReplacement { get; set; }
+        public int? AgreementPeriod { get; set; }
 
     }
 }
