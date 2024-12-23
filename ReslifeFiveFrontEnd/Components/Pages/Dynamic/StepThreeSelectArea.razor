@@ -16,6 +16,20 @@
                 <div class="col-md-4 text-center">
                     <img src="https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/HL.jpg" class="img-fluid" alt="Helaman Halls Image">
                     <h2 class="card-title mt-2">Helaman Halls</h2>
+
+                    <!-- New Total Section -->
+                    <div style="text-align: left; margin-left: 0; padding-left: 0; margin-bottom: 1rem;">
+                        <h5>Total Allocations</h5>
+                        @if (AllocationTests == null)
+                        {
+                            <small>Calculating total...</small>
+                        }
+                        else
+                        {
+                            <small>Total: @AllocationTests.Count</small>
+                        }
+                    </div>
+
                     <!-- Small Headers -->
                     <div style="text-align: left; margin-left: 0; padding-left: 0;">
                         <small>Available</small><br />
