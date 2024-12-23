@@ -21,6 +21,7 @@ namespace ReslifeFiveBackEnd.Context
         public DbSet<TimePeriodTest> TimePeriodTest { get; set; }
         public DbSet<Role> Role { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<RLFImage> Images { get; set; }
 
     }
 }
