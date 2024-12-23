@@ -54,12 +54,20 @@
 
 
                 <div>
-                    <Button @onclick="ShowProfileOffCanvas" Style="color:white;">
+                    @if (IsUserAuthenticated)
+                    {
+                        <Button @onclick="ShowProfileOffCanvas" Style="color:white;">
 
-                        <img src="@ProfileImage" alt="Profile Picture" class="rounded-circle" style="width: 40px; height: 40px; border: 2px solid white;" />
-                        Profile
+                        <img src="@ConvertImageToBase64(LoggedInUser.ProfileImage ?? new RLFImage())" alt="Profile" class="rounded-circle" style="width: 40px; height: 40px; border: 2px solid white;" />
+                            @LoggedInUser.PreferredFirstName
 
-                    </Button>
+                        </Button>
+                    }
+                    else
+                    {
+                        <a href="Login" >Login</a>
+                    }
+
 
                 </div>
 
@@ -78,17 +86,16 @@
 
 <Offcanvas @ref="ProfileOffCanvas">
     <BodyTemplate>
-        @if (!string.IsNullOrWhiteSpace(LoggedInUser.RestOfName))
-        {
-            <div>
-            @if(LoggedInUser.ProfileImage?.ImageData != null){<img src="@ConvertImageToBase64(LoggedInUser.ProfileImage)"}
-            <InputFile OnChange="UpsertLoggedInUserProfileImage" />
-            <h4>Name: @LoggedInUser.RestOfName @LoggedInUser.Surname</h4>
-            <h4>DOB: @LoggedInUser.DateOfBirth</h4>
-            <h4>Net ID: @LoggedInUser.NetId</h4>
-            <h4>BYU ID: @LoggedInUser.ByuId</h4>
-            <h4>Citizenship: @LoggedInUser.CitizenshipCountry</h4>
-            </div>
+        @if(!string.IsNullOrWhiteSpace(LoggedInUser.RestOfName))
+        {   <div>
+               <img src="@ConvertImageToBase64(LoggedInUser.ProfileImage ?? new RLFImage())"  alt="Profile Picture"/>
+               <InputFile OnChange="UpsertLoggedInUserProfileImage" />
+                <h4>Name: @LoggedInUser.RestOfName @LoggedInUser.Surname</h4>
+                <h4>DOB: @LoggedInUser.DateOfBirth</h4>
+                <h4>Net ID: @LoggedInUser.NetId</h4>
+                <h4>BYU ID: @LoggedInUser.ByuId</h4>
+                <h4>Citizenship: @LoggedInUser.CitizenshipCountry</h4>
+            </div>       
         }
         else
         {
@@ -98,6 +105,7 @@
         }
 
     </BodyTemplate>
+    
 </Offcanvas>
 
 @code{
@@ -125,6 +133,7 @@
                 LoggedInUser.ProfileImage = genService.GetModel<RLFImage>().FirstOrDefault(x => x.Id == LoggedInUser.ProfileImageId);
             }
         }
+        StateHasChanged();
     }
 
 
