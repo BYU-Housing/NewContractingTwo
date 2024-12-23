@@ -13,6 +13,7 @@ namespace ReslifeFiveBackEnd.Model
         public int? Building { get; set; }
         public int? Floor { get; set; }
         public string Bedspace { get; set; } = string.Empty;
+        public bool? Active { get; set; }
 
     }
 }

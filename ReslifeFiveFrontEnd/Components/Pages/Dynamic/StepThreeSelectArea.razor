@@ -17,7 +17,7 @@
                     <img src="https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/HL.jpg" class="img-fluid" alt="Helaman Halls Image">
                     <h2 class="card-title mt-2">Helaman Halls</h2>
 
-                    <!-- New Total Section -->
+                    <!-- Total Allocations Section -->
                     <div style="text-align: left; margin-left: 0; padding-left: 0; margin-bottom: 1rem;">
                         <h5>Total Allocations</h5>
                         @if (AllocationTests == null)
@@ -30,9 +30,9 @@
                         }
                     </div>
 
-                    <!-- Small Headers -->
+                    <!-- Available Allocations with Active Count -->
                     <div style="text-align: left; margin-left: 0; padding-left: 0;">
-                        <small>Available</small><br />
+                        <small>Available (@GetActiveCount() Active)</small><br />
                         <small>Seeking Replacement</small>
                     </div>
                 </div>
@@ -243,5 +243,10 @@
                   .Replace("REQMet", "Requirement Met")
                   .Replace("ESA", "Emotional Support Animal")
                   .Replace("Scholarship", "Scholarship");
+    }
+
+    private int GetActiveCount()
+    {
+        return AllocationTests?.Count(a => a.Active == true) ?? 0;
     }
 }
