@@ -12,7 +12,6 @@
                 <h4>@AccessMessage</h4>
             </div>
             <div class="row no-gutters">
-                <!-- Image Section -->
                 <div class="col-md-4 text-center">
                     <img src="https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/HL.jpg" class="img-fluid" alt="Helaman Halls Image">
                     <h2 class="card-title mt-2">Helaman Halls</h2>
@@ -35,10 +34,9 @@
                         }
                     </div>
                 </div>
-                <!-- Text Section -->
                 <div class="col-md-8">
                     <div class="card-body">
-                        <p>
+                        <p style="white-space: normal; overflow: visible;">
                             Helaman Halls caters to full-time day continuing students with various room options.
                             The housing area is divided into communities based on age, accommodating recent high
                             school graduates as well as older students. The environment upholds the honor code and
@@ -49,7 +47,6 @@
                             Residence Life activities, fostering a holistic living experience for residents.
                         </p>
 
-                        <!-- Navigation Button -->
                         <div class="text-center mt-3">
                             <button class="btn btn-primary" @onclick="NavigateToStepFourSelectBuilding" disabled="@IsHelamanButtonDisabled">Go to Step Four: Select Building</button>
                         </div>
@@ -68,7 +65,6 @@
                 <h4>@HeritageAccessMessage</h4>
             </div>
             <div class="row no-gutters">
-                <!-- Image Section -->
                 <div class="col-md-4 text-center">
                     <img src="https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/HR.jpg" class="img-fluid" alt="Heritage Halls Image">
                     <h2 class="card-title mt-2">Heritage Halls</h2>
@@ -91,10 +87,9 @@
                         }
                     </div>
                 </div>
-                <!-- Text Section -->
                 <div class="col-md-8">
                     <div class="card-body">
-                        <p>
+                        <p style="white-space: normal; overflow: visible;">
                             Heritage Halls, tailored for full-time day continuing students, presents an array of accommodations.
                             The community adheres to credit hour requirements, with special provisions for Spring and Summer Terms.
                             Tenants dwell in age-specific communities, including the 18 and Under Community and the 19 and Over Community.
@@ -104,7 +99,6 @@
                             parking, and recreational spaces, offering a comprehensive student living experience.
                         </p>
 
-                        <!-- Navigation Button -->
                         <div class="text-center mt-3">
                             <button class="btn btn-primary" @onclick="NavigateToStepFourSelectBuilding" disabled="@IsHeritageButtonDisabled">Go to Step Four: Select Building</button>
                         </div>
@@ -115,22 +109,86 @@
     </div>
 </div>
 
+<!-- Riviera Block -->
+<div class="row justify-content-center mb-4">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header text-center">
+                <h4>@RivieraAccessMessage</h4>
+            </div>
+            <div class="row no-gutters">
+                <div class="col-md-4 text-center">
+                    <img src="https://reslife-pictures.s3.us-east-1.amazonaws.com/contracting/RI.jpg" class="img-fluid" alt="Riviera Image">
+                    <h2 class="card-title mt-2">The Riviera</h2>
+
+                    <!-- Available Allocations -->
+                    <div style="text-align: left; margin-left: 0; padding-left: 0;">
+                        @if (AllocationTests == null)
+                        {
+                            <small>Calculating totals...</small>
+                        }
+                        else
+                        {
+                            <small>Total: @AllocationTests.Count(a => a.Area == 3 && a.AgreementPeriod == AgreementPeriod)</small>
+                            <br />
+                            <small>Available (@GetActiveCount(3) Active)</small>
+                            <br />
+                            <small>Swappable (@GetSwappableCount(3) Swappable)</small>
+                            <br />
+                            <small>Seeking Replacement (@GetSeekingReplacementCount(3))</small>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <p style="white-space: normal; overflow: visible;">
+                            The Riviera is a housing option at Brigham Young University for full-time day continuing students,
+                            defined as those taking at least 9 credits as undergraduates or 2 credits as graduate students.
+                            The credit requirements shift to 4 credits for undergraduates and 2 credits for graduates during
+                            Spring and Summer Terms. This housing welcomes all students. Upholding the honor code and
+                            gospel-centered community standards is expected of Riviera tenants. The apartments feature two
+                            or three shared bedrooms, each furnished with two beds, a desk, chair, and closet. Apartment
+                            amenities include kitchen appliances, dining furniture, and shared laundry facilities. Additional
+                            facilities such as a fitness center, pool, hot tub, volleyball court, and clubhouse are provided,
+                            and rental payments cover gas, water, sewer/refuse removal, and high-speed internet, with tenants
+                            responsible for electricity costs.
+                        </p>
+
+                        <div class="text-center mt-3">
+                            <button class="btn btn-primary" @onclick="NavigateToStepFourSelectBuilding" disabled="@IsRivieraButtonDisabled">Go to Step Four: Select Building</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @code {
     private Dictionary<string, string?> UrlParameters = new Dictionary<string, string?>();
+
     private string AccessMessage = "You do not have access";
     private string HeritageAccessMessage = "You do not have access";
+    private string RivieraAccessMessage = "You do not have access";
+
     private DateTime? HelamanPriorityDate;
     private DateTime? HeritagePriorityDate;
+    private DateTime? RivieraPriorityDate;
+
     private System.Threading.Timer? _timerHelaman;
     private System.Threading.Timer? _timerHeritage;
+    private System.Threading.Timer? _timerRiviera;
+
     private List<AllocationTest> AllocationTests { get; set; } = new List<AllocationTest>();
     private int AgreementPeriod = 0;
 
     private bool IsHelamanAccessGranted = false;
     private bool IsHeritageAccessGranted = false;
+    private bool IsRivieraAccessGranted = false;
 
     private bool IsHelamanButtonDisabled => !IsHelamanAccessGranted;
     private bool IsHeritageButtonDisabled => !IsHeritageAccessGranted;
+    private bool IsRivieraButtonDisabled => !IsRivieraAccessGranted;
 
     protected override async Task OnInitializedAsync()
     {
@@ -165,6 +223,13 @@
         {
             HeritagePriorityDate = heritagePriorityDate;
             StartCountdownForHeritage();
+        }
+
+        if (UrlParameters.ContainsKey("RivieraPriorityDate") &&
+            DateTime.TryParse(UrlParameters["RivieraPriorityDate"], out var rivieraPriorityDate))
+        {
+            RivieraPriorityDate = rivieraPriorityDate;
+            StartCountdownForRiviera();
         }
     }
 
@@ -227,6 +292,33 @@
         }
     }
 
+    private void StartCountdownForRiviera()
+    {
+        _timerRiviera = new System.Threading.Timer(UpdateCountdownRiviera, null, 0, 1000);
+    }
+
+    private void UpdateCountdownRiviera(object? state)
+    {
+        if (RivieraPriorityDate.HasValue)
+        {
+            var now = DateTime.UtcNow;
+            var remaining = RivieraPriorityDate.Value - now;
+
+            if (remaining <= TimeSpan.Zero)
+            {
+                RivieraAccessMessage = "You have access";
+                IsRivieraAccessGranted = true;
+                _timerRiviera?.Dispose();
+            }
+            else
+            {
+                RivieraAccessMessage = $"The Riviera: You do not have access. Time remaining: {remaining.Days} days, {remaining.Hours} hours, {remaining.Minutes} minutes, {remaining.Seconds} seconds.";
+            }
+
+            InvokeAsync(() => StateHasChanged());
+        }
+    }
+
     private int GetActiveCount(int area)
     {
         return AllocationTests?.Count(a => a.Active == true && a.Area == area && a.AgreementPeriod == AgreementPeriod) ?? 0;
@@ -251,5 +343,6 @@
     {
         _timerHelaman?.Dispose();
         _timerHeritage?.Dispose();
+        _timerRiviera?.Dispose();
     }
 }
