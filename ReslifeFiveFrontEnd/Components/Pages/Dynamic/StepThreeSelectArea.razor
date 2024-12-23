@@ -115,6 +115,7 @@
     </div>
 </div>
 
+
 @code {
     private Dictionary<string, string?> UrlParameters = new Dictionary<string, string?>();
     private string AccessMessage = "You do not have access";
@@ -140,7 +141,6 @@
 
         await LoadAllocationTestsAsync();
 
-        // Initialize Helaman Priority Date
         if (UrlParameters.ContainsKey("HelamanPriorityDate") &&
             DateTime.TryParse(UrlParameters["HelamanPriorityDate"], out var helamanPriorityDate))
         {
@@ -148,7 +148,6 @@
             StartCountdownForHelaman();
         }
 
-        // Initialize Heritage Priority Date
         if (UrlParameters.ContainsKey("HeritagePriorityDate") &&
             DateTime.TryParse(UrlParameters["HeritagePriorityDate"], out var heritagePriorityDate))
         {
@@ -181,9 +180,11 @@
             }
             else
             {
-                AccessMessage = $"You do not have access. Time remaining: {remaining.Days} days, {remaining.Hours} hours, {remaining.Minutes} minutes, {remaining.Seconds} seconds.";
-                InvokeAsync(StateHasChanged);
+                AccessMessage = $"Helaman Halls: You do not have access. Time remaining: {remaining.Days} days, {remaining.Hours} hours, {remaining.Minutes} minutes, {remaining.Seconds} seconds.";
             }
+
+            // Update only this section
+            InvokeAsync(() => StateHasChanged());
         }
     }
 
@@ -206,9 +207,11 @@
             }
             else
             {
-                HeritageAccessMessage = $"You do not have access. Time remaining: {remaining.Days} days, {remaining.Hours} hours, {remaining.Minutes} minutes, {remaining.Seconds} seconds.";
-                InvokeAsync(StateHasChanged);
+                HeritageAccessMessage = $"Heritage Halls: You do not have access. Time remaining: {remaining.Days} days, {remaining.Hours} hours, {remaining.Minutes} minutes, {remaining.Seconds} seconds.";
             }
+
+            // Update only this section
+            InvokeAsync(() => StateHasChanged());
         }
     }
 
