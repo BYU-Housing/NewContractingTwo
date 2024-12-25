@@ -42,7 +42,9 @@
                             internet access, and Residence Life activities, fostering a holistic living experience for residents.
                         </p>
                         <div class="text-center mt-3">
-                            <button class="btn btn-primary" @onclick="NavigateToStepFourSelectBuilding" disabled="@IsHelamanButtonDisabled">Go to Step Four: Select Building</button>
+                            <button class="btn btn-primary" @onclick="() => NavigateToStepFourSelectBuilding(1)" disabled="@IsHelamanButtonDisabled">
+                                Go to Step Four: Select Building
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -90,7 +92,9 @@
                             offering a comprehensive student living experience.
                         </p>
                         <div class="text-center mt-3">
-                            <button class="btn btn-primary" @onclick="NavigateToStepFourSelectBuilding" disabled="@IsHeritageButtonDisabled">Go to Step Four: Select Building</button>
+                            <button class="btn btn-primary" @onclick="() => NavigateToStepFourSelectBuilding(2)" disabled="@IsHeritageButtonDisabled">
+                                Go to Step Four: Select Building
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -138,7 +142,9 @@
                             water, sewer/refuse removal, and high-speed internet, with tenants responsible for electricity costs.
                         </p>
                         <div class="text-center mt-3">
-                            <button class="btn btn-primary" @onclick="NavigateToStepFourSelectBuilding" disabled="@IsRivieraButtonDisabled">Go to Step Four: Select Building</button>
+                            <button class="btn btn-primary" @onclick="() => NavigateToStepFourSelectBuilding(3)" disabled="@IsRivieraButtonDisabled">
+                                Go to Step Four: Select Building
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -191,8 +197,11 @@
                             four tenants. The housing costs vary based on the agreement period and room type.
                         </p>
                         <div class="text-center mt-3">
-                            <button class="btn btn-primary" @onclick="NavigateToStepFourSelectBuilding" disabled="@IsWyviewButtonDisabled">Go to Step Four: Select Building</button>
+                            <button class="btn btn-primary" @onclick="() => NavigateToStepFourSelectBuilding(4)" disabled="@IsWyviewButtonDisabled">
+                                Go to Step Four: Select Building
+                            </button>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -213,7 +222,7 @@
     private DateTime? HelamanPriorityDate;
     private DateTime? HeritagePriorityDate;
     private DateTime? RivieraPriorityDate;
-    private DateTime? WyviewPriorityDate;
+    private DateTime? WyviewParkPriorityDate;
 
     private bool IsHelamanButtonDisabled => !IsHelamanAccessGranted;
     private bool IsHeritageButtonDisabled => !IsHeritageAccessGranted;
@@ -272,10 +281,10 @@
             StartCountdownForRiviera();
         }
 
-        if (UrlParameters.ContainsKey("WyviewPriorityDate") &&
-            DateTime.TryParse(UrlParameters["WyviewPriorityDate"], out var wyviewPriorityDate))
+        if (UrlParameters.ContainsKey("WyviewParkPriorityDate") &&
+            DateTime.TryParse(UrlParameters["WyviewParkPriorityDate"], out var wyviewPriorityDate))
         {
-            WyviewPriorityDate = wyviewPriorityDate;
+            WyviewParkPriorityDate = wyviewPriorityDate;
             StartCountdownForWyview();
         }
     }
@@ -373,10 +382,10 @@
 
     private void UpdateCountdownWyview(object? state)
     {
-        if (WyviewPriorityDate.HasValue)
+        if (WyviewParkPriorityDate.HasValue)
         {
             var now = DateTime.UtcNow;
-            var remaining = WyviewPriorityDate.Value - now;
+            var remaining = WyviewParkPriorityDate.Value - now;
 
             if (remaining <= TimeSpan.Zero)
             {
@@ -408,9 +417,18 @@
         return AllocationTests?.Count(a => a.Active == true && a.SeekingReplacement == true && a.Area == area && a.AgreementPeriod == AgreementPeriod) ?? 0;
     }
 
-    private void NavigateToStepFourSelectBuilding()
+    private void NavigateToStepFourSelectBuilding(int area)
     {
-        NavigationManager.NavigateTo("/stepFourSelectBuilding");
+        // Retrieve the current URL and parse query parameters
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+        // Add or update the "Area" parameter
+        query["Area"] = area.ToString();
+
+        // Construct the new URL with updated parameters
+        var newQueryString = query.ToString();
+        NavigationManager.NavigateTo($"/stepFourSelectBuilding?{newQueryString}");
     }
 
     public void Dispose()

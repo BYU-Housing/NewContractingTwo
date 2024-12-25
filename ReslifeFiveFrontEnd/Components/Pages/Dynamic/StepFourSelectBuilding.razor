@@ -1,10 +1,37 @@
 ﻿@page "/stepFourSelectBuilding"
-@inject IGenService GenService
 @inject NavigationManager NavigationManager
 
+<h3>Step Four: Select Building</h3>
 
-<h3>StepFourSelectBuilding</h3>
+<!-- URL Parameters as String -->
+<div class="mt-4">
+    <h4>URL Parameters String</h4>
+    <p>@UrlParametersString</p>
+</div>
+
+<button class="btn btn-primary mt-3" @onclick="NavigateBack">Back</button>
 
 @code {
+    private Dictionary<string, string?> UrlParameters = new Dictionary<string, string?>();
+    private string UrlParametersString => string.Join(", ", UrlParameters.Select(p => $"{p.Key}={p.Value ?? "null"}"));
 
+    protected override void OnInitialized()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+        foreach (string key in query.Keys)
+        {
+            if (!string.IsNullOrEmpty(key))
+            {
+                UrlParameters[key] = query[key];
+            }
+        }
+    }
+
+    private void NavigateBack()
+    {
+        var queryParams = string.Join("&", UrlParameters.Select(p => $"{Uri.EscapeDataString(p.Key)}={Uri.EscapeDataString(p.Value ?? string.Empty)}"));
+        NavigationManager.NavigateTo($"/stepThreeSelectArea?{queryParams}");
+    }
 }
