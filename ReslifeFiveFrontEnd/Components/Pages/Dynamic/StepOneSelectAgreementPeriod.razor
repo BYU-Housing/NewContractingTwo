@@ -71,6 +71,12 @@
     </div>
 </div>
 
+<!-- Additional Section: URL Parameters as String -->
+<div class="mt-4">
+    <h4>URL Parameters String</h4>
+    <p>@UrlParametersString</p>
+</div>
+
 <button class="btn btn-primary mt-3" @onclick="NavigateBack">Back</button>
 
 @code {
@@ -87,9 +93,10 @@
     private HashSet<string> DateFields = new() { "HelamanPriorityDate", "HeritagePriorityDate", "WyviewParkPriorityDate", "RivieraPriorityDate" };
     private int? SelectedAgreementPeriod;
 
+    private string UrlParametersString => string.Join(", ", UrlParameters.Select(p => $"{p.Key}={p.Value ?? "null"}"));
+
     protected override void OnInitialized()
     {
-        // Parse the query string from the URL
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
 
@@ -101,7 +108,6 @@
             }
         }
 
-        // Extract and parse agreement periods
         if (UrlParameters.TryGetValue("AgreementPeriod", out var periodValue) && !string.IsNullOrWhiteSpace(periodValue))
         {
             foreach (var period in periodValue.Split(','))
@@ -149,7 +155,6 @@
     {
         SelectedAgreementPeriod = periodId;
 
-        // Fetch the start and end dates of the selected agreement period
         if (AllPossibleAgreementPeriods.TryGetValue(periodId, out var periodDetails))
         {
             var dates = periodDetails.DateRange.Split('-').Select(d => DateTime.Parse(d.Trim())).ToArray();
@@ -158,17 +163,13 @@
                 var startDate = dates[0].ToString("yyyy-MM-ddTHH:mm:ss");
                 var endDate = dates[1].ToString("yyyy-MM-ddTHH:mm:ss");
 
-                // Update the URL parameters
                 UrlParameters["AgreementPeriod"] = periodId.ToString();
                 UrlParameters["AgreementStartDate"] = startDate;
                 UrlParameters["AgreementEndDate"] = endDate;
             }
         }
 
-        // Construct the query string using the updated UrlParameters
         var queryParams = string.Join("&", UrlParameters.Select(p => $"{Uri.EscapeDataString(p.Key)}={Uri.EscapeDataString(p.Value ?? string.Empty)}"));
-
-        // Navigate to the next page
         NavigationManager.NavigateTo($"/selectStartDate?{queryParams}");
     }
 
