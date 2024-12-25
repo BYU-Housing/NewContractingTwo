@@ -125,8 +125,8 @@ else
         // Convert selectedDate to ISO 8601 format matching other timestamps
         var formattedTimestamp = selectedDate.ToString("yyyy-MM-ddTHH:mm:ss");
 
-        // Add SelectedDate as a timestamp to the existing URL parameters
-        UrlParameters["SelectedDate"] = formattedTimestamp;
+        // Add SelectedStartDate as a timestamp to the existing URL parameters
+        UrlParameters["SelectedStartDate"] = formattedTimestamp;
 
         // Construct query string from all parameters
         var queryString = string.Join("&", UrlParameters.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value ?? string.Empty)}"));
