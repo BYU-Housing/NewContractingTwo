@@ -73,10 +73,15 @@ else
                         </td>
                     </tr>
                 }
-                }
             </tbody>
         </table>
     </div>
+</div>
+
+<!-- Additional Section: Incoming URL Parameters -->
+<div class="mt-4 text-center">
+    <h4>Incoming URL Parameters</h4>
+    <p>@UrlParametersString</p>
 </div>
 
 @code {
@@ -92,6 +97,7 @@ else
     };
 
     private DateTime? AgreementStartDate;
+    private string UrlParametersString => string.Join(", ", UrlParameters.Select(p => $"{p.Key}={p.Value ?? "null"}"));
 
     protected override void OnInitialized()
     {
