@@ -3,35 +3,113 @@
 
 <h3>Step Four: Select Building</h3>
 
-<!-- URL Parameters as String -->
-<div class="mt-4">
-    <h4>URL Parameters String</h4>
-    <p>@UrlParametersString</p>
+<div class="row justify-content-center mb-4">
+    @foreach (var building in FilteredBuildings)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">@building.Name</h5>
+                    <p class="card-text">Building Code: @building.Code</p>
+                    <button class="btn btn-primary" @onclick="() => OnBuildingSelected(building.Id)">Select</button>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
-<button class="btn btn-primary mt-3" @onclick="NavigateBack">Back</button>
-
 @code {
-    private Dictionary<string, string?> UrlParameters = new Dictionary<string, string?>();
-    private string UrlParametersString => string.Join(", ", UrlParameters.Select(p => $"{p.Key}={p.Value ?? "null"}"));
+    private int? Area;
+    private List<Building> FilteredBuildings = new();
+
+    private List<Building> AllBuildings = new()
+    {
+        // Area 1
+        new Building { Id = 1, Name = "Hinckley", Code = "B", Area = 1 },
+        new Building { Id = 2, Name = "Chipman", Code = "C", Area = 1 },
+        new Building { Id = 3, Name = "David John", Code = "D", Area = 1 },
+        new Building { Id = 4, Name = "Taylor", Code = "E", Area = 1 },
+        new Building { Id = 5, Name = "Stover", Code = "F", Area = 1 },
+        new Building { Id = 6, Name = "Budge", Code = "G", Area = 1 },
+        new Building { Id = 7, Name = "Merrill", Code = "H", Area = 1 },
+        new Building { Id = 8, Name = "May", Code = "I", Area = 1 },
+        new Building { Id = 9, Name = "Building 9", Code = "J", Area = 1 },
+
+        // Area 2
+        new Building { Id = 10, Name = "HR 02", Code = "HR 02", Area = 2 },
+        new Building { Id = 11, Name = "HR 03", Code = "HR 03", Area = 2 },
+        new Building { Id = 12, Name = "HR 04", Code = "HR 04", Area = 2 },
+        new Building { Id = 13, Name = "HR 05", Code = "HR 05", Area = 2 },
+        new Building { Id = 14, Name = "HR 06", Code = "HR 06", Area = 2 },
+        new Building { Id = 15, Name = "HR 07", Code = "HR 07", Area = 2 },
+        new Building { Id = 16, Name = "HR 08", Code = "HR 08", Area = 2 },
+        new Building { Id = 17, Name = "HR 09", Code = "HR 09", Area = 2 },
+        new Building { Id = 18, Name = "HR 10", Code = "HR 10", Area = 2 },
+        new Building { Id = 19, Name = "HR 11", Code = "HR 11", Area = 2 },
+        new Building { Id = 20, Name = "HR 12", Code = "HR 12", Area = 2 },
+        new Building { Id = 21, Name = "HR 13", Code = "HR 13", Area = 2 },
+        new Building { Id = 22, Name = "HR 14", Code = "HR 14", Area = 2 },
+        new Building { Id = 23, Name = "HR 15", Code = "HR 15", Area = 2 },
+        new Building { Id = 24, Name = "HR 16", Code = "HR 16", Area = 2 },
+
+        // Area 3
+        new Building { Id = 25, Name = "RI A", Code = "RI A", Area = 3 },
+        new Building { Id = 26, Name = "RI B", Code = "RI B", Area = 3 },
+        new Building { Id = 27, Name = "RI C", Code = "RI C", Area = 3 },
+        new Building { Id = 28, Name = "RI D", Code = "RI D", Area = 3 },
+        new Building { Id = 29, Name = "RI E", Code = "RI E", Area = 3 },
+        new Building { Id = 30, Name = "RI F", Code = "RI F", Area = 3 },
+        new Building { Id = 31, Name = "RI G", Code = "RI G", Area = 3 },
+        new Building { Id = 32, Name = "RI H", Code = "RI H", Area = 3 },
+        new Building { Id = 33, Name = "RI I", Code = "RI I", Area = 3 },
+        new Building { Id = 34, Name = "RI J", Code = "RI J", Area = 3 },
+        new Building { Id = 35, Name = "RI K", Code = "RI K", Area = 3 },
+        new Building { Id = 36, Name = "RI L", Code = "RI L", Area = 3 },
+        new Building { Id = 37, Name = "RI O", Code = "RI O", Area = 3 },
+
+        // Area 5 (not built yet)
+        new Building { Id = 38, Name = "LI A", Code = "LI A", Area = 5 },
+        new Building { Id = 39, Name = "LI B", Code = "LI B", Area = 5 },
+        new Building { Id = 40, Name = "LI C", Code = "LI C", Area = 5 },
+        new Building { Id = 41, Name = "LI D", Code = "LI D", Area = 5 },
+        new Building { Id = 42, Name = "LI E", Code = "LI E", Area = 5 },
+
+        // Area 4
+        new Building { Id = 43, Name = "WP 1", Code = "WP 1", Area = 4 },
+        new Building { Id = 44, Name = "WP 2", Code = "WP 2", Area = 4 },
+        new Building { Id = 45, Name = "WP 3", Code = "WP 3", Area = 4 },
+        new Building { Id = 46, Name = "WP 4", Code = "WP 4", Area = 4 },
+        new Building { Id = 47, Name = "WP 5", Code = "WP 5", Area = 4 },
+        new Building { Id = 48, Name = "WP 6", Code = "WP 6", Area = 4 },
+        new Building { Id = 49, Name = "WP 7", Code = "WP 7", Area = 4 },
+        new Building { Id = 50, Name = "WP 8", Code = "WP 8", Area = 4 },
+        new Building { Id = 51, Name = "WP 9", Code = "WP 9", Area = 4 },
+        new Building { Id = 52, Name = "WP 10", Code = "WP 10", Area = 4 },
+        new Building { Id = 53, Name = "WP 11", Code = "WP 11", Area = 4 }
+    };
 
     protected override void OnInitialized()
     {
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
 
-        foreach (string key in query.Keys)
+        if (query["Area"] != null && int.TryParse(query["Area"], out var areaId))
         {
-            if (!string.IsNullOrEmpty(key))
-            {
-                UrlParameters[key] = query[key];
-            }
+            Area = areaId;
+            FilteredBuildings = AllBuildings.Where(b => b.Area == Area).ToList();
         }
     }
 
-    private void NavigateBack()
+    private void OnBuildingSelected(int buildingId)
     {
-        var queryParams = string.Join("&", UrlParameters.Select(p => $"{Uri.EscapeDataString(p.Key)}={Uri.EscapeDataString(p.Value ?? string.Empty)}"));
-        NavigationManager.NavigateTo($"/stepThreeSelectArea?{queryParams}");
+        // Handle building selection logic here.
+    }
+
+    private class Building
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Code { get; set; } = string.Empty;
+        public int Area { get; set; }
     }
 }
