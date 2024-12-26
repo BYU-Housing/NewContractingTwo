@@ -4,14 +4,18 @@
 <h3>Step Five: Select Floor</h3>
 
 <!-- Display Blocks Based on Area -->
-<div class="mt-4">
-    <h4>Available Floors</h4>
-    <ul>
-        @foreach (var block in AvailableBlocks)
-        {
-            <li>@block</li>
-        }
-    </ul>
+<div class="row justify-content-center mt-4">
+    @foreach (var block in AvailableBlocks)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Floor @block</h5>
+                    <button class="btn btn-primary" @onclick="() => NavigateToStepSix(block)">Select</button>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 <!-- Display URL Parameters as a String -->
@@ -51,5 +55,12 @@
             4 => new List<string> { "1", "2", "3" },
             _ => new List<string> { "No blocks available for this area" }
         };
+    }
+
+    private void NavigateToStepSix(string block)
+    {
+        // Construct query string with the selected floor
+        var queryParams = $"{UrlParametersString}&Floor={block}";
+        NavigationManager.NavigateTo($"/stepSixSelectBedspace?{queryParams}");
     }
 }
