@@ -263,8 +263,8 @@
         Submit
     </button>
 </form>
-
-@code {
+@* No prefill *@
+@* @code {
     private string Name { get; set; } = string.Empty;
     private string NetID { get; set; } = string.Empty;
     private int? AgreementPeriod { get; set; } = null;
@@ -341,6 +341,88 @@
             $"WaitingList={WaitingList?.ToString().ToLower()}",
 
 
+            $"HelamanPriorityDate={HelamanPriorityDate:yyyy-MM-ddTHH:mm:ss}",
+            $"HeritagePriorityDate={HeritagePriorityDate:yyyy-MM-ddTHH:mm:ss}",
+            $"WyviewParkPriorityDate={WyviewParkPriorityDate:yyyy-MM-ddTHH:mm:ss}",
+            $"RivieraPriorityDate={RivieraPriorityDate:yyyy-MM-ddTHH:mm:ss}"
+        };
+
+        NavigationManager.NavigateTo($"/selectAgreementPeriod?{string.Join("&", queryParams)}");
+    }
+} *@
+@code {
+    private string Name { get; set; } = string.Empty;
+    private string NetID { get; set; } = string.Empty;
+    private int? AgreementPeriod { get; set; } = null;
+
+    // Prepopulate all boolean properties with false
+    private bool? ApplicationEligible { get; set; } = false;
+    private bool? ContractEligible { get; set; } = false;
+    private bool? SexAtBirth { get; set; } = false;
+    private bool? Community { get; set; } = false;
+    private bool? Minor { get; set; } = false;
+    private bool? Athlete { get; set; } = false;
+    private bool? ADA { get; set; } = false;
+    private bool? FlexGE { get; set; } = false;
+    private bool? InternationalScholarship { get; set; } = false;
+    private bool? LISR { get; set; } = false;
+    private bool? NoAnimal { get; set; } = false;
+    private bool? PostBacc { get; set; } = false;
+    private bool? REQMet { get; set; } = false;
+    private bool? ServiceESA { get; set; } = false;
+    private bool? FirstGeneration { get; set; } = false;
+    private bool? WheatleyVSScholar { get; set; } = false;
+    private bool? WaitingList { get; set; } = false;
+
+    // Prepopulate all date properties with December 12, 2024, at noon
+    private DateTime? HelamanPriorityDate { get; set; } = new DateTime(2024, 12, 12, 12, 0, 0);
+    private DateTime? HeritagePriorityDate { get; set; } = new DateTime(2024, 12, 12, 12, 0, 0);
+    private DateTime? WyviewParkPriorityDate { get; set; } = new DateTime(2024, 12, 12, 12, 0, 0);
+    private DateTime? RivieraPriorityDate { get; set; } = new DateTime(2024, 12, 12, 12, 0, 0);
+
+    private void OnAgreementPeriodChanged(ChangeEventArgs e) => AgreementPeriod = int.TryParse(e.Value?.ToString(), out var value) ? value : null;
+    private void OnApplicationEligibleChanged(bool value) => ApplicationEligible = value;
+    private void OnContractEligibleChanged(bool value) => ContractEligible = value;
+    private void OnSexAtBirthChanged(bool value) => SexAtBirth = value;
+    private void OnCommunityChanged(bool value) => Community = value;
+    private void OnMinorChanged(bool value) => Minor = value;
+    private void OnAthleteChanged(bool value) => Athlete = value;
+    private void OnADAChanged(bool value) => ADA = value;
+    private void OnFlexGEChanged(bool value) => FlexGE = value;
+    private void OnInternationalScholarshipChanged(bool value) => InternationalScholarship = value;
+    private void OnLISRChanged(bool value) => LISR = value;
+    private void OnNoAnimalChanged(bool value) => NoAnimal = value;
+    private void OnPostBaccChanged(bool value) => PostBacc = value;
+    private void OnREQMetChanged(bool value) => REQMet = value;
+    private void OnServiceESAChanged(bool value) => ServiceESA = value;
+    private void OnFirstGenerationChanged(bool value) => FirstGeneration = value;
+    private void OnWheatleyVSScholarChanged(bool value) => WheatleyVSScholar = value;
+    private void OnWaitingListChanged(bool value) => WaitingList = value;
+
+    private void NavigateToSelectAgreementPeriod()
+    {
+        var queryParams = new List<string>
+        {
+            $"Name={Uri.EscapeDataString(Name)}",
+            $"NetID={Uri.EscapeDataString(NetID)}",
+            $"AgreementPeriod={AgreementPeriod}",
+            $"ApplicationEligible={ApplicationEligible?.ToString().ToLower()}",
+            $"ContractEligible={ContractEligible?.ToString().ToLower()}",
+            $"SexAtBirth={SexAtBirth?.ToString().ToLower()}",
+            $"Community={Community?.ToString().ToLower()}",
+            $"Minor={Minor?.ToString().ToLower()}",
+            $"Athlete={Athlete?.ToString().ToLower()}",
+            $"ADA={ADA?.ToString().ToLower()}",
+            $"FlexGE={FlexGE?.ToString().ToLower()}",
+            $"InternationalScholarship={InternationalScholarship?.ToString().ToLower()}",
+            $"LISR={LISR?.ToString().ToLower()}",
+            $"NoAnimal={NoAnimal?.ToString().ToLower()}",
+            $"PostBacc={PostBacc?.ToString().ToLower()}",
+            $"REQMet={REQMet?.ToString().ToLower()}",
+            $"ServiceESA={ServiceESA?.ToString().ToLower()}",
+            $"FirstGeneration={FirstGeneration?.ToString().ToLower()}",
+            $"WheatleyVSScholar={WheatleyVSScholar?.ToString().ToLower()}",
+            $"WaitingList={WaitingList?.ToString().ToLower()}",
             $"HelamanPriorityDate={HelamanPriorityDate:yyyy-MM-ddTHH:mm:ss}",
             $"HeritagePriorityDate={HeritagePriorityDate:yyyy-MM-ddTHH:mm:ss}",
             $"WyviewParkPriorityDate={WyviewParkPriorityDate:yyyy-MM-ddTHH:mm:ss}",
