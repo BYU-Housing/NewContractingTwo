@@ -34,8 +34,8 @@
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
 
-        // Generate a string of URL parameters
-        UrlParametersString = string.Join(", ", query.AllKeys.Select(key => $"{key}={query[key]}"));
+        // Use "&" as the parameter delimiter
+        UrlParametersString = string.Join("&", query.AllKeys.Select(key => $"{key}={query[key]}"));
 
         // Parse the Area parameter
         if (query["Area"] != null && int.TryParse(query["Area"], out var area))
