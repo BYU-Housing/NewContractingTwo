@@ -18,9 +18,16 @@
     }
 </div>
 
+<!-- Display URL Parameters as a String -->
+<div class="mt-4">
+    <h4>URL Parameters</h4>
+    <p>@UrlParametersString</p>
+</div>
+
 @code {
     private int? Area;
     private List<Building> FilteredBuildings = new();
+    private string UrlParametersString = string.Empty;
 
     private List<Building> AllBuildings = new()
     {
@@ -92,6 +99,8 @@
     {
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+        UrlParametersString = string.Join(", ", query.AllKeys.Select(key => $"{key}={query[key]}"));
 
         if (query["Area"] != null && int.TryParse(query["Area"], out var areaId))
         {
