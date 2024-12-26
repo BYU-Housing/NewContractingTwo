@@ -1,7 +1,23 @@
 ﻿@page "/stepFiveSelectFloor"
 @inject NavigationManager NavigationManager
-<h3>StepFiveSelectFloor</h3>
+
+<h3>Step Five: Select Floor</h3>
+
+<!-- Display URL Parameters as a String -->
+<div class="mt-4">
+    <h4>URL Parameters</h4>
+    <p>@UrlParametersString</p>
+</div>
 
 @code {
+    private string UrlParametersString = string.Empty;
 
+    protected override void OnInitialized()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+        // Generate a string of URL parameters
+        UrlParametersString = string.Join(", ", query.AllKeys.Select(key => $"{key}={query[key]}"));
+    }
 }
