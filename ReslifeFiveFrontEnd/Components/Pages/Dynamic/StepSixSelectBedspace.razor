@@ -7,11 +7,11 @@
 <p>All URL Parameters:</p>
 <p>@AllUrlParameters</p>
 
-<h4>Allocation Test IDs:</h4>
-@if (AllocationTests.Any())
+<h4>Filtered Allocation Test IDs:</h4>
+@if (FilteredAllocationTests.Any())
 {
     <ul>
-        @foreach (var allocation in AllocationTests)
+        @foreach (var allocation in FilteredAllocationTests)
         {
             <li>Id: @allocation.Id</li>
         }
@@ -19,23 +19,35 @@
 }
 else
 {
-    <p>No Allocation Test rows found.</p>
+    <p>No matching Allocation Test rows found.</p>
 }
 
 @code {
     private string AllUrlParameters = string.Empty;
-    private List<AllocationTest> AllocationTests = new();
+    private List<AllocationTest> FilteredAllocationTests = new();
 
     protected override void OnInitialized()
     {
-        // Ensure NavigationManager is injected and used properly
+        // Parse URL parameters
         var uri = new Uri(NavigationManager.Uri);
         var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
 
         // Combine URL parameters into a string
         AllUrlParameters = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
 
-        // Fetch AllocationTest rows
-        AllocationTests = GenService.GetModel<AllocationTest>().ToList();
+        // Extract relevant URL parameters
+        var area = queryParams.TryGetValue("Area", out var areaValue) && int.TryParse(areaValue, out var a) ? a : (int?)null;
+        var buildingId = queryParams.TryGetValue("BuildingId", out var buildingIdValue) && int.TryParse(buildingIdValue, out var bId) ? bId : (int?)null;
+        var floor = queryParams.TryGetValue("Floor", out var floorValue) && int.TryParse(floorValue, out var f) ? f : (int?)null;
+        var agreementPeriod = queryParams.TryGetValue("AgreementPeriod", out var agreementPeriodValue) && int.TryParse(agreementPeriodValue, out var ap) ? ap : (int?)null;
+
+        // Fetch and filter AllocationTest rows
+        FilteredAllocationTests = GenService.GetModel<AllocationTest>()
+            .Where(allocation =>
+                (!area.HasValue || allocation.Area == area.Value) &&
+                (!buildingId.HasValue || allocation.Building == buildingId.Value) &&
+                (!floor.HasValue || allocation.Floor == floor.Value) &&
+                (!agreementPeriod.HasValue || allocation.AgreementPeriod == agreementPeriod.Value))
+            .ToList();
     }
 }
