@@ -1,7 +1,21 @@
 ﻿@page "/stepSixSelectBedspace"
 @inject NavigationManager NavigationManager
+
 <h3>StepSixSelectBedspace</h3>
 
-@code {
+<p>All URL Parameters:</p>
+<p>@AllUrlParameters</p>
 
+@code {
+    private string AllUrlParameters = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        // Parse the current URI to get query parameters
+        var uri = new Uri(NavigationManager.Uri);
+        var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+
+        // Convert query parameters to a single string
+        AllUrlParameters = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+    }
 }
