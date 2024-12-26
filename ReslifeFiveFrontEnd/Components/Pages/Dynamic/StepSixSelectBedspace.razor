@@ -5,7 +5,7 @@
 <h3>Step Six: Select Bedspace</h3>
 
 <!-- Conditional Image Display -->
-@if (Floor == 1100)
+@if (Floor == 1100 && Area == 1)
 {
     <div class="text-center">
         <img src="https://reslife-pictures.s3.us-east-1.amazonaws.com/floorplans/HL0B11.gif" alt="Floor Plan" class="img-fluid" />
@@ -38,6 +38,7 @@ else
     private string AllUrlParameters = string.Empty;
     private List<AllocationTest> FilteredAllocationTests = new();
     private int? Floor { get; set; }
+    private int? Area { get; set; }
 
     protected override void OnInitialized()
     {
@@ -51,8 +52,10 @@ else
         // Extract Floor parameter
         Floor = queryParams.TryGetValue("Floor", out var floorValue) && int.TryParse(floorValue, out var f) ? f : (int?)null;
 
+        // Extract Area parameter
+        Area = queryParams.TryGetValue("Area", out var areaValue) && int.TryParse(areaValue, out var a) ? a : (int?)null;
+
         // Extract other relevant URL parameters
-        var area = queryParams.TryGetValue("Area", out var areaValue) && int.TryParse(areaValue, out var a) ? a : (int?)null;
         var buildingId = queryParams.TryGetValue("BuildingId", out var buildingIdValue) && int.TryParse(buildingIdValue, out var bId) ? bId : (int?)null;
         var agreementPeriod = queryParams.TryGetValue("AgreementPeriod", out var agreementPeriodValue) && int.TryParse(agreementPeriodValue, out var ap) ? ap : (int?)null;
 
@@ -60,7 +63,7 @@ else
         FilteredAllocationTests = GenService.GetModel<AllocationTest>()
             .Where(allocation =>
                 allocation.Active == true && // Only rows where Active = true
-                (!area.HasValue || allocation.Area == area.Value) &&
+                (!Area.HasValue || allocation.Area == Area.Value) &&
                 (!buildingId.HasValue || allocation.Building == buildingId.Value) &&
                 (!Floor.HasValue || allocation.Floor == Floor.Value) &&
                 (!agreementPeriod.HasValue || allocation.AgreementPeriod == agreementPeriod.Value))
