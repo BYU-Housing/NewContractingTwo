@@ -3,6 +3,17 @@
 
 <h3>Step Five: Select Floor</h3>
 
+<!-- Display Blocks Based on Area -->
+<div class="mt-4">
+    <h4>Available Floors</h4>
+    <ul>
+        @foreach (var block in AvailableBlocks)
+        {
+            <li>@block</li>
+        }
+    </ul>
+</div>
+
 <!-- Display URL Parameters as a String -->
 <div class="mt-4">
     <h4>URL Parameters</h4>
@@ -11,6 +22,8 @@
 
 @code {
     private string UrlParametersString = string.Empty;
+    private List<string> AvailableBlocks = new();
+    private int? Area;
 
     protected override void OnInitialized()
     {
@@ -19,5 +32,24 @@
 
         // Generate a string of URL parameters
         UrlParametersString = string.Join(", ", query.AllKeys.Select(key => $"{key}={query[key]}"));
+
+        // Parse the Area parameter
+        if (query["Area"] != null && int.TryParse(query["Area"], out var area))
+        {
+            Area = area;
+            SetAvailableBlocks();
+        }
+    }
+
+    private void SetAvailableBlocks()
+    {
+        AvailableBlocks = Area switch
+        {
+            1 => new List<string> { "1100", "1200", "2100", "2000", "2200", "3100", "3200" },
+            2 => new List<string> { "1", "2", "3", "4" },
+            3 => new List<string> { "1", "2", "3" },
+            4 => new List<string> { "1", "2", "3" },
+            _ => new List<string> { "No blocks available for this area" }
+        };
     }
 }
