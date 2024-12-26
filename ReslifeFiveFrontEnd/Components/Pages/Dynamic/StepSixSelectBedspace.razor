@@ -4,17 +4,14 @@
 
 <h3>Step Six: Select Bedspace</h3>
 
-<p>All URL Parameters:</p>
-<p>@AllUrlParameters</p>
-
-<h4>Filtered Allocation Test IDs:</h4>
+<h4>Filtered Allocation Test Bedspaces:</h4>
 @if (FilteredAllocationTests.Any())
 {
     <div>
         @foreach (var allocation in FilteredAllocationTests)
         {
             <button class="btn btn-primary m-2" @onclick="() => OnAllocationSelected(allocation.Id)">
-                Id: @allocation.Id
+                Bedspace: @allocation.Bedspace
             </button>
         }
     </div>
@@ -23,6 +20,11 @@ else
 {
     <p>No matching Allocation Test rows found.</p>
 }
+
+<!-- URL Parameters Section -->
+<div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #f8f9fa; color: gray; text-align: center; padding: 10px; font-size: small; border-top: 1px solid #ddd;">
+    <p>@AllUrlParameters</p>
+</div>
 
 @code {
     private string AllUrlParameters = string.Empty;
@@ -56,7 +58,7 @@ else
 
     private void OnAllocationSelected(int id)
     {
-        // Handle the button click here, e.g., navigate to another page or perform an action
+        // Pass the Id as a URL parameter to the next page
         NavigationManager.NavigateTo($"/nextPage?SelectedId={id}");
     }
 }
