@@ -111,7 +111,12 @@
 
     private void OnBuildingSelected(int buildingId)
     {
-        // Handle building selection logic here.
+        var currentUri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(currentUri.Query);
+        query["BuildingId"] = buildingId.ToString();
+
+        var updatedQuery = string.Join("&", query.AllKeys.Select(key => $"{key}={query[key]}"));
+        NavigationManager.NavigateTo($"/stepFiveSelectFloor?{updatedQuery}");
     }
 
     private class Building
