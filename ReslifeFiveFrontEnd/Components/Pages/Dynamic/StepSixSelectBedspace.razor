@@ -10,12 +10,14 @@
 <h4>Filtered Allocation Test IDs:</h4>
 @if (FilteredAllocationTests.Any())
 {
-    <ul>
+    <div>
         @foreach (var allocation in FilteredAllocationTests)
         {
-            <li>Id: @allocation.Id</li>
+            <button class="btn btn-primary m-2" @onclick="() => OnAllocationSelected(allocation.Id)">
+                Id: @allocation.Id
+            </button>
         }
-    </ul>
+    </div>
 }
 else
 {
@@ -44,10 +46,17 @@ else
         // Fetch and filter AllocationTest rows
         FilteredAllocationTests = GenService.GetModel<AllocationTest>()
             .Where(allocation =>
+                allocation.Active == true && // Only rows where Active = true
                 (!area.HasValue || allocation.Area == area.Value) &&
                 (!buildingId.HasValue || allocation.Building == buildingId.Value) &&
                 (!floor.HasValue || allocation.Floor == floor.Value) &&
                 (!agreementPeriod.HasValue || allocation.AgreementPeriod == agreementPeriod.Value))
             .ToList();
+    }
+
+    private void OnAllocationSelected(int id)
+    {
+        // Handle the button click here, e.g., navigate to another page or perform an action
+        NavigationManager.NavigateTo($"/nextPage?SelectedId={id}");
     }
 }
