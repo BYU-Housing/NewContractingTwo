@@ -24,13 +24,14 @@ else
     </div>
 }
 
+<h4>Filtered Allocation Test Bedspaces:</h4>
 @if (FilteredAllocationTests.Any())
 {
     <div class="button-grid">
         @foreach (var allocation in FilteredAllocationTests)
         {
             <button class="btn @(SelectedId == allocation.Id ? "btn-success" : "btn-primary")"
-                    @onclick="() => OnAllocationSelected(allocation.Id)">
+                    @onclick="() => OnAllocationSelected(allocation)">
                 @GetFormattedBedspace(allocation.Bedspace)
             </button>
         }
@@ -39,6 +40,21 @@ else
 else
 {
     <p>No matching Allocation Test rows found.</p>
+}
+
+@if (SelectedAllocation != null)
+{
+    <div class="mt-4">
+        <h4>You have selected bedspace @SelectedAllocation.Bedspace</h4>
+        <label for="swapPreference">Please select your swap preference:</label>
+        <select id="swapPreference" class="form-control" @bind="SelectedSwapPreference">
+            <option value="">-- Select --</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
+    </div>
 }
 
 <!-- URL Parameters Section -->
@@ -64,6 +80,8 @@ else
     private int? Area { get; set; }
     private int? BuildingId { get; set; }
     private int? SelectedId { get; set; } // Track the selected button ID
+    private AllocationTest? SelectedAllocation { get; set; } // Nullable to avoid initialization warnings
+    private string? SelectedSwapPreference { get; set; } // Nullable to avoid initialization warnings
 
     protected override void OnInitialized()
     {
@@ -97,10 +115,10 @@ else
             .ToList();
     }
 
-    private void OnAllocationSelected(int id)
+    private void OnAllocationSelected(AllocationTest allocation)
     {
-        // Set the selected button ID
-        SelectedId = id;
+        SelectedId = allocation.Id;
+        SelectedAllocation = allocation;
     }
 
     private string GetFormattedBedspace(string bedspace)
