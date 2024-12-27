@@ -24,16 +24,14 @@ else
     </div>
 }
 
-<h4>Filtered Allocation Test Bedspaces:</h4>
 @if (FilteredAllocationTests.Any())
 {
-    <div>
+    <div class="button-grid">
         @foreach (var allocation in FilteredAllocationTests)
         {
             <button class="btn @(SelectedId == allocation.Id ? "btn-success" : "btn-primary")"
-                    style="margin: 1px;"
                     @onclick="() => OnAllocationSelected(allocation.Id)">
-                @allocation.Bedspace
+                @GetFormattedBedspace(allocation.Bedspace)
             </button>
         }
     </div>
@@ -47,7 +45,18 @@ else
 <div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #f8f9fa; color: gray; text-align: center; padding: 10px; font-size: small; border-top: 1px solid #ddd;">
     <p>@AllUrlParameters</p>
 </div>
-
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
 @code {
     private string AllUrlParameters = string.Empty;
     private List<AllocationTest> FilteredAllocationTests = new();
@@ -93,4 +102,30 @@ else
         // Set the selected button ID
         SelectedId = id;
     }
+
+    private string GetFormattedBedspace(string bedspace)
+    {
+        // Ensure bedspace has enough characters
+        if (string.IsNullOrEmpty(bedspace) || bedspace.Length < 10)
+        {
+            return bedspace; // Return the original value if formatting is not possible
+        }
+
+        // Extract characters 5 through 8 and 9 through 10
+        return $"{bedspace.Substring(4, 4)}-{bedspace.Substring(8, 2)}";
+    }
 }
+
+<style>
+    .button-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+        padding: 10px;
+    }
+
+        .button-grid button {
+            width: 100%;
+            text-align: center;
+        }
+</style>
