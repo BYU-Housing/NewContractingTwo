@@ -30,7 +30,8 @@ else
     <div>
         @foreach (var allocation in FilteredAllocationTests)
         {
-            <button class="btn btn-primary m-2" @onclick="() => OnAllocationSelected(allocation.Id)">
+            <button class="btn @(SelectedId == allocation.Id ? "btn-success" : "btn-primary") m-2"
+                    @onclick="() => OnAllocationSelected(allocation.Id)">
                 Bedspace: @allocation.Bedspace
             </button>
         }
@@ -46,8 +47,7 @@ else
     <p>@AllUrlParameters</p>
 </div>
 
-<br />
-<br />
+
 <br />
 <br />
 <br />
@@ -60,12 +60,14 @@ else
 <br />
 <br />
 
+
 @code {
     private string AllUrlParameters = string.Empty;
     private List<AllocationTest> FilteredAllocationTests = new();
     private int? Floor { get; set; }
     private int? Area { get; set; }
     private int? BuildingId { get; set; }
+    private int? SelectedId { get; set; } // Track the selected button ID
 
     protected override void OnInitialized()
     {
@@ -101,7 +103,7 @@ else
 
     private void OnAllocationSelected(int id)
     {
-        // Pass the Id as a URL parameter to the next page
-        NavigationManager.NavigateTo($"/nextPage?SelectedId={id}");
+        // Set the selected button ID
+        SelectedId = id;
     }
 }
