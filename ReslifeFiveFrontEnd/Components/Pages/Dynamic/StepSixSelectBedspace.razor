@@ -70,10 +70,19 @@ else
     <!-- Room walls -->
     <rect x="10" y="10" width="130" height="180" fill="none" stroke="#000" stroke-width="2" />
 
-    <!-- Door on top wall -->
-    <line x1="65" y1="10" x2="85" y2="10" stroke="#000" stroke-width="4" />
-    <path d="M65,10 Q75,30 85,10" fill="none" stroke="#000" stroke-width="2" />
+    <!-- Gap in top wall for open door -->
+    <line x1="10" y1="10" x2="65" y2="10" stroke="#000" stroke-width="2" />
+    <line x1="85" y1="10" x2="140" y2="10" stroke="#000" stroke-width="2" />
+
+    <!-- Door (open at 90 degrees) -->
+    <line x1="75" y1="10" x2="75" y2="30" stroke="#000" stroke-width="2" />
+
+    <!-- Dotted curve to represent door swing (inverted quarter-circle) -->
+    <path d="M75,30 A20,20 0 0,0 95,10" fill="none" stroke="#000" stroke-dasharray="4,4" stroke-width="1" />
 </svg>
+
+
+
 
 
 
