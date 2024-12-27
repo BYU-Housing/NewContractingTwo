@@ -22,7 +22,6 @@ namespace ReslifeFiveBackEnd.Model
         public string CitizenshipCountry { get; set; } = string.Empty;
         public int RoleId { get; set; }
         public virtual Role? Role { get; set; }
-        public int? ProfileImageId { get; set; }
-        public virtual RLFImage? ProfileImage { get; set; }
+
     }
 }

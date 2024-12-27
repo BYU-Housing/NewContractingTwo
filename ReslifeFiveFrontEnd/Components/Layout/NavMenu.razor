@@ -5,72 +5,67 @@
 
 <div class="top-row ps-3 navbar" style="background-color: #002E5D;">
     <nav class="d-flex justify-content-evenly w-100">
-                <div>
-                    <NavLink class="nav-link" style="color: white;" href="">
-                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-                    </NavLink>
-                </div>
-
-                <div>
-                    <NavLink class="nav-link" style="color: white;" href="counter">
-                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-                    </NavLink>
-                </div>
-
-                
-                <div>
-                    <NavLink class="nav-link" style="color: white;" href="Login">
+        <div>
+            <NavLink class="nav-link" style="color: white;" href="">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>        
+        <div>
+            <Button @onclick="ToggleUserPortals" style="color: white;"><span class="person-lines-fill" style="color: white;"></span>User Portals</Button>
+            <Collapse @ref="UserPortalsCollapse">
+                    <Card class="bg-light">
+                    <NavLink class="nav-link custom-nav-item custom-text" href="Login">
                         <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Login
                     </NavLink>
-                </div>
-                
-                <div>
-                    <NavLink class="nav-link" style="color: white;" href="userPortals">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> User Portals
+                    <NavLink class="nav-link custom-nav-item custom-text" href="counter">
+                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
                     </NavLink>
-                </div>
-                
-                <div>
+                    <NavLink class="nav-link custom-nav-item custom-text" href="userPortals">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Other User Portals
+                    </NavLink>
+                </Card>
+            </Collapse>
+        </div>
+        <div>
+            <Button @onclick="ToggleAdminPortals" style="color: white;"><span class="key" style="color: white;"></span>Admin Portals</Button>
+            <Collapse @ref="AdminPortalsCollapse">
+                <Card>
+                    <NavLink class="nav-link custom-nav-item custom-text" href="gridBlockTestJ">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Block J Readonly
+                    </NavLink>
+                    <NavLink class="nav-link custom-nav-item custom-text" href="editGridBlockJ">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Block J Editable
+                    </NavLink>
+                    <NavLink class="nav-link custom-nav-item custom-text" href="manageUser">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Manage Users
+                    </NavLink>
+                    <NavLink class="nav-link custom-nav-item custom-text" href="manageRole">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Manage Roles
+                    </NavLink>
+                </Card>
+            </Collapse>
+        </div>
+    
+        <div>
+           <p>Target User: </p>
+        </div>
 
-                    <Button @onclick="ToggleObjectManagement" style="color: white;"><span class="bi bi-collection" style="color: white;"></span> Object Management</Button>
-                    <Collapse @ref="ManageObjectsCollapse">
-                        <Card class="bg-light">
-                            <NavLink class="nav-link custom-nav-item custom-text" href="manageRole">
-                                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Manage Roles
-                            </NavLink>
-                            <NavLink class="nav-link custom-nav-item custom-text" href="manageUser">
-                                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Manage Users
-                            </NavLink>
-                            <NavLink class="nav-link custom-nav-item custom-text" href="gridBlockTestJ">
-                                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Block J Readonly
-                            </NavLink>
-                            <NavLink class="nav-link custom-nav-item custom-text" href="editGridBlockJ">
-                                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Block J Editable
-                            </NavLink>
-                        </Card>
-                    </Collapse>
-                </div>
-                
+        <div>
+            @if (IsUserAuthenticated)
+            {
+                <Button @onclick="ShowProfileOffCanvas" Style="color:white;">
 
+                    @LoggedInUser.PreferredFirstName
 
-                <div>
-                    @if (IsUserAuthenticated)
-                    {
-                        <Button @onclick="ShowProfileOffCanvas" Style="color:white;">
-
-                        <img src="@ConvertImageToBase64(LoggedInUser.ProfileImage ?? new RLFImage())" alt="Profile" class="rounded-circle" style="width: 40px; height: 40px; border: 2px solid white;" />
-                            @LoggedInUser.PreferredFirstName
-
-                        </Button>
-                    }
-                    else
-                    {
-                        <a href="Login" >Login</a>
-                    }
-
-
-                </div>
-
+                </Button>
+            }
+            else
+            {
+                <NavLink class="nav-link custom-nav-item custom-text" href="Login">
+                    <span class="bi bi-list-nested-nav-menu" area-hidden="true"></span>Login
+                </NavLink>
+            }
+        </div>
 
         </nav>
 </div>
@@ -88,8 +83,7 @@
     <BodyTemplate>
         @if(!string.IsNullOrWhiteSpace(LoggedInUser.RestOfName))
         {   <div>
-               <img src="@ConvertImageToBase64(LoggedInUser.ProfileImage ?? new RLFImage())"  alt="Profile Picture"/>
-               <InputFile OnChange="UpsertLoggedInUserProfileImage" />
+              
                 <h4>Name: @LoggedInUser.RestOfName @LoggedInUser.Surname</h4>
                 <h4>DOB: @LoggedInUser.DateOfBirth</h4>
                 <h4>Net ID: @LoggedInUser.NetId</h4>
@@ -109,12 +103,14 @@
 </Offcanvas>
 
 @code{
-    Collapse ManageObjectsCollapse = default!;
+    Collapse AdminPortalsCollapse = default!;
+    Collapse UserPortalsCollapse = default!;
     private Offcanvas ProfileOffCanvas = default!;
     private string ProfileImage = "default.png";
     private User LoggedInUser = new User();
+    private User TargetUser = new User();
     private bool IsUserAuthenticated = false;
-
+    private List<Collapse> CollapsesList = [];
     protected override async Task OnInitializedAsync()
     {
         var auth = await authState.GetAuthenticationStateAsync();
@@ -128,90 +124,44 @@
             var netId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "No Netid";
             LoggedInUser = genService.GetModel<User>().FirstOrDefault(x => x.NetId == netId) ?? new User();
             LoggedInUser.Role = genService.GetModel<Role>().FirstOrDefault(r => r.Name == roleName) ?? new Role { Name = "No Role" };
-            if (LoggedInUser.ProfileImageId > 0)
-            {
-                LoggedInUser.ProfileImage = genService.GetModel<RLFImage>().FirstOrDefault(x => x.Id == LoggedInUser.ProfileImageId);
-            }
+
         }
-        StateHasChanged();
+        CollapsesList.Add(UserPortalsCollapse);
+        CollapsesList.Add(AdminPortalsCollapse);
     }
 
 
 
 
-
-
-
-    private async Task ToggleObjectManagement() => await ManageObjectsCollapse.ToggleAsync();
 
     private async Task ShowProfileOffCanvas() => await ProfileOffCanvas.ShowAsync();
 
-
-
-    private string ConvertImageToBase64(RLFImage image)
+    private async Task ToggleUserPortals()
     {
-        if (image.ImageData == null || string.IsNullOrEmpty(image.ImageType))
-            return string.Empty;
+        await CloseAllCollapsesAsync(UserPortalsCollapse);
+        await UserPortalsCollapse.ToggleAsync();
+    }
 
-        var base64Data = Convert.ToBase64String(image.ImageData);
-        return $"data:{image.ImageType};base64,{base64Data}";
+    private async Task ToggleAdminPortals()
+    {
+        await CloseAllCollapsesAsync(AdminPortalsCollapse);
+        await AdminPortalsCollapse.ToggleAsync();
+    }
+
+    private async Task CloseAllCollapsesAsync(Collapse collapseToExclude)
+    {
+        foreach (var collapse in CollapsesList)
+        {
+            if (collapse != null && collapse != collapseToExclude)
+            {
+                await collapse.HideAsync();
+            }
+        }
     }
 
 
-    private async Task UpsertLoggedInUserProfileImage(InputFileChangeEventArgs e)
-    {
-        if (e.File == null)
-        {
-            _logger.LogInformation("No file uploaded.");
-            return;
-        }
-        try
-        {
-            var file = e.File;
-            var buffer = new byte[file.Size];
-            await file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024).ReadAsync(buffer); // Max 5MB file size
-            var image = new RLFImage
-            {
-                ImageData = buffer,
-                ImageType = file.ContentType,
-                ImageUrl = string.Empty // Not used since we're storing as bytea
-            };
-            if(LoggedInUser.ProfileImageId > 0)
-            {
-                //upsert the image, replacing the old. 
-                RLFImage? currentProfileImage = genService.GetModel<RLFImage>().FirstOrDefault(x => x.Id == LoggedInUser.ProfileImageId);
-                if (currentProfileImage != null)
-                {
-                    currentProfileImage.ImageData = image.ImageData;
-                    currentProfileImage.ImageType = image.ImageType;
 
-                    genService.Upsert<RLFImage>(currentProfileImage);
-                }
-                else
-                {
-                    _logger.LogInformation($"failed to retrieve profile image for logged in user even tho their image id is > 0");
-                }
-            }
-            else
-            {
-                //add a brand new image
-                genService.Upsert<RLFImage>(image);
-                LoggedInUser.ProfileImageId = image.Id;
-                genService.Upsert<User>(LoggedInUser);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogInformation($"Error uploading profile image: {ex.Message}");
-        }
-
-
-
-
-
-
-
-    }
+   
 
 
 
