@@ -49,20 +49,26 @@ else
         <label for="swapPreference">Please select your swap preference:</label>
         <select id="swapPreference" class="form-control" @bind="SelectedSwapPreference">
             <option value="">-- Select --</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
+            <option value="1">I am not willing to swap</option>
+            <option value="2">I am willing to swap on my floor</option>
+            <option value="3">I am willing to swap in my area</option>
+            <option value="4">I am willing to swap anywhere</option>
         </select>
+
+        @if (!string.IsNullOrEmpty(SelectedSwapPreference))
+        {
+            <button class="btn btn-primary mt-3" @onclick="OnConfirmSelection">Select A Meal Plan</button>
+        }
     </div>
 }
-
-
 
 <!-- URL Parameters Section -->
 <div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #f8f9fa; color: gray; text-align: center; padding: 10px; font-size: small; border-top: 1px solid #ddd;">
     <p>@AllUrlParameters</p>
 </div>
+<br />
+<br />
+<br />
 <br />
 <br />
 <br />
@@ -121,6 +127,26 @@ else
     {
         SelectedId = allocation.Id;
         SelectedAllocation = allocation;
+    }
+
+    private void OnSubmit()
+    {
+        // Construct URL with parameters, including SelectedSwapPreference
+        var queryParams = new List<string>();
+
+        if (!string.IsNullOrEmpty(SelectedSwapPreference))
+        {
+            queryParams.Add($"SwapPreference={SelectedSwapPreference}");
+        }
+
+        // Add other parameters as needed
+        NavigationManager.NavigateTo($"/stepSixSelectBedspace?{string.Join("&", queryParams)}");
+    }
+
+    private void OnConfirmSelection()
+    {
+        // Handle the confirmation logic here
+        Console.WriteLine($"Confirmed selection for bedspace: {SelectedAllocation?.Bedspace}, Swap Preference: {SelectedSwapPreference}");
     }
 
     private string GetFormattedBedspace(string bedspace)
