@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,9 @@ namespace ReslifeFiveBackEnd.Model
         public string Surname { get; set; } = string.Empty;
         public string RestOfName { get; set; } = string.Empty;
         public string PreferredFirstName { get; set; } = string.Empty;
+        
+        [NotMapped]
+        public string PreferredFullName => PreferredFirstName + " " + Surname;
         public int Gender { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string MaritalStatus { get; set; } = string.Empty;

@@ -3,15 +3,13 @@
 <script src="_content/BlazorBootstrap/js/bootstrap/bootstrap.bundle.min.js"></script>
 
 <div class="page d-flex flex-column vh-100">
-    <!-- Navbar as Ribbon at the Top -->
-        <div class="container-fluid">
+    <div class="container-fluid" style="padding-bottom: 10px;">
             <NavMenu />
-        </div>
+    </div>
 
 
-    <!-- Main Content Area -->
-    <main class="flex-grow-1 d-flex flex-column justify-content-center align-items-center">
-        <article class="content px-4">
+    <main class="flex-grow-1 d-flex flex-column" style="margin-top: 60px; padding: 20px;">
+        <article class="content" style="padding: 20px;">
             @Body
         </article>
     </main>

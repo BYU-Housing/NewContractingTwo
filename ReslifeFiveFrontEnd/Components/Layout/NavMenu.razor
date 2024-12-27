@@ -1,14 +1,15 @@
 ﻿@inject ILogger<NavMenu> _logger
 @inject AuthenticationStateProvider authState
 @inject IGenService genService
-
+@inject NavigationManager navigation
+@inject ITargetUserService target
 
 <div class="top-row ps-3 navbar" style="background-color: #002E5D;">
     <nav class="d-flex justify-content-evenly w-100" style="overflow: visible">
         <div>
-            <NavLink class="nav-link" style="color: white;" href="">
+            <Button @onclick="NavigateToHome" Style="color: white">
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span>
-            </NavLink>
+            </Button>
         </div>        
         <div>
             <Button @onclick="ToggleUserPortals" style="color: white;"><span class="person-lines-fill" style="color: white;"></span>User Portals</Button>
@@ -184,6 +185,7 @@
         if(!string.IsNullOrWhiteSpace(TargetUser.RestOfName + " " + TargetUser.Surname))
         {
             selectedUserName = TargetUser.RestOfName + " " + TargetUser.Surname;
+            target.SetTargetUser(user);
         }
         else
         {
@@ -215,6 +217,8 @@
             }
         }
     }
+
+    private void NavigateToHome() => navigation.NavigateTo("/");
     #endregion
 
 
