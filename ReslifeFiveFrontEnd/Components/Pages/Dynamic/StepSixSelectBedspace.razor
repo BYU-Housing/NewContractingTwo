@@ -30,9 +30,10 @@ else
     <div>
         @foreach (var allocation in FilteredAllocationTests)
         {
-            <button class="btn @(SelectedId == allocation.Id ? "btn-success" : "btn-primary") m-2"
+            <button class="btn @(SelectedId == allocation.Id ? "btn-success" : "btn-primary")"
+                    style="margin: 1px;"
                     @onclick="() => OnAllocationSelected(allocation.Id)">
-                Bedspace: @allocation.Bedspace
+                @allocation.Bedspace
             </button>
         }
     </div>
@@ -46,20 +47,6 @@ else
 <div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #f8f9fa; color: gray; text-align: center; padding: 10px; font-size: small; border-top: 1px solid #ddd;">
     <p>@AllUrlParameters</p>
 </div>
-
-
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-
 
 @code {
     private string AllUrlParameters = string.Empty;
