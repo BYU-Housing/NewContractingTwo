@@ -57,30 +57,28 @@ else
 
         @if (!string.IsNullOrEmpty(SelectedSwapPreference))
         {
-            <button class="btn btn-primary mt-3" @onclick="OnConfirmSelection">Select A Meal Plan</button>
+            <button class="btn btn-primary mt-3" @onclick="NavigateToMealPlan">Select Meal Plan</button>
         }
     </div>
 }
-
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
 <!-- URL Parameters Section -->
 <div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #f8f9fa; color: gray; text-align: center; padding: 10px; font-size: small; border-top: 1px solid #ddd;">
     <p>@AllUrlParameters</p>
 </div>
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
+
 @code {
     private string AllUrlParameters = string.Empty;
     private List<AllocationTest> FilteredAllocationTests = new();
@@ -129,24 +127,23 @@ else
         SelectedAllocation = allocation;
     }
 
-    private void OnSubmit()
+    private void NavigateToMealPlan()
     {
-        // Construct URL with parameters, including SelectedSwapPreference
-        var queryParams = new List<string>();
+        // Prepare URL parameters
+        var queryParams = new List<string> { AllUrlParameters };
+
+        if (SelectedAllocation != null)
+        {
+            queryParams.Add($"BedspaceId={SelectedAllocation.Id}");
+        }
 
         if (!string.IsNullOrEmpty(SelectedSwapPreference))
         {
             queryParams.Add($"SwapPreference={SelectedSwapPreference}");
         }
 
-        // Add other parameters as needed
-        NavigationManager.NavigateTo($"/stepSixSelectBedspace?{string.Join("&", queryParams)}");
-    }
-
-    private void OnConfirmSelection()
-    {
-        // Handle the confirmation logic here
-        Console.WriteLine($"Confirmed selection for bedspace: {SelectedAllocation?.Bedspace}, Swap Preference: {SelectedSwapPreference}");
+        // Navigate to stepSevenSelectMealPlan
+        NavigationManager.NavigateTo($"/stepSevenSelectMealPlan?{string.Join("&", queryParams)}");
     }
 
     private string GetFormattedBedspace(string bedspace)
