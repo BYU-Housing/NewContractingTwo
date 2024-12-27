@@ -4,10 +4,10 @@
 
 
 <div class="top-row ps-3 navbar" style="background-color: #002E5D;">
-    <nav class="d-flex justify-content-evenly w-100">
+    <nav class="d-flex justify-content-evenly w-100" style="overflow: visible">
         <div>
             <NavLink class="nav-link" style="color: white;" href="">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span>
             </NavLink>
         </div>        
         <div>
@@ -45,9 +45,15 @@
                 </Card>
             </Collapse>
         </div>
-    
-        <div>
-           <p>Target User: </p>
+        <div style ="overflow: visible;">
+            <AutoComplete @bind-Value="selectedUserName"
+                          TItem="User"
+                          DataProvider="UserDataProvider"
+                          PropertyName="PreferredFullName"
+                          Placeholder="Search for a user..."
+                          OnChanged="(User user) => SelectUser(user)">
+
+            </AutoComplete>
         </div>
 
         <div>
@@ -103,6 +109,7 @@
 </Offcanvas>
 
 @code{
+    #region instantiations
     Collapse AdminPortalsCollapse = default!;
     Collapse UserPortalsCollapse = default!;
     private Offcanvas ProfileOffCanvas = default!;
@@ -111,6 +118,9 @@
     private User TargetUser = new User();
     private bool IsUserAuthenticated = false;
     private List<Collapse> CollapsesList = [];
+    private AutoComplete<User> UserAutoComplete = default!;
+    private string selectedUserName = string.Empty;
+
     protected override async Task OnInitializedAsync()
     {
         var auth = await authState.GetAuthenticationStateAsync();
@@ -130,9 +140,56 @@
         CollapsesList.Add(AdminPortalsCollapse);
     }
 
+    #endregion
 
 
+    #region UI
+    private async Task<AutoCompleteDataProviderResult<User>> UserDataProvider(AutoCompleteDataProviderRequest<User> request)
+    {
+        var searchText = request.Filter?.Value?.ToString()?.ToLowerInvariant();
 
+        var query = genService.GetModel<User>();
+
+        if (!string.IsNullOrEmpty(searchText))
+        {
+            // Try parsing the search text as a date in the "mmddyyyy" format
+            DateTime? parsedDate = null;
+            if (DateTime.TryParseExact(searchText, "MMddyyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
+            {
+                parsedDate = DateTime.SpecifyKind(parsed.Date, DateTimeKind.Utc);
+            }
+            query = query.Where(u =>
+                (!string.IsNullOrEmpty(u.Surname) && u.Surname.ToLower().Contains(searchText)) ||
+                (!string.IsNullOrEmpty(u.RestOfName) && u.RestOfName.ToLower().Contains(searchText)) ||
+                (!string.IsNullOrEmpty(u.PreferredFirstName) && u.PreferredFirstName.ToLower().Contains(searchText)) ||
+                (!string.IsNullOrEmpty(u.ByuId) && u.ByuId.ToLower().Contains(searchText)) ||
+                (!string.IsNullOrEmpty(u.NetId) && u.NetId.ToLower().Contains(searchText)) ||
+                (parsedDate != null && u.DateOfBirth.Date == parsedDate.Value) // Match full birthday
+            );
+        }
+        var filteredUsers = query.OrderBy(u => u.RestOfName);
+        return await Task.FromResult(new AutoCompleteDataProviderResult<User> { Data = filteredUsers, TotalCount = filteredUsers.Count() });
+    }
+
+    private void SelectUser(User user)
+    {
+        if (user == null)
+        {
+            // Handle the case where no user is selected
+            TargetUser = new User();
+            selectedUserName = "Search for a user...";
+            return;
+        }
+        TargetUser = user;
+        if(!string.IsNullOrWhiteSpace(TargetUser.RestOfName + " " + TargetUser.Surname))
+        {
+            selectedUserName = TargetUser.RestOfName + " " + TargetUser.Surname;
+        }
+        else
+        {
+            selectedUserName = "Search for a user...";
+        }
+    }
 
     private async Task ShowProfileOffCanvas() => await ProfileOffCanvas.ShowAsync();
 
@@ -158,15 +215,7 @@
             }
         }
     }
-
-
-
-   
-
-
-
-
-
+    #endregion
 
 
 }
