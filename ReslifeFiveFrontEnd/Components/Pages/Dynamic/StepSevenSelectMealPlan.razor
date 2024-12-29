@@ -5,18 +5,37 @@
 <h3>Step Seven: Select Meal Plan</h3>
 
 <div class="button-container">
-    @for (int i = 1; i <= 10; i++)
+    @foreach (var plan in MealPlans)
     {
-        <button class="btn btn-primary m-2" @onclick="() => OnButtonClicked(i)">
-            @i
+        <button class="btn @(SelectedMealPlan == plan ? "btn-success" : "btn-primary") m-2"
+                @onclick="() => SelectMealPlan(plan)">
+            @plan
         </button>
     }
 </div>
 
 @code {
-    private void OnButtonClicked(int buttonNumber)
+    private List<string> MealPlans = new List<string>
     {
-        Console.WriteLine($"Button {buttonNumber} clicked.");
-        // Add any additional logic for handling button clicks here
+        "19 + ",
+        "Dining Plus",
+        "EZ Dining 100",
+        "EZ Dining 150",
+        "EZ Dining 200",
+        "Open Door",
+        "True Blue Dining 500",
+        "True Blue Dining 500 Weekly",
+        "True Blue Dining 800",
+        "True Blue Dining 800 Weekly",
+        "No Meal Plan"
+    };
+
+    private string? SelectedMealPlan;
+
+    private void SelectMealPlan(string plan)
+    {
+        SelectedMealPlan = plan;
+        Console.WriteLine($"Selected Meal Plan: {plan}");
+        // Add additional logic for handling the selected meal plan here
     }
 }
