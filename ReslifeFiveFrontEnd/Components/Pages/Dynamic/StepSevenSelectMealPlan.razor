@@ -4,14 +4,33 @@
 
 <h3>Step Seven: Select Meal Plan</h3>
 
-<div class="button-container">
-    @foreach (var plan in MealPlans)
-    {
-        <button class="btn @(SelectedMealPlan == plan ? "btn-success" : "btn-primary") m-2"
-                @onclick="() => SelectMealPlan(plan)">
-            @plan
-        </button>
-    }
+<div class="row">
+    <!-- Left-side: Buttons -->
+    <div class="col-md-3">
+        <div class="button-container">
+            @foreach (var plan in MealPlans)
+            {
+                <button class="btn @(SelectedMealPlan == plan ? "btn-success" : "btn-primary") mb-2 w-100"
+                        @onclick="() => SelectMealPlan(plan)">
+                    @plan
+                </button>
+            }
+        </div>
+    </div>
+
+    <!-- Right-side: Content -->
+    <div class="col-md-9">
+        <div class="content-container">
+            @if (SelectedMealPlan != null)
+            {
+                <p>@MealPlanDescriptions[SelectedMealPlan]</p>
+            }
+            else
+            {
+                <p>Please select a meal plan to see details.</p>
+            }
+        </div>
+    </div>
 </div>
 
 @code {
@@ -30,12 +49,26 @@
         "No Meal Plan"
     };
 
+    private Dictionary<string, string> MealPlanDescriptions = new Dictionary<string, string>
+    {
+        { "19 + ", "This meal plan offers 19 meals per week with unlimited access to the dining halls." },
+        { "Dining Plus", "Dining Plus provides a flexible balance of dining hall meals and on-campus restaurant credits." },
+        { "EZ Dining 100", "The EZ Dining 100 plan includes 100 dining dollars for use across campus." },
+        { "EZ Dining 150", "The EZ Dining 150 plan includes 150 dining dollars for use across campus." },
+        { "EZ Dining 200", "The EZ Dining 200 plan includes 200 dining dollars for use across campus." },
+        { "Open Door", "Open Door offers access to dining halls with pay-per-meal options." },
+        { "True Blue Dining 500", "True Blue Dining 500 provides 500 meals per semester with access to premium options." },
+        { "True Blue Dining 500 Weekly", "True Blue Dining 500 Weekly offers 500 meals per semester, distributed weekly." },
+        { "True Blue Dining 800", "True Blue Dining 800 provides 800 meals per semester with access to all dining facilities." },
+        { "True Blue Dining 800 Weekly", "True Blue Dining 800 Weekly offers 800 meals per semester, distributed weekly." },
+        { "No Meal Plan", "No Meal Plan allows students to opt out of on-campus dining options." }
+    };
+
     private string? SelectedMealPlan;
 
     private void SelectMealPlan(string plan)
     {
         SelectedMealPlan = plan;
         Console.WriteLine($"Selected Meal Plan: {plan}");
-        // Add additional logic for handling the selected meal plan here
     }
 }
