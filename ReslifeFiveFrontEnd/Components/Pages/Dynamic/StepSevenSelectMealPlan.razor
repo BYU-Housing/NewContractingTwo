@@ -91,12 +91,23 @@
     };
 
     private string? SelectedMealPlan;
+    private int? SelectedMealPlanIndex;
     private bool? HasDietaryRestrictions;
     private string DietaryRestrictionDescription = string.Empty;
+    private Dictionary<string, string> UrlParameters = new();
+
+    protected override void OnInitialized()
+    {
+        // Parse the current URL to extract existing parameters
+        var uri = new Uri(NavigationManager.Uri);
+        UrlParameters = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query)
+            .ToDictionary(k => k.Key, v => v.Value.ToString());
+    }
 
     private void SelectMealPlan(string plan)
     {
         SelectedMealPlan = plan;
+        SelectedMealPlanIndex = MealPlans.IndexOf(plan) + 1; // 1-based index
         ResetDietaryRestrictions();
         StateHasChanged();
     }
@@ -124,6 +135,15 @@
 
     private void ProceedToSignAgreement()
     {
-        NavigationManager.NavigateTo("/stepEightSignHousingAgreement");
+        // Add new parameters
+        UrlParameters["SelectedMealPlan"] = SelectedMealPlanIndex?.ToString() ?? "0";
+        UrlParameters["HasDietaryRestrictions"] = HasDietaryRestrictions?.ToString()?.ToLower() ?? "false";
+
+        // Construct new query string
+        var queryString = string.Join("&", UrlParameters.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
+
+        // Navigate to the next page with updated parameters
+        NavigationManager.NavigateTo($"/stepEightSignHousingAgreement?{queryString}");
     }
 }
+
