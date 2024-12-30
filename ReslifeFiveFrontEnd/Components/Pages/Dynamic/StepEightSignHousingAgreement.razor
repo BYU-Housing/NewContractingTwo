@@ -10,6 +10,7 @@
 <p>Building: @BuildingName</p>
 <p>Bedspace Code: @BedspaceCode</p>
 <p>Bedspace Substring (Chars 5–8): @BedspaceSubstring</p>
+<p>Bedspace Substring (Chars 9–10): @BedspaceSubstringEnd</p>
 
 <!-- Embedded Adobe Sign form -->
 <div style="width: 100%; height: 100%; border: 0; overflow: hidden;">
@@ -24,7 +25,8 @@
     private string Name = "Not specified";
     private string BuildingName = "Not specified";
     private string BedspaceCode = "Not specified";
-    private string BedspaceSubstring = "Not specified";
+    private string BedspaceSubstring = "Not specified"; // Characters 5–8
+    private string BedspaceSubstringEnd = "Not specified"; // Characters 9–10
     private string IframeUrl = "https://byusign.na2.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhB3CgMCc6i3412faQKEurYXc9N5vLkQEIcvpUSIL2F7Oz9Pazk4i0IiIV5YcP3bn00*&hosted=false";
 
     private List<Building> Buildings = new()
@@ -126,11 +128,16 @@
             IframeUrl += $"&P4={Uri.EscapeDataString(BuildingName)}";
         }
 
-        // Retrieve the BedspaceCode and calculate substring
+        // Retrieve the BedspaceCode and calculate substrings
         if (queryParams.TryGetValue("BedspaceCode", out var bedspaceValue))
         {
             BedspaceCode = bedspaceValue.ToString() ?? "Not specified";
             BedspaceSubstring = BedspaceCode.Length >= 8 ? BedspaceCode.Substring(4, 4) : "Invalid";
+            BedspaceSubstringEnd = BedspaceCode.Length >= 10 ? BedspaceCode.Substring(8, 2) : "Invalid";
+
+            // Add P5 and P6 to iframe URL
+            IframeUrl += $"&P5={Uri.EscapeDataString(BedspaceSubstring)}";
+            IframeUrl += $"&P6={Uri.EscapeDataString(BedspaceSubstringEnd)}";
         }
     }
 
