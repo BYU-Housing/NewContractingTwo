@@ -6,6 +6,7 @@
 
 <p>Area: @AreaDisplayName</p>
 <p>NetID: @NetID</p>
+<p>Name: @Name</p>
 
 <!-- Embedded Adobe Sign form -->
 <div style="width: 100%; height: 100%; border: 0; overflow: hidden;">
@@ -17,6 +18,7 @@
 @code {
     private string AreaDisplayName = "Not specified";
     private string NetID = "Not specified";
+    private string Name = "Not specified";
     private string IframeUrl = "https://byusign.na2.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhB3CgMCc6i3412faQKEurYXc9N5vLkQEIcvpUSIL2F7Oz9Pazk4i0IiIV5YcP3bn00*&hosted=false";
 
     protected override void OnInitialized()
@@ -44,6 +46,13 @@
         {
             NetID = netIDValue.ToString() ?? "Not specified";
             IframeUrl += $"&P2={Uri.EscapeDataString(NetID)}";
+        }
+
+        // Retrieve the Name value and set P3
+        if (queryParams.TryGetValue("Name", out var nameValue))
+        {
+            Name = nameValue.ToString() ?? "Not specified";
+            IframeUrl += $"&P3={Uri.EscapeDataString(Name)}";
         }
     }
 }
