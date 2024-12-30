@@ -26,7 +26,21 @@
         var uri = new Uri(NavigationManager.Uri);
         var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
 
-        // Retrieve the Area value and set P1
+        // Retrieve the Name value and set P1
+        if (queryParams.TryGetValue("Name", out var nameValue))
+        {
+            Name = nameValue.ToString() ?? "Not specified";
+            IframeUrl += $"#P1={Uri.EscapeDataString(Name)}";
+        }
+
+        // Retrieve the NetID value and set P2
+        if (queryParams.TryGetValue("NetID", out var netIDValue))
+        {
+            NetID = netIDValue.ToString() ?? "Not specified";
+            IframeUrl += $"&P2={Uri.EscapeDataString(NetID)}";
+        }
+
+        // Retrieve the Area value and set P3
         if (queryParams.TryGetValue("Area", out var areaValue) && int.TryParse(areaValue.ToString(), out var area))
         {
             AreaDisplayName = area switch
@@ -38,21 +52,7 @@
                 _ => "Unknown Area"
             };
 
-            IframeUrl += $"#P1={Uri.EscapeDataString(AreaDisplayName)}";
-        }
-
-        // Retrieve the NetID value and set P2
-        if (queryParams.TryGetValue("NetID", out var netIDValue))
-        {
-            NetID = netIDValue.ToString() ?? "Not specified";
-            IframeUrl += $"&P2={Uri.EscapeDataString(NetID)}";
-        }
-
-        // Retrieve the Name value and set P3
-        if (queryParams.TryGetValue("Name", out var nameValue))
-        {
-            Name = nameValue.ToString() ?? "Not specified";
-            IframeUrl += $"&P3={Uri.EscapeDataString(Name)}";
+            IframeUrl += $"&P3={Uri.EscapeDataString(AreaDisplayName)}";
         }
     }
 }
