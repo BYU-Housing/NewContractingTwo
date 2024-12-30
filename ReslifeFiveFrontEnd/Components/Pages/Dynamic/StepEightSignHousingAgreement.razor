@@ -25,7 +25,7 @@
         var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
 
         // Retrieve the Area value and set P1
-        if (queryParams.TryGetValue("Area", out var areaValue) && int.TryParse(areaValue, out var area))
+        if (queryParams.TryGetValue("Area", out var areaValue) && int.TryParse(areaValue.ToString(), out var area))
         {
             AreaDisplayName = area switch
             {
@@ -36,14 +36,13 @@
                 _ => "Unknown Area"
             };
 
-            // Set P1 to the AreaDisplayName
             IframeUrl += $"#P1={Uri.EscapeDataString(AreaDisplayName)}";
         }
 
         // Retrieve the NetID value and set P2
         if (queryParams.TryGetValue("NetID", out var netIDValue))
         {
-            NetID = netIDValue;
+            NetID = netIDValue.ToString() ?? "Not specified";
             IframeUrl += $"&P2={Uri.EscapeDataString(NetID)}";
         }
     }
