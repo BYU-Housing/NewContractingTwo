@@ -50,28 +50,36 @@
             <AutoComplete @bind-Value="selectedUserName"
                           TItem="User"
                           DataProvider="UserDataProvider"
-                          PropertyName="PreferredFullName"
+                          PropertyName="SearchBarInformation"
                           Placeholder="Search for a user..."
-                          OnChanged="(User user) => SelectUser(user)">
+                          OnChanged="(User user) => SelectUser(user)"
+                              style="width: 350px">
 
+
+                    
             </AutoComplete>
         </div>
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap">
 
-        <div>
             @if (IsUserAuthenticated)
             {
-                <Button @onclick="ShowProfileOffCanvas" Style="color:white;">
-
-                    @LoggedInUser.PreferredFirstName
-
-                </Button>
+                <div style="display: flex; flex-direction: column; align-items: flex-start; margin-left: auto;">
+                    <Button @onclick="ShowProfileOffCanvas" style="color: white; font-size: 14px; padding: 2px 5px; background: none; border: none; cursor: pointer;">
+                        Active User: @LoggedInUser.PreferredFirstName
+                    </Button>
+                    <span style="color: white; font-size: 12px; line-height: 1;"> Target User: @(target?.targetUser?.PreferredFullName ?? "None")</span>
+                </div>
             }
-            else
-            {
-                <NavLink class="nav-link custom-nav-item custom-text" href="Login">
-                    <span class="bi bi-list-nested-nav-menu" area-hidden="true"></span>Login
-                </NavLink>
-            }
+            <div style="padding: 5px">
+                @if (IsUserAuthenticated)
+                {
+                    <Button class="light-blue-button" Color="ButtonColor.Secondary" style="color: white; font-size: 14px;" @onclick="Logout">Logout</Button>
+                }
+                else
+                {
+                    <Button class="light-blue-button" Color="ButtonColor.Primary" style="color: white; font-size: 14px;" @onclick="NavToLogin">Sign In</Button>
+                }
+            </div>
         </div>
 
         </nav>
@@ -219,6 +227,8 @@
     }
 
     private void NavigateToHome() => navigation.NavigateTo("/");
+    private void NavToLogin() => navigation.NavigateTo("/Login");
+    private void Logout() => navigation.NavigateTo("/Logout", forceLoad:true);
     #endregion
 
 
