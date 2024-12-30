@@ -4,6 +4,8 @@
 
 <h3>Step Eight: Sign Housing Agreement</h3>
 
+<p>Area: @Area</p>
+
 <!-- Embedded Adobe Sign form -->
 <div style="width: 100%; height: 100%; border: 0; overflow: hidden;">
     <iframe src="https://byusign.na2.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhB3CgMCc6i3412faQKEurYXc9N5vLkQEIcvpUSIL2F7Oz9Pazk4i0IiIV5YcP3bn00*&hosted=false"
@@ -12,5 +14,21 @@
 </div>
 
 @code {
+    private string? Area;
 
+    protected override void OnInitialized()
+    {
+        var uri = new Uri(NavigationManager.Uri);
+        var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+
+        // Check if the "Area" parameter exists and set its value
+        if (queryParams.TryGetValue("Area", out var areaValue))
+        {
+            Area = areaValue;
+        }
+        else
+        {
+            Area = "Not specified";
+        }
+    }
 }
