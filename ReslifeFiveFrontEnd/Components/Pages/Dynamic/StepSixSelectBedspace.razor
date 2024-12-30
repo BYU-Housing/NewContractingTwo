@@ -107,17 +107,13 @@ else
         // Extract BuildingId parameter
         BuildingId = queryParams.TryGetValue("BuildingId", out var buildingIdValue) && int.TryParse(buildingIdValue, out var bId) ? bId : (int?)null;
 
-        // Extract other relevant URL parameters
-        var agreementPeriod = queryParams.TryGetValue("AgreementPeriod", out var agreementPeriodValue) && int.TryParse(agreementPeriodValue, out var ap) ? ap : (int?)null;
-
         // Fetch and filter AllocationTest rows
         FilteredAllocationTests = GenService.GetModel<AllocationTest>()
             .Where(allocation =>
                 allocation.Active == true && // Only rows where Active = true
                 (!Area.HasValue || allocation.Area == Area.Value) &&
                 (!BuildingId.HasValue || allocation.Building == BuildingId.Value) &&
-                (!Floor.HasValue || allocation.Floor == Floor.Value) &&
-                (!agreementPeriod.HasValue || allocation.AgreementPeriod == agreementPeriod.Value))
+                (!Floor.HasValue || allocation.Floor == Floor.Value))
             .ToList();
     }
 
@@ -135,6 +131,7 @@ else
         if (SelectedAllocation != null)
         {
             queryParams.Add($"BedspaceId={SelectedAllocation.Id}");
+            queryParams.Add($"BedspaceCode={SelectedAllocation.Bedspace}");
         }
 
         if (!string.IsNullOrEmpty(SelectedSwapPreference))
