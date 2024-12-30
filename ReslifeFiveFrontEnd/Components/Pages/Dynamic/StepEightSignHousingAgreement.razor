@@ -7,7 +7,7 @@
 <p>Area: @AreaDisplayName</p>
 <p>NetID: @NetID</p>
 <p>Name: @Name</p>
-<p>Building ID: @BuildingId</p>
+<p>Building: @BuildingName</p>
 
 <!-- Embedded Adobe Sign form -->
 <div style="width: 100%; height: 100%; border: 0; overflow: hidden;">
@@ -20,8 +20,65 @@
     private string AreaDisplayName = "Not specified";
     private string NetID = "Not specified";
     private string Name = "Not specified";
-    private string BuildingId = "Not specified";
+    private string BuildingName = "Not specified";
     private string IframeUrl = "https://byusign.na2.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhB3CgMCc6i3412faQKEurYXc9N5vLkQEIcvpUSIL2F7Oz9Pazk4i0IiIV5YcP3bn00*&hosted=false";
+
+    private List<Building> Buildings = new()
+    {
+        new Building { Id = 1, Name = "Hinckley" },
+        new Building { Id = 2, Name = "Chipman" },
+        new Building { Id = 3, Name = "David John" },
+        new Building { Id = 4, Name = "Taylor" },
+        new Building { Id = 5, Name = "Stover" },
+        new Building { Id = 6, Name = "Budge" },
+        new Building { Id = 7, Name = "Merrill" },
+        new Building { Id = 8, Name = "May" },
+        new Building { Id = 9, Name = "Building 9" },
+        new Building { Id = 10, Name = "HR 02" },
+        new Building { Id = 11, Name = "HR 03" },
+        new Building { Id = 12, Name = "HR 04" },
+        new Building { Id = 13, Name = "HR 05" },
+        new Building { Id = 14, Name = "HR 06" },
+        new Building { Id = 15, Name = "HR 07" },
+        new Building { Id = 16, Name = "HR 08" },
+        new Building { Id = 17, Name = "HR 09" },
+        new Building { Id = 18, Name = "HR 10" },
+        new Building { Id = 19, Name = "HR 11" },
+        new Building { Id = 20, Name = "HR 12" },
+        new Building { Id = 21, Name = "HR 13" },
+        new Building { Id = 22, Name = "HR 14" },
+        new Building { Id = 23, Name = "HR 15" },
+        new Building { Id = 24, Name = "HR 16" },
+        new Building { Id = 25, Name = "RI A" },
+        new Building { Id = 26, Name = "RI B" },
+        new Building { Id = 27, Name = "RI C" },
+        new Building { Id = 28, Name = "RI D" },
+        new Building { Id = 29, Name = "RI E" },
+        new Building { Id = 30, Name = "RI F" },
+        new Building { Id = 31, Name = "RI G" },
+        new Building { Id = 32, Name = "RI H" },
+        new Building { Id = 33, Name = "RI I" },
+        new Building { Id = 34, Name = "RI J" },
+        new Building { Id = 35, Name = "RI K" },
+        new Building { Id = 36, Name = "RI L" },
+        new Building { Id = 37, Name = "RI O" },
+        new Building { Id = 38, Name = "LI A" },
+        new Building { Id = 39, Name = "LI B" },
+        new Building { Id = 40, Name = "LI C" },
+        new Building { Id = 41, Name = "LI D" },
+        new Building { Id = 42, Name = "LI E" },
+        new Building { Id = 43, Name = "WP 1" },
+        new Building { Id = 44, Name = "WP 2" },
+        new Building { Id = 45, Name = "WP 3" },
+        new Building { Id = 46, Name = "WP 4" },
+        new Building { Id = 47, Name = "WP 5" },
+        new Building { Id = 48, Name = "WP 6" },
+        new Building { Id = 49, Name = "WP 7" },
+        new Building { Id = 50, Name = "WP 8" },
+        new Building { Id = 51, Name = "WP 9" },
+        new Building { Id = 52, Name = "WP 10" },
+        new Building { Id = 53, Name = "WP 11" }
+    };
 
     protected override void OnInitialized()
     {
@@ -58,10 +115,17 @@
         }
 
         // Retrieve the BuildingId value and set P4
-        if (queryParams.TryGetValue("BuildingId", out var buildingIdValue))
+        if (queryParams.TryGetValue("BuildingId", out var buildingIdValue) && int.TryParse(buildingIdValue.ToString(), out var buildingId))
         {
-            BuildingId = buildingIdValue.ToString() ?? "Not specified";
-            IframeUrl += $"&P4={Uri.EscapeDataString(BuildingId)}";
+            var building = Buildings.FirstOrDefault(b => b.Id == buildingId);
+            BuildingName = building?.Name ?? "Not specified";
+            IframeUrl += $"&P4={Uri.EscapeDataString(BuildingName)}";
         }
+    }
+
+    private class Building
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }
