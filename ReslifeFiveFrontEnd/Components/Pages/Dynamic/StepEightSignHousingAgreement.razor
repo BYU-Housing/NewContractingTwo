@@ -138,6 +138,10 @@ else
                 var calculatedRateType = RoomTypeDisplay; // Assuming RoomTypeDisplay contains the calculated string
                 IframeUrl += $"&P7={Uri.EscapeDataString(calculatedRateType)}";
             }
+            if (!string.IsNullOrEmpty(AgreementPeriodDisplay))
+            {
+                IframeUrl += $"&P8={Uri.EscapeDataString(AgreementPeriodDisplay)}";
+            }
 
         }
     }
