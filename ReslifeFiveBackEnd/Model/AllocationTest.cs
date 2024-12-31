@@ -18,6 +18,7 @@ namespace ReslifeFiveBackEnd.Model
         public bool? SeekingReplacement { get; set; }
         public int? AgreementPeriod { get; set; }
         public decimal? DailyRate { get; set; }
+        public int? RoomType { get; set; }
 
     }
 }

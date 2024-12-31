@@ -157,6 +157,12 @@ else
             {
                 queryParams.Add($"DailyRate={SelectedAllocation.DailyRate.Value}");
             }
+
+            // Include RoomType in the URL if it exists
+            if (SelectedAllocation.RoomType.HasValue)
+            {
+                queryParams.Add($"RoomType={SelectedAllocation.RoomType.Value}");
+            }
         }
 
         if (!string.IsNullOrEmpty(SelectedSwapPreference))
@@ -167,6 +173,7 @@ else
         // Navigate to stepSevenSelectMealPlan
         NavigationManager.NavigateTo($"/stepSevenSelectMealPlan?{string.Join("&", queryParams)}");
     }
+
 
 
     private string GetFormattedBedspace(string bedspace)
