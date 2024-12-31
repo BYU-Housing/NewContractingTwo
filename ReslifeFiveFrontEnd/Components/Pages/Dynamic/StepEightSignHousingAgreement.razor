@@ -111,6 +111,12 @@ else
             {
                 IframeUrl += $"&P3={Uri.EscapeDataString(AreaDisplayName)}";
             }
+            if (!string.IsNullOrEmpty(RoomTypeDisplay))
+            {
+                var calculatedRateType = RoomTypeDisplay; // Assuming RoomTypeDisplay contains the calculated string
+                IframeUrl += $"&P7={Uri.EscapeDataString(calculatedRateType)}";
+            }
+
         }
     }
 
