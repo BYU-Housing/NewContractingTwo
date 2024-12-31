@@ -13,23 +13,12 @@
 <p>Bedspace Substring (Chars 9–10): @BedspaceSubstringEnd</p>
 <p>Room Type: @RoomTypeDisplay</p>
 
-
 <!-- Conditional Content Rendering -->
-@if (Area == 1 || Area == 2)
+@if (Area == 1 || Area == 2 || Area == 3 || Area == 4)
 {
     <div style="width: 100%; height: 100%; border: 0; overflow: hidden;">
         <iframe src="@IframeUrl" style="width: 100%; height: 500px; border: none;"></iframe>
     </div>
-}
-else if (Area == 4)
-{
-    <div style="width: 100%; height: 100%; border: 0; overflow: hidden;">
-        <iframe src="@IframeUrl" style="width: 100%; height: 500px; border: none;"></iframe>
-    </div>
-}
-else if (Area == 3)
-{
-    <p>Riv</p>
 }
 else
 {
@@ -47,7 +36,6 @@ else
     private string IframeUrl = string.Empty;
     private int? Area;
     private string RoomTypeDisplay = "Not specified"; // RoomType property display
-
 
     protected override void OnInitialized()
     {
@@ -82,6 +70,7 @@ else
         IframeUrl = Area switch
         {
             1 or 2 => "https://byusign.na2.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhB3CgMCc6i3412faQKEurYXc9N5vLkQEIcvpUSIL2F7Oz9Pazk4i0IiIV5YcP3bn00*&hosted=false",
+            3 => "https://byusign.na2.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhAQCbVuh79M68kYqamuClVSItha_HAl8uKyfcTamujsq8Y6j8ues4zSay52jMwfw2Y*&hosted=false",
             4 => "https://byusign.na2.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhBn0uBgbNHLLKuRWU51P2NsZPYMroyrKEU-Wq_hJ7y7I3MbvKdPdQc4SSsx9jk7-ok*&hosted=false",
             _ => string.Empty
         };
