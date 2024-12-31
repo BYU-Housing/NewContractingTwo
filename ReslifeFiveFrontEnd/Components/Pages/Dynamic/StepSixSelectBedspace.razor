@@ -123,6 +123,25 @@ else
         SelectedAllocation = allocation;
     }
 
+    // private void NavigateToMealPlan()
+    // {
+    //     // Prepare URL parameters
+    //     var queryParams = new List<string> { AllUrlParameters };
+
+    //     if (SelectedAllocation != null)
+    //     {
+    //         queryParams.Add($"BedspaceId={SelectedAllocation.Id}");
+    //         queryParams.Add($"BedspaceCode={SelectedAllocation.Bedspace}");
+    //     }
+
+    //     if (!string.IsNullOrEmpty(SelectedSwapPreference))
+    //     {
+    //         queryParams.Add($"SwapPreference={SelectedSwapPreference}");
+    //     }
+
+    //     // Navigate to stepSevenSelectMealPlan
+    //     NavigationManager.NavigateTo($"/stepSevenSelectMealPlan?{string.Join("&", queryParams)}");
+    // }
     private void NavigateToMealPlan()
     {
         // Prepare URL parameters
@@ -132,6 +151,12 @@ else
         {
             queryParams.Add($"BedspaceId={SelectedAllocation.Id}");
             queryParams.Add($"BedspaceCode={SelectedAllocation.Bedspace}");
+
+            // Include DailyRate in the URL if it exists
+            if (SelectedAllocation.DailyRate.HasValue)
+            {
+                queryParams.Add($"DailyRate={SelectedAllocation.DailyRate.Value}");
+            }
         }
 
         if (!string.IsNullOrEmpty(SelectedSwapPreference))
@@ -142,6 +167,7 @@ else
         // Navigate to stepSevenSelectMealPlan
         NavigationManager.NavigateTo($"/stepSevenSelectMealPlan?{string.Join("&", queryParams)}");
     }
+
 
     private string GetFormattedBedspace(string bedspace)
     {
