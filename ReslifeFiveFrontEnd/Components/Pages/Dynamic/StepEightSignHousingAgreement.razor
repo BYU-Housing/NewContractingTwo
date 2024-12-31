@@ -70,7 +70,12 @@ else
 
         if (queryParams.TryGetValue("RoomType", out var roomTypeValue) && int.TryParse(roomTypeValue.ToString(), out var roomType))
         {
-            RoomTypeDisplay = roomType.ToString();
+            RoomTypeDisplay = roomType switch
+            {
+                1 => "Rate 1",
+                2 => "Rate 2",
+                _ => roomType.ToString()
+            };
         }
 
         // Determine the base IframeUrl
