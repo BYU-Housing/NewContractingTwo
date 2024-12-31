@@ -11,6 +11,8 @@
 <p>Bedspace Code: @BedspaceCode</p>
 <p>Bedspace Substring (Chars 5–8): @BedspaceSubstring</p>
 <p>Bedspace Substring (Chars 9–10): @BedspaceSubstringEnd</p>
+<p>Room Type: @RoomTypeDisplay</p>
+
 
 <!-- Conditional Content Rendering -->
 @if (Area == 1 || Area == 2)
@@ -44,6 +46,8 @@ else
     private string BedspaceSubstringEnd = "Not specified"; // Characters 9–10
     private string IframeUrl = string.Empty;
     private int? Area;
+    private string RoomTypeDisplay = "Not specified"; // RoomType property display
+
 
     protected override void OnInitialized()
     {
@@ -62,6 +66,11 @@ else
                 4 => "Wyview Park",
                 _ => "Unknown Area"
             };
+        }
+
+        if (queryParams.TryGetValue("RoomType", out var roomTypeValue) && int.TryParse(roomTypeValue.ToString(), out var roomType))
+        {
+            RoomTypeDisplay = roomType.ToString();
         }
 
         // Determine the base IframeUrl
