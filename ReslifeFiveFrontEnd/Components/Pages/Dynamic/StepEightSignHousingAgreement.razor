@@ -12,6 +12,8 @@
 <p>Bedspace Substring (Chars 5–8): @BedspaceSubstring</p>
 <p>Bedspace Substring (Chars 9–10): @BedspaceSubstringEnd</p>
 <p>Room Type: @RoomTypeDisplay</p>
+<p>Agreement Period: @AgreementPeriodDisplay</p>
+
 
 <!-- Conditional Content Rendering -->
 @if (Area == 1 || Area == 2 || Area == 3 || Area == 4)
@@ -27,6 +29,7 @@ else
 
 @code {
     private string AreaDisplayName = "Not specified";
+    private string AgreementPeriodDisplay = "Not specified";
     private string NetID = "Not specified";
     private string Name = "Not specified";
     private string BuildingName = "Not specified";
@@ -53,6 +56,25 @@ else
                 3 => "Riviera",
                 4 => "Wyview Park",
                 _ => "Unknown Area"
+            };
+        }
+        if (queryParams.TryGetValue("AgreementPeriod", out var agreementPeriodValue) && int.TryParse(agreementPeriodValue.ToString(), out var agreementPeriod))
+        {
+            AgreementPeriodDisplay = agreementPeriod switch
+            {
+                1 => "Spring 2024",
+                2 => "Summer 2024",
+                3 => "Fall Winter 2024",
+                4 => "Winter 2025",
+                5 => "Spring 2025",
+                6 => "Summer 2025",
+                7 => "Fall Winter 2025",
+                8 => "Winter 2026",
+                9 => "Spring 2026",
+                10 => "Summer 2026",
+                11 => "Fall Winter 2026",
+                12 => "Winter 2027",
+                _ => "Unknown Agreement Period"
             };
         }
 
