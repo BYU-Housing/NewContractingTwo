@@ -12,12 +12,27 @@
 <p>Bedspace Substring (Chars 5–8): @BedspaceSubstring</p>
 <p>Bedspace Substring (Chars 9–10): @BedspaceSubstringEnd</p>
 
-<!-- Embedded Adobe Sign form -->
-<div style="width: 100%; height: 100%; border: 0; overflow: hidden;">
-    <iframe src="@IframeUrl"
-            style="width: 100%; height: 500px; border: none;">
-    </iframe>
-</div>
+<!-- Conditional Content Rendering -->
+@if (Area == 1 || Area == 2)
+{
+    <div style="width: 100%; height: 100%; border: 0; overflow: hidden;">
+        <iframe src="@IframeUrl" style="width: 100%; height: 500px; border: none;"></iframe>
+    </div>
+}
+else if (Area == 4)
+{
+    <div style="width: 100%; height: 100%; border: 0; overflow: hidden;">
+        <iframe src="@IframeUrl" style="width: 100%; height: 500px; border: none;"></iframe>
+    </div>
+}
+else if (Area == 3)
+{
+    <p>Riv</p>
+}
+else
+{
+    <p>Your contract failed to load, please email Campus Accommodations to receive a link to your contract.</p>
+}
 
 @code {
     private string AreaDisplayName = "Not specified";
@@ -27,7 +42,80 @@
     private string BedspaceCode = "Not specified";
     private string BedspaceSubstring = "Not specified"; // Characters 5–8
     private string BedspaceSubstringEnd = "Not specified"; // Characters 9–10
-    private string IframeUrl = "https://byusign.na2.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhB3CgMCc6i3412faQKEurYXc9N5vLkQEIcvpUSIL2F7Oz9Pazk4i0IiIV5YcP3bn00*&hosted=false";
+    private string IframeUrl = string.Empty;
+    private int? Area;
+
+    protected override void OnInitialized()
+    {
+        var uri = new Uri(NavigationManager.Uri);
+        var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+
+        // Parse Area
+        if (queryParams.TryGetValue("Area", out var areaValue) && int.TryParse(areaValue.ToString(), out var area))
+        {
+            Area = area;
+            AreaDisplayName = area switch
+            {
+                1 => "Helaman Halls",
+                2 => "Heritage Halls",
+                3 => "Riviera",
+                4 => "Wyview Park",
+                _ => "Unknown Area"
+            };
+        }
+
+        // Determine the base IframeUrl
+        IframeUrl = Area switch
+        {
+            1 or 2 => "https://byusign.na2.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhB3CgMCc6i3412faQKEurYXc9N5vLkQEIcvpUSIL2F7Oz9Pazk4i0IiIV5YcP3bn00*&hosted=false",
+            4 => "https://byusign.na2.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhBn0uBgbNHLLKuRWU51P2NsZPYMroyrKEU-Wq_hJ7y7I3MbvKdPdQc4SSsx9jk7-ok*&hosted=false",
+            _ => string.Empty
+        };
+
+        if (!string.IsNullOrEmpty(IframeUrl))
+        {
+            // Add parameters dynamically to the IFrame URL
+            if (queryParams.TryGetValue("Name", out var nameValue))
+            {
+                Name = nameValue.ToString() ?? "Not specified";
+                IframeUrl += $"#P1={Uri.EscapeDataString(Name)}";
+            }
+
+            if (queryParams.TryGetValue("NetID", out var netIDValue))
+            {
+                NetID = netIDValue.ToString() ?? "Not specified";
+                IframeUrl += $"&P2={Uri.EscapeDataString(NetID)}";
+            }
+
+            if (queryParams.TryGetValue("BuildingId", out var buildingIdValue) && int.TryParse(buildingIdValue.ToString(), out var buildingId))
+            {
+                var building = Buildings.FirstOrDefault(b => b.Id == buildingId);
+                BuildingName = building?.Name ?? "Not specified";
+                IframeUrl += $"&P4={Uri.EscapeDataString(BuildingName)}";
+            }
+
+            if (queryParams.TryGetValue("BedspaceCode", out var bedspaceValue))
+            {
+                BedspaceCode = bedspaceValue.ToString() ?? "Not specified";
+                BedspaceSubstring = BedspaceCode.Length >= 8 ? BedspaceCode.Substring(4, 4) : "Invalid";
+                BedspaceSubstringEnd = BedspaceCode.Length >= 10 ? BedspaceCode.Substring(8, 2) : "Invalid";
+
+                IframeUrl += $"&P5={Uri.EscapeDataString(BedspaceSubstring)}";
+                IframeUrl += $"&P6={Uri.EscapeDataString(BedspaceSubstringEnd)}";
+            }
+
+            if (Area.HasValue)
+            {
+                IframeUrl += $"&P3={Uri.EscapeDataString(AreaDisplayName)}";
+            }
+        }
+    }
+
+    private class Building
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+    }
 
     private List<Building> Buildings = new()
     {
@@ -85,65 +173,4 @@
         new Building { Id = 52, Name = "WP 10" },
         new Building { Id = 53, Name = "WP 11" }
     };
-
-    protected override void OnInitialized()
-    {
-        var uri = new Uri(NavigationManager.Uri);
-        var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
-
-        // Retrieve the Name value and set P1
-        if (queryParams.TryGetValue("Name", out var nameValue))
-        {
-            Name = nameValue.ToString() ?? "Not specified";
-            IframeUrl += $"#P1={Uri.EscapeDataString(Name)}";
-        }
-
-        // Retrieve the NetID value and set P2
-        if (queryParams.TryGetValue("NetID", out var netIDValue))
-        {
-            NetID = netIDValue.ToString() ?? "Not specified";
-            IframeUrl += $"&P2={Uri.EscapeDataString(NetID)}";
-        }
-
-        // Retrieve the Area value and set P3
-        if (queryParams.TryGetValue("Area", out var areaValue) && int.TryParse(areaValue.ToString(), out var area))
-        {
-            AreaDisplayName = area switch
-            {
-                1 => "Helaman Halls",
-                2 => "Heritage Halls",
-                3 => "Riviera",
-                4 => "Wyview Park",
-                _ => "Unknown Area"
-            };
-
-            IframeUrl += $"&P3={Uri.EscapeDataString(AreaDisplayName)}";
-        }
-
-        // Retrieve the BuildingId value and set P4
-        if (queryParams.TryGetValue("BuildingId", out var buildingIdValue) && int.TryParse(buildingIdValue.ToString(), out var buildingId))
-        {
-            var building = Buildings.FirstOrDefault(b => b.Id == buildingId);
-            BuildingName = building?.Name ?? "Not specified";
-            IframeUrl += $"&P4={Uri.EscapeDataString(BuildingName)}";
-        }
-
-        // Retrieve the BedspaceCode and calculate substrings
-        if (queryParams.TryGetValue("BedspaceCode", out var bedspaceValue))
-        {
-            BedspaceCode = bedspaceValue.ToString() ?? "Not specified";
-            BedspaceSubstring = BedspaceCode.Length >= 8 ? BedspaceCode.Substring(4, 4) : "Invalid";
-            BedspaceSubstringEnd = BedspaceCode.Length >= 10 ? BedspaceCode.Substring(8, 2) : "Invalid";
-
-            // Add P5 and P6 to iframe URL
-            IframeUrl += $"&P5={Uri.EscapeDataString(BedspaceSubstring)}";
-            IframeUrl += $"&P6={Uri.EscapeDataString(BedspaceSubstringEnd)}";
-        }
-    }
-
-    private class Building
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-    }
 }
