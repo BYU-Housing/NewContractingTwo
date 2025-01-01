@@ -224,7 +224,10 @@ else
             {
                 IframeUrl += $"&P9={Uri.EscapeDataString(CombinedDateRangeDisplay)}";
             }
-
+            if (!string.IsNullOrEmpty(TotalCostDisplay))
+            {
+                IframeUrl += $"&P10={Uri.EscapeDataString(TotalCostDisplay)}";
+            }
 
 
         }
