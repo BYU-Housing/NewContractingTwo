@@ -24,6 +24,7 @@
 <p>Total Cost: @TotalCostDisplay</p>
 <p>Payment 1 Start Date: @Payment1Start2024FW.ToString("MMMM dd, yyyy")</p>
 <p>Payment 1 End Date: @Payment1End2024FW.ToString("MMMM dd, yyyy")</p>
+<p>Payment 1 Duration: @Payment1Days days</p>
 
 <p>Payment 2 Start Date: @Payment2Start2024FW.ToString("MMMM dd, yyyy")</p>
 <p>Payment 2 End Date: @Payment2End2024FW.ToString("MMMM dd, yyyy")</p>
@@ -111,6 +112,7 @@ else
     private DateTime Payment9End2024FW;
     private DateTime Payment10Start2024FW;
     private DateTime Payment10End2024FW;
+    private int Payment1Days;
 
     protected override void OnInitialized()
     {
@@ -120,6 +122,7 @@ else
         DateTime? agreementEndDate = null;
         Payment1Start2024FW = new DateTime(2024, 8, 28);
         Payment1End2024FW = new DateTime(2024, 9, 19);
+        Payment1Days = (Payment1End2024FW - Payment1Start2024FW).Days + 1;
 
         Payment2Start2024FW = new DateTime(2024, 9, 20);
         Payment2End2024FW = new DateTime(2024, 10, 12);
