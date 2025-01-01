@@ -15,6 +15,7 @@
 <p>Agreement Period: @AgreementPeriodDisplay</p>
 <p>Selected Start Date: @SelectedStartDateDisplay</p>
 <p>Agreement End Date: @AgreementEndDateDisplay</p>
+<p>Date Range: @CombinedDateRangeDisplay</p>
 
 <!-- Conditional Content Rendering -->
 @if (Area == 1 || Area == 2 || Area == 3 || Area == 4)
@@ -42,6 +43,7 @@ else
     private string RoomTypeDisplay = "Not specified"; // RoomType property display
     private string SelectedStartDateDisplay = "Not specified";
     private string AgreementEndDateDisplay = "Not specified";
+    private string CombinedDateRangeDisplay = "Not specified";
 
     protected override void OnInitialized()
     {
@@ -58,6 +60,13 @@ else
         {
             AgreementEndDateDisplay = agreementEndDate.ToString("MMMM dd, yyyy"); // Format as desired
         }
+
+        // Combine Dates into a Single String
+        if (!string.IsNullOrEmpty(SelectedStartDateDisplay) && !string.IsNullOrEmpty(AgreementEndDateDisplay))
+        {
+            CombinedDateRangeDisplay = $"{SelectedStartDateDisplay} - {AgreementEndDateDisplay}";
+        }
+
         // Parse Area
         if (queryParams.TryGetValue("Area", out var areaValue) && int.TryParse(areaValue.ToString(), out var area))
         {
