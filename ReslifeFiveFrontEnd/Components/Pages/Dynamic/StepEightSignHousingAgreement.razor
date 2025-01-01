@@ -22,6 +22,40 @@
 <p>Number of Days Difference: @DaysDifferenceDisplay</p>
 <p>Daily Rate: @DailyRateDisplay</p>
 <p>Total Cost: @TotalCostDisplay</p>
+<p>Payment 1 Start Date: @Payment1Start2024FW.ToString("MMMM dd, yyyy")</p>
+<p>Payment 1 End Date: @Payment1End2024FW.ToString("MMMM dd, yyyy")</p>
+
+<p>Payment 2 Start Date: @Payment2Start2024FW.ToString("MMMM dd, yyyy")</p>
+<p>Payment 2 End Date: @Payment2End2024FW.ToString("MMMM dd, yyyy")</p>
+
+<p>Payment 3 Start Date: @Payment3Start2024FW.ToString("MMMM dd, yyyy")</p>
+<p>Payment 3 End Date: @Payment3End2024FW.ToString("MMMM dd, yyyy")</p>
+
+<p>Payment 4 Start Date: @Payment4Start2024FW.ToString("MMMM dd, yyyy")</p>
+<p>Payment 4 End Date: @Payment4End2024FW.ToString("MMMM dd, yyyy")</p>
+
+<p>Payment 5 Start Date: @Payment5Start2024FW.ToString("MMMM dd, yyyy")</p>
+<p>Payment 5 End Date: @Payment5End2024FW.ToString("MMMM dd, yyyy")</p>
+
+<p>Unbilled Period Start Date: @UnbillStart2024FW.ToString("MMMM dd, yyyy")</p>
+<p>Unbilled Period End Date: @UnbillEnd2024FW.ToString("MMMM dd, yyyy")</p>
+
+<p>Payment 6 Start Date: @Payment6Start2024FW.ToString("MMMM dd, yyyy")</p>
+<p>Payment 6 End Date: @Payment6End2024FW.ToString("MMMM dd, yyyy")</p>
+
+<p>Payment 7 Start Date: @Payment7Start2024FW.ToString("MMMM dd, yyyy")</p>
+<p>Payment 7 End Date: @Payment7End2024FW.ToString("MMMM dd, yyyy")</p>
+
+<p>Payment 8 Start Date: @Payment8Start2024FW.ToString("MMMM dd, yyyy")</p>
+<p>Payment 8 End Date: @Payment8End2024FW.ToString("MMMM dd, yyyy")</p>
+
+<p>Payment 9 Start Date: @Payment9Start2024FW.ToString("MMMM dd, yyyy")</p>
+<p>Payment 9 End Date: @Payment9End2024FW.ToString("MMMM dd, yyyy")</p>
+
+<p>Payment 10 Start Date: @Payment10Start2024FW.ToString("MMMM dd, yyyy")</p>
+<p>Payment 10 End Date: @Payment10End2024FW.ToString("MMMM dd, yyyy")</p>
+
+
 
 <!-- Conditional Content Rendering -->
 @if (Area == 1 || Area == 2 || Area == 3 || Area == 4)
@@ -55,7 +89,28 @@ else
     private string TotalCostDisplay = "Not calculated";
     private decimal? DailyRate = null;
     private int DaysDifference = 0;
-
+    private DateTime Payment1Start2024FW;
+    private DateTime Payment1End2024FW;
+    private DateTime Payment2Start2024FW;
+    private DateTime Payment2End2024FW;
+    private DateTime Payment3Start2024FW;
+    private DateTime Payment3End2024FW;
+    private DateTime Payment4Start2024FW;
+    private DateTime Payment4End2024FW;
+    private DateTime Payment5Start2024FW;
+    private DateTime Payment5End2024FW;
+    private DateTime UnbillStart2024FW;
+    private DateTime UnbillEnd2024FW;
+    private DateTime Payment6Start2024FW;
+    private DateTime Payment6End2024FW;
+    private DateTime Payment7Start2024FW;
+    private DateTime Payment7End2024FW;
+    private DateTime Payment8Start2024FW;
+    private DateTime Payment8End2024FW;
+    private DateTime Payment9Start2024FW;
+    private DateTime Payment9End2024FW;
+    private DateTime Payment10Start2024FW;
+    private DateTime Payment10End2024FW;
 
     protected override void OnInitialized()
     {
@@ -63,6 +118,39 @@ else
         var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
         DateTime? selectedStartDate = null;
         DateTime? agreementEndDate = null;
+        Payment1Start2024FW = new DateTime(2024, 8, 28);
+        Payment1End2024FW = new DateTime(2024, 9, 27);
+
+        Payment2Start2024FW = new DateTime(2024, 9, 28);
+        Payment2End2024FW = new DateTime(2024, 10, 27);
+
+        Payment3Start2024FW = new DateTime(2024, 10, 28);
+        Payment3End2024FW = new DateTime(2024, 11, 27);
+
+        Payment4Start2024FW = new DateTime(2024, 11, 28);
+        Payment4End2024FW = new DateTime(2024, 12, 27);
+
+        Payment5Start2024FW = new DateTime(2024, 12, 28);
+        Payment5End2024FW = new DateTime(2025, 1, 27);
+
+        UnbillStart2024FW = new DateTime(2025, 1, 28);
+        UnbillEnd2024FW = new DateTime(2025, 2, 27);
+
+        Payment6Start2024FW = new DateTime(2025, 2, 28);
+        Payment6End2024FW = new DateTime(2025, 3, 27);
+
+        Payment7Start2024FW = new DateTime(2025, 3, 28);
+        Payment7End2024FW = new DateTime(2025, 4, 27);
+
+        Payment8Start2024FW = new DateTime(2025, 4, 28);
+        Payment8End2024FW = new DateTime(2025, 5, 27);
+
+        Payment9Start2024FW = new DateTime(2025, 5, 28);
+        Payment9End2024FW = new DateTime(2025, 6, 27);
+
+        Payment10Start2024FW = new DateTime(2025, 6, 28);
+        Payment10End2024FW = new DateTime(2025, 7, 27);
+
 
         // Parse DailyRate
         if (queryParams.TryGetValue("DailyRate", out var dailyRateValue) && decimal.TryParse(dailyRateValue, out var parsedDailyRate))
