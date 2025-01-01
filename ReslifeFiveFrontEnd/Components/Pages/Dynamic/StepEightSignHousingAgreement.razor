@@ -4,6 +4,9 @@
 
 <h3>Step Eight: Sign Housing Agreement</h3>
 
+
+
+
 <p>Area: @AreaDisplayName</p>
 <p>NetID: @NetID</p>
 <p>Name: @Name</p>
@@ -16,6 +19,9 @@
 <p>Selected Start Date: @SelectedStartDateDisplay</p>
 <p>Agreement End Date: @AgreementEndDateDisplay</p>
 <p>Date Range: @CombinedDateRangeDisplay</p>
+<p>Number of Days Difference: @DaysDifferenceDisplay</p>
+<p>Daily Rate: @DailyRateDisplay</p>
+<p>Total Cost: @TotalCostDisplay</p>
 
 <!-- Conditional Content Rendering -->
 @if (Area == 1 || Area == 2 || Area == 3 || Area == 4)
@@ -44,27 +50,74 @@ else
     private string SelectedStartDateDisplay = "Not specified";
     private string AgreementEndDateDisplay = "Not specified";
     private string CombinedDateRangeDisplay = "Not specified";
+    private string DaysDifferenceDisplay = "Not calculated";
+    private string DailyRateDisplay = "Not specified";
+    private string TotalCostDisplay = "Not calculated";
+    private decimal? DailyRate = null;
+    private int DaysDifference = 0;
+
 
     protected override void OnInitialized()
     {
         var uri = new Uri(NavigationManager.Uri);
         var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
-        // Parse Selected Start Date
-        if (queryParams.TryGetValue("SelectedStartDate", out var selectedStartDateValue) && DateTime.TryParse(selectedStartDateValue, out var selectedStartDate))
+        DateTime? selectedStartDate = null;
+        DateTime? agreementEndDate = null;
+
+        // Parse DailyRate
+        if (queryParams.TryGetValue("DailyRate", out var dailyRateValue) && decimal.TryParse(dailyRateValue, out var parsedDailyRate))
         {
-            SelectedStartDateDisplay = selectedStartDate.ToString("MMMM dd, yyyy"); // Format as desired
+            DailyRate = parsedDailyRate;
+            DailyRateDisplay = $"${parsedDailyRate:F2}"; // Format as currency
+        }
+
+        // Parse Selected Start Date
+        if (queryParams.TryGetValue("SelectedStartDate", out var selectedStartDateValue) && DateTime.TryParse(selectedStartDateValue, out var parsedStartDate))
+        {
+            selectedStartDate = parsedStartDate;
+            SelectedStartDateDisplay = parsedStartDate.ToString("MMMM dd, yyyy");
         }
 
         // Parse Agreement End Date
-        if (queryParams.TryGetValue("AgreementEndDate", out var agreementEndDateValue) && DateTime.TryParse(agreementEndDateValue, out var agreementEndDate))
+        if (queryParams.TryGetValue("AgreementEndDate", out var agreementEndDateValue) && DateTime.TryParse(agreementEndDateValue, out var parsedEndDate))
         {
-            AgreementEndDateDisplay = agreementEndDate.ToString("MMMM dd, yyyy"); // Format as desired
+            agreementEndDate = parsedEndDate;
+            AgreementEndDateDisplay = parsedEndDate.ToString("MMMM dd, yyyy");
         }
 
-        // Combine Dates into a Single String
-        if (!string.IsNullOrEmpty(SelectedStartDateDisplay) && !string.IsNullOrEmpty(AgreementEndDateDisplay))
+        // Calculate Days Difference and Total Cost
+        if (selectedStartDate.HasValue && agreementEndDate.HasValue)
         {
-            CombinedDateRangeDisplay = $"{SelectedStartDateDisplay} - {AgreementEndDateDisplay}";
+            DaysDifference = (agreementEndDate.Value - selectedStartDate.Value).Days;
+            CombinedDateRangeDisplay = $"{SelectedStartDateDisplay} - {AgreementEndDateDisplay} ({DaysDifference} days)";
+            DaysDifferenceDisplay = DaysDifference.ToString();
+
+            if (DailyRate.HasValue)
+            {
+                var totalCost = DailyRate.Value * DaysDifference;
+                TotalCostDisplay = $"${totalCost:F2}"; // Format as currency
+            }
+            else
+            {
+                TotalCostDisplay = "Daily rate not specified";
+            }
+        }
+        else
+        {
+            DaysDifferenceDisplay = "Invalid or missing dates";
+            TotalCostDisplay = "Total cost cannot be calculated";
+        }
+
+        // Combine Dates into a Single String and Calculate Days Difference
+        if (selectedStartDate.HasValue && agreementEndDate.HasValue)
+        {
+            var daysDifference = (agreementEndDate.Value - selectedStartDate.Value).Days;
+            CombinedDateRangeDisplay = $"{SelectedStartDateDisplay} - {AgreementEndDateDisplay} ({daysDifference} days)";
+            DaysDifferenceDisplay = daysDifference.ToString(); // Set the days difference
+        }
+        else
+        {
+            DaysDifferenceDisplay = "Invalid or missing dates"; // Handle missing or invalid dates
         }
 
         // Parse Area
@@ -80,6 +133,8 @@ else
                 _ => "Unknown Area"
             };
         }
+
+        // Parse Agreement Period
         if (queryParams.TryGetValue("AgreementPeriod", out var agreementPeriodValue) && int.TryParse(agreementPeriodValue.ToString(), out var agreementPeriod))
         {
             AgreementPeriodDisplay = agreementPeriod switch
@@ -100,6 +155,7 @@ else
             };
         }
 
+        // Parse Room Type
         if (queryParams.TryGetValue("RoomType", out var roomTypeValue) && int.TryParse(roomTypeValue.ToString(), out var roomType))
         {
             RoomTypeDisplay = roomType switch
