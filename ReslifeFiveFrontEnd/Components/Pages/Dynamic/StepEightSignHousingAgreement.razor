@@ -44,6 +44,10 @@
 <p>Payment 6 Start Date: @Payment6Start2024FW.ToString("MMMM dd, yyyy")</p>
 <p>Payment 6 End Date: @Payment6End2024FW.ToString("MMMM dd, yyyy")</p>
 
+<p>Period 6 Days: @Period6Days</p>
+<p>Period 6 Total Cost: @(Period6Total.HasValue ? $"${Period6Total:F2}" : "Not calculated")</p>
+
+
 <p>Payment 7 Start Date: @Payment7Start2024FW.ToString("MMMM dd, yyyy")</p>
 <p>Payment 7 End Date: @Payment7End2024FW.ToString("MMMM dd, yyyy")</p>
 
@@ -113,6 +117,8 @@ else
     private DateTime Payment10Start2024FW;
     private DateTime Payment10End2024FW;
     private int Payment1Days;
+    private int Period6Days;
+    private decimal? Period6Total;
 
     protected override void OnInitialized()
     {
@@ -174,6 +180,34 @@ else
         {
             agreementEndDate = parsedEndDate;
             AgreementEndDateDisplay = parsedEndDate.ToString("MMMM dd, yyyy");
+        }
+
+        // Calculate Days Difference and Total Cost for Period 6
+        if (selectedStartDate.HasValue)
+        {
+            // Use Payment6End2024FW as the end date
+            var endDate = Payment6End2024FW;
+            Period6Days = (endDate - selectedStartDate.Value).Days;
+            CombinedDateRangeDisplay = $"{SelectedStartDateDisplay} - {endDate.ToString("MMMM dd, yyyy")} ({Period6Days} days)";
+            DaysDifferenceDisplay = Period6Days.ToString();
+
+            if (DailyRate.HasValue)
+            {
+                Period6Total = DailyRate.Value * Period6Days;
+                TotalCostDisplay = $"${Period6Total:F2}"; // Format as currency
+            }
+            else
+            {
+                TotalCostDisplay = "Daily rate not specified";
+                Period6Total = null;
+            }
+        }
+        else
+        {
+            DaysDifferenceDisplay = "Invalid or missing dates";
+            TotalCostDisplay = "Total cost cannot be calculated";
+            Period6Days = 0;
+            Period6Total = null;
         }
 
         // Calculate Days Difference and Total Cost
