@@ -13,7 +13,8 @@
 <p>Bedspace Substring (Chars 9–10): @BedspaceSubstringEnd</p>
 <p>Room Type: @RoomTypeDisplay</p>
 <p>Agreement Period: @AgreementPeriodDisplay</p>
-
+<p>Selected Start Date: @SelectedStartDateDisplay</p>
+<p>Agreement End Date: @AgreementEndDateDisplay</p>
 
 <!-- Conditional Content Rendering -->
 @if (Area == 1 || Area == 2 || Area == 3 || Area == 4)
@@ -39,12 +40,24 @@ else
     private string IframeUrl = string.Empty;
     private int? Area;
     private string RoomTypeDisplay = "Not specified"; // RoomType property display
+    private string SelectedStartDateDisplay = "Not specified";
+    private string AgreementEndDateDisplay = "Not specified";
 
     protected override void OnInitialized()
     {
         var uri = new Uri(NavigationManager.Uri);
         var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        // Parse Selected Start Date
+        if (queryParams.TryGetValue("SelectedStartDate", out var selectedStartDateValue) && DateTime.TryParse(selectedStartDateValue, out var selectedStartDate))
+        {
+            SelectedStartDateDisplay = selectedStartDate.ToString("MMMM dd, yyyy"); // Format as desired
+        }
 
+        // Parse Agreement End Date
+        if (queryParams.TryGetValue("AgreementEndDate", out var agreementEndDateValue) && DateTime.TryParse(agreementEndDateValue, out var agreementEndDate))
+        {
+            AgreementEndDateDisplay = agreementEndDate.ToString("MMMM dd, yyyy"); // Format as desired
+        }
         // Parse Area
         if (queryParams.TryGetValue("Area", out var areaValue) && int.TryParse(areaValue.ToString(), out var area))
         {
