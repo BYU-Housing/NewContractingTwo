@@ -164,6 +164,11 @@ else
             {
                 IframeUrl += $"&P8={Uri.EscapeDataString(AgreementPeriodDisplay)}";
             }
+            if (!string.IsNullOrEmpty(CombinedDateRangeDisplay))
+            {
+                IframeUrl += $"&P9={Uri.EscapeDataString(CombinedDateRangeDisplay)}";
+            }
+
 
         }
     }
