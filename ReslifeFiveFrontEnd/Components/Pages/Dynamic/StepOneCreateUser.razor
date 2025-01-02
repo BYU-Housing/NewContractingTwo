@@ -15,6 +15,11 @@
         <input type="text" @bind="NetID" class="form-control" style="flex-grow: 1;" placeholder="Enter your NetID" />
     </div>
     <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="min-width: 150px;">Preferred Roommate:</label>
+        <input type="text" @bind="PreferredRoommate" class="form-control" style="flex-grow: 1;" placeholder="Enter preferred roommate's name" />
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 10px;">
         <label style="min-width: 150px;">Select Agreement Period:</label>
         <select @onchange="OnAgreementPeriodChanged" class="form-control" style="flex-grow: 1;">
             <option value="">-- Select --</option>
@@ -288,6 +293,7 @@
 @code {
     private string Name { get; set; } = string.Empty;
     private string NetID { get; set; } = string.Empty;
+    private string PreferredRoommate { get; set; } = string.Empty;
     private int? AgreementPeriod { get; set; } = null;
 
     // Prepopulate all boolean properties with false
@@ -340,6 +346,7 @@
         {
             $"Name={Uri.EscapeDataString(Name)}",
             $"NetID={Uri.EscapeDataString(NetID)}",
+            $"PreferredRoommate={Uri.EscapeDataString(PreferredRoommate)}",
             $"AgreementPeriod={AgreementPeriod}",
             $"ApplicationEligible={ApplicationEligible?.ToString().ToLower()}",
             $"ContractEligible={ContractEligible?.ToString().ToLower()}",
