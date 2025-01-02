@@ -830,9 +830,13 @@ else
             {
                 IframeUrl += $"&P9={Uri.EscapeDataString(CombinedDateRangeDisplay)}";
             }
-            if (!string.IsNullOrEmpty(TotalCostDisplay))
+            if (TotalBillableMoney.HasValue)
             {
-                IframeUrl += $"&P10={Uri.EscapeDataString(TotalCostDisplay)}";
+                IframeUrl += $"&P10={Uri.EscapeDataString(TotalBillableMoney.Value.ToString("F2"))}";
+            }
+            else
+            {
+                IframeUrl += "&P10=NotAvailable";
             }
             // Determine the value for P11 based on selectedStartDate
             string P11Value = "0.00"; // Default value
