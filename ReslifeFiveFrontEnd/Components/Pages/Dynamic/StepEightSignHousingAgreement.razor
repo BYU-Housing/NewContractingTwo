@@ -227,35 +227,44 @@ else
 
         Payment2Start2024FW = new DateTime(2024, 9, 20);
         Payment2End2024FW = new DateTime(2024, 10, 12);
+        string payment2Range = $"{Payment2Start2024FW:MMMM dd, yyyy} - {Payment2End2024FW:MMMM dd, yyyy}";
 
         Payment3Start2024FW = new DateTime(2024, 10, 13);
         Payment3End2024FW = new DateTime(2024, 11, 4);
+        string payment3Range = $"{Payment3Start2024FW:MMMM dd, yyyy} - {Payment3End2024FW:MMMM dd, yyyy}";
 
         Payment4Start2024FW = new DateTime(2024, 11, 5);
         Payment4End2024FW = new DateTime(2024, 11, 27);
+        string payment4Range = $"{Payment4Start2024FW:MMMM dd, yyyy} - {Payment4End2024FW:MMMM dd, yyyy}";
 
         Payment5Start2024FW = new DateTime(2024, 11, 28);
         Payment5End2024FW = new DateTime(2024, 12, 19);
+        string payment5Range = $"{Payment5Start2024FW:MMMM dd, yyyy} - {Payment5End2024FW:MMMM dd, yyyy}";
 
         UnbillStart2024FW = new DateTime(2024, 12, 20);
         UnbillEnd2024FW = new DateTime(2025, 1, 5);
 
         Payment6Start2024FW = new DateTime(2025, 1, 6);
         Payment6End2024FW = new DateTime(2025, 1, 27);
+        string payment6Range = $"{Payment6Start2024FW:MMMM dd, yyyy} - {Payment6End2024FW:MMMM dd, yyyy}";
 
         Period6DaysFromPaymentStart = (Payment6End2024FW - Payment6Start2024FW).Days;
 
         Payment7Start2024FW = new DateTime(2025, 1, 28);
         Payment7End2024FW = new DateTime(2025, 2, 18);
+        string payment7Range = $"{Payment7Start2024FW:MMMM dd, yyyy} - {Payment7End2024FW:MMMM dd, yyyy}";
 
         Payment8Start2024FW = new DateTime(2025, 2, 19);
         Payment8End2024FW = new DateTime(2025, 3, 12);
+        string payment8Range = $"{Payment8Start2024FW:MMMM dd, yyyy} - {Payment8End2024FW:MMMM dd, yyyy}";
 
         Payment9Start2024FW = new DateTime(2025, 3, 13);
         Payment9End2024FW = new DateTime(2025, 4, 3);
+        string payment9Range = $"{Payment9Start2024FW:MMMM dd, yyyy} - {Payment9End2024FW:MMMM dd, yyyy}";
 
         Payment10Start2024FW = new DateTime(2025, 4, 4);
         Payment10End2024FW = new DateTime(2025, 4, 26);
+        string payment10Range = $"{Payment10Start2024FW:MMMM dd, yyyy} - {Payment10End2024FW:MMMM dd, yyyy}";
 
 
         // Parse DailyRate
@@ -822,6 +831,7 @@ else
                     P15Value = Period3Total.HasValue ? Period3Total.Value.ToString("F2") : "0.00";
                 }
             }
+            IframeUrl += $"&P14={Uri.EscapeDataString(payment2Range)}";
             IframeUrl += $"&P15={Uri.EscapeDataString(P15Value)}";
 
             string P17Value = "0.00"; // Default value
@@ -836,6 +846,7 @@ else
                     P17Value = Period4Total.HasValue ? Period4Total.Value.ToString("F2") : "0.00";
                 }
             }
+            IframeUrl += $"&P16={Uri.EscapeDataString(payment3Range)}";
             IframeUrl += $"&P17={Uri.EscapeDataString(P17Value)}";
 
             string P19Value = "0.00"; // Default value
@@ -850,6 +861,7 @@ else
                     P19Value = Period5Total.HasValue ? Period5Total.Value.ToString("F2") : "0.00";
                 }
             }
+            IframeUrl += $"&P18={Uri.EscapeDataString(payment4Range)}";
             IframeUrl += $"&P19={Uri.EscapeDataString(P19Value)}";
 
             string P21Value = "0.00"; // Default value
@@ -864,6 +876,7 @@ else
                     P21Value = Period6Total.HasValue ? Period6Total.Value.ToString("F2") : "0.00";
                 }
             }
+            IframeUrl += $"&P20={Uri.EscapeDataString(payment5Range)}";
             IframeUrl += $"&P21={Uri.EscapeDataString(P21Value)}";
 
 
@@ -887,7 +900,7 @@ else
                     P23Value = "0.00";
                 }
             }
-
+            IframeUrl += $"&P22={Uri.EscapeDataString(payment6Range)}";
             // Append P23 to the IframeUrl
             IframeUrl += $"&P23={Uri.EscapeDataString(P23Value)}";
 
@@ -907,7 +920,7 @@ else
                     P25Value = Period8Total.HasValue ? Period8Total.Value.ToString("F2") : "0.00";
                 }
             }
-
+            IframeUrl += $"&P24={Uri.EscapeDataString(payment7Range)}";
             // Append P25 to the IframeUrl
             IframeUrl += $"&P25={Uri.EscapeDataString(P25Value)}";
 
@@ -926,7 +939,7 @@ else
                     P27Value = Period9Total.HasValue ? Period9Total.Value.ToString("F2") : "0.00";
                 }
             }
-
+            IframeUrl += $"&P26={Uri.EscapeDataString(payment8Range)}";
             // Append P27 to the IframeUrl
             IframeUrl += $"&P27={Uri.EscapeDataString(P27Value)}";
             string P29Value = "0.00"; // Default value
@@ -944,10 +957,10 @@ else
                     P29Value = Period10Total.HasValue ? Period10Total.Value.ToString("F2") : "0.00";
                 }
             }
-
+            IframeUrl += $"&P28={Uri.EscapeDataString(payment9Range)}";
             // Append P29 to the IframeUrl
             IframeUrl += $"&P29={Uri.EscapeDataString(P29Value)}";
-
+            IframeUrl += $"&P30={Uri.EscapeDataString(payment10Range)}";
 
 
 
