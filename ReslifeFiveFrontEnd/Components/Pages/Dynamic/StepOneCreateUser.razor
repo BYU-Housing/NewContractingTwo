@@ -25,9 +25,20 @@
             <option value="7">Fall Winter 2025</option>
         </select>
     </div>
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="min-width: 150px;">Application Eligible:</label>
+        <div style="display: flex; align-items: center; gap: 5px;">
+            <input type="radio" name="ApplicationEligible" value="true" @onchange="e => OnApplicationEligibleChanged(true)" checked="@(ApplicationEligible == true)" />
+            <label>Yes</label>
+        </div>
+        <div style="display: flex; align-items: center; gap: 5px;">
+            <input type="radio" name="ApplicationEligible" value="false" @onchange="e => OnApplicationEligibleChanged(false)" checked="@(ApplicationEligible == false)" />
+            <label>No</label>
+        </div>
+    </div>
 
 
-    <div>
+@*     <div>
         <label>Application Eligible:</label>
         <div>
             <input type="radio" name="ApplicationEligible" value="true" @onchange="e => OnApplicationEligibleChanged(true)" checked="@(ApplicationEligible == true)" />
@@ -37,7 +48,7 @@
             <input type="radio" name="ApplicationEligible" value="false" @onchange="e => OnApplicationEligibleChanged(false)" checked="@(ApplicationEligible == false)" />
             <label>No</label>
         </div>
-    </div>
+    </div> *@
 
     <div>
         <label>Contract Eligible:</label>
