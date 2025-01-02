@@ -125,6 +125,13 @@ else
     <p>Your contract failed to load, please email Campus Accommodations to receive a link to your contract.</p>
 }
 
+<!-- Navigation Button -->
+<div style="margin-top: 20px; text-align: center;">
+    <button class="btn btn-primary" @onclick="NavigateToMealPlanAgreement">
+        Proceed to Step Nine: Sign Meal Plan Agreement
+    </button>
+</div>
+
 @code {
     private string AreaDisplayName = "Not specified";
     private string AgreementPeriodDisplay = "Not specified";
@@ -1076,4 +1083,8 @@ else
         new Building { Id = 52, Name = "WP 10" },
         new Building { Id = 53, Name = "WP 11" }
     };
+    private void NavigateToMealPlanAgreement()
+    {
+        NavigationManager.NavigateTo("/stepNineSignMealPlanAgreement");
+    }
 }
