@@ -53,6 +53,12 @@
 <p>Payment 7 Start Date: @Payment7Start2024FW.ToString("MMMM dd, yyyy")</p>
 <p>Payment 7 End Date: @Payment7End2024FW.ToString("MMMM dd, yyyy")</p>
 
+<p>Period 7 Days: @Period7Days</p>
+<p>Period 7 Total Cost: @(Period7Total.HasValue ? $"${Period7Total:F2}" : "Not calculated")</p>
+<p>Period 7 Days (from Payment7Start): @Period7DaysFromPaymentStart</p>
+<p>Period 7 Total Cost (from Payment7Start): @(Period7TotalFromPaymentStart.HasValue ? $"${Period7TotalFromPaymentStart:F2}" : "Not calculated")</p>
+
+
 <p>Payment 8 Start Date: @Payment8Start2024FW.ToString("MMMM dd, yyyy")</p>
 <p>Payment 8 End Date: @Payment8End2024FW.ToString("MMMM dd, yyyy")</p>
 
@@ -123,6 +129,10 @@ else
     private decimal? Period6Total;
     private int Period6DaysFromPaymentStart;
     private decimal? Period6TotalFromPaymentStart;
+    private int Period7Days;
+    private decimal? Period7Total;
+    private int Period7DaysFromPaymentStart;
+    private decimal? Period7TotalFromPaymentStart;
 
     protected override void OnInitialized()
     {
@@ -223,6 +233,31 @@ else
             TotalCostDisplay = "Total cost cannot be calculated";
             Period6Days = 0;
             Period6Total = null;
+        }
+        // Calculate Period7Days and Period7Total using selectedStartDate
+        if (selectedStartDate.HasValue)
+        {
+            var endDate = Payment7End2024FW;
+            Period7Days = (endDate - selectedStartDate.Value).Days + 1; // Include start and end dates
+            if (DailyRate.HasValue)
+            {
+                Period7Total = DailyRate.Value * Period7Days;
+            }
+            else
+            {
+                Period7Total = null;
+            }
+        }
+
+        // Calculate Period7DaysFromPaymentStart and Period7TotalFromPaymentStart
+        Period7DaysFromPaymentStart = (Payment7End2024FW - Payment7Start2024FW).Days + 1; // Include start and end dates
+        if (DailyRate.HasValue)
+        {
+            Period7TotalFromPaymentStart = DailyRate.Value * Period7DaysFromPaymentStart;
+        }
+        else
+        {
+            Period7TotalFromPaymentStart = null;
         }
 
         // Calculate Days Difference and Total Cost
