@@ -246,25 +246,33 @@
 
 
 
-    <div>
-        <label>Helaman Priority Date:</label>
-        <input type="datetime-local" @bind="HelamanPriorityDate" class="form-control" />
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="min-width: 200px;">Helaman Priority Date:</label>
+        <input type="datetime-local" @bind="HelamanPriorityDate" class="form-control" style="flex: 1;" />
     </div>
 
-    <div>
-        <label>Heritage Priority Date:</label>
-        <input type="datetime-local" @bind="HeritagePriorityDate" class="form-control" />
+
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="min-width: 200px;">Heritage Priority Date:</label>
+        <input type="datetime-local" @bind="HeritagePriorityDate" class="form-control" style="flex: 1;" />
     </div>
 
-    <div>
+
+@*     <div>
         <label>Wyview Park Priority Date:</label>
         <input type="datetime-local" @bind="WyviewParkPriorityDate" class="form-control" />
+    </div> *@
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="min-width: 200px;">Wyview Park Priority Date:</label>
+        <input type="datetime-local" @bind="WyviewParkPriorityDate" class="form-control" style="flex: 1;" />
     </div>
 
-    <div>
-        <label>Riviera Priority Date:</label>
-        <input type="datetime-local" @bind="RivieraPriorityDate" class="form-control" />
+
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="min-width: 200px;">Riviera Priority Date:</label>
+        <input type="datetime-local" @bind="RivieraPriorityDate" class="form-control" style="flex: 1;" />
     </div>
+
 
     <button type="button" @onclick="NavigateToSelectAgreementPeriod" class="btn btn-primary"
             disabled="@(string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(NetID) || AgreementPeriod == null ||
