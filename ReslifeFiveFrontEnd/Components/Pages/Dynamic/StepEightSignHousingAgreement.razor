@@ -779,6 +779,213 @@ else
             {
                 IframeUrl += $"&P10={Uri.EscapeDataString(TotalCostDisplay)}";
             }
+            // Determine the value for P11 based on selectedStartDate
+            string P11Value = "0.00"; // Default value
+            if (selectedStartDate.HasValue)
+            {
+                if (selectedStartDate.Value < Payment1Start2024FW)
+                {
+                    P11Value = Period1TotalFromPaymentStart.HasValue ? Period1TotalFromPaymentStart.Value.ToString("F2") : "0.00";
+                }
+                else if (selectedStartDate.Value >= Payment1Start2024FW && selectedStartDate.Value <= Payment1End2024FW)
+                {
+                    P11Value = Period1Total.HasValue ? Period1Total.Value.ToString("F2") : "0.00";
+                }
+            }
+            IframeUrl += $"&P11={Uri.EscapeDataString(P11Value)}";
+
+            string P13Value = "0.00"; // Default value
+            if (selectedStartDate.HasValue)
+            {
+                if (selectedStartDate.Value < Payment2Start2024FW)
+                {
+                    P13Value = Period2TotalFromPaymentStart.HasValue ? Period2TotalFromPaymentStart.Value.ToString("F2") : "0.00";
+                }
+                else if (selectedStartDate.Value >= Payment2Start2024FW && selectedStartDate.Value <= Payment2End2024FW)
+                {
+                    P13Value = Period2Total.HasValue ? Period2Total.Value.ToString("F2") : "0.00";
+                }
+            }
+            IframeUrl += $"&P13={Uri.EscapeDataString(P13Value)}";
+
+            string P15Value = "0.00"; // Default value
+            if (selectedStartDate.HasValue)
+            {
+                if (selectedStartDate.Value < Payment3Start2024FW)
+                {
+                    P15Value = Period3TotalFromPaymentStart.HasValue ? Period3TotalFromPaymentStart.Value.ToString("F2") : "0.00";
+                }
+                else if (selectedStartDate.Value >= Payment3Start2024FW && selectedStartDate.Value <= Payment3End2024FW)
+                {
+                    P15Value = Period3Total.HasValue ? Period3Total.Value.ToString("F2") : "0.00";
+                }
+            }
+            IframeUrl += $"&P15={Uri.EscapeDataString(P15Value)}";
+
+            string P17Value = "0.00"; // Default value
+            if (selectedStartDate.HasValue)
+            {
+                if (selectedStartDate.Value < Payment4Start2024FW)
+                {
+                    P17Value = Period4TotalFromPaymentStart.HasValue ? Period4TotalFromPaymentStart.Value.ToString("F2") : "0.00";
+                }
+                else if (selectedStartDate.Value >= Payment4Start2024FW && selectedStartDate.Value <= Payment4End2024FW)
+                {
+                    P17Value = Period4Total.HasValue ? Period4Total.Value.ToString("F2") : "0.00";
+                }
+            }
+            IframeUrl += $"&P17={Uri.EscapeDataString(P17Value)}";
+
+            string P19Value = "0.00"; // Default value
+            if (selectedStartDate.HasValue)
+            {
+                if (selectedStartDate.Value < Payment5Start2024FW)
+                {
+                    P19Value = Period5TotalFromPaymentStart.HasValue ? Period5TotalFromPaymentStart.Value.ToString("F2") : "0.00";
+                }
+                else if (selectedStartDate.Value >= Payment5Start2024FW && selectedStartDate.Value <= Payment5End2024FW)
+                {
+                    P19Value = Period5Total.HasValue ? Period5Total.Value.ToString("F2") : "0.00";
+                }
+            }
+            IframeUrl += $"&P19={Uri.EscapeDataString(P19Value)}";
+
+            string P21Value = "0.00"; // Default value
+            if (selectedStartDate.HasValue)
+            {
+                if (selectedStartDate.Value < Payment6Start2024FW)
+                {
+                    P21Value = Period6TotalFromPaymentStart.HasValue ? Period6TotalFromPaymentStart.Value.ToString("F2") : "0.00";
+                }
+                else if (selectedStartDate.Value >= Payment6Start2024FW && selectedStartDate.Value <= Payment6End2024FW)
+                {
+                    P21Value = Period6Total.HasValue ? Period6Total.Value.ToString("F2") : "0.00";
+                }
+            }
+            IframeUrl += $"&P21={Uri.EscapeDataString(P21Value)}";
+
+
+            string P23Value = "0.00"; // Default value
+
+            if (selectedStartDate.HasValue)
+            {
+                if (selectedStartDate.Value < Payment7Start2024FW)
+                {
+                    // Show Period7TotalFromPaymentStart
+                    P23Value = Period7TotalFromPaymentStart.HasValue ? Period7TotalFromPaymentStart.Value.ToString("F2") : "0.00";
+                }
+                else if (selectedStartDate.Value >= Payment7Start2024FW && selectedStartDate.Value <= Payment7End2024FW)
+                {
+                    // Show Period7Total
+                    P23Value = Period7Total.HasValue ? Period7Total.Value.ToString("F2") : "0.00";
+                }
+                else
+                {
+                    // After Payment7End2024FW, show 0.00
+                    P23Value = "0.00";
+                }
+            }
+
+            // Append P23 to the IframeUrl
+            IframeUrl += $"&P23={Uri.EscapeDataString(P23Value)}";
+
+
+            string P25Value = "0.00"; // Default value
+
+            if (selectedStartDate.HasValue)
+            {
+                if (selectedStartDate.Value < Payment8Start2024FW)
+                {
+                    // Use Period8TotalFromPaymentStart when the selectedStartDate is before Payment8Start2024FW
+                    P25Value = Period8TotalFromPaymentStart.HasValue ? Period8TotalFromPaymentStart.Value.ToString("F2") : "0.00";
+                }
+                else if (selectedStartDate.Value >= Payment8Start2024FW && selectedStartDate.Value <= Payment8End2024FW)
+                {
+                    // Use Period8Total when the selectedStartDate is within the range of Payment8Start2024FW and Payment8End2024FW
+                    P25Value = Period8Total.HasValue ? Period8Total.Value.ToString("F2") : "0.00";
+                }
+            }
+
+            // Append P25 to the IframeUrl
+            IframeUrl += $"&P25={Uri.EscapeDataString(P25Value)}";
+
+            string P27Value = "0.00"; // Default value
+
+            if (selectedStartDate.HasValue)
+            {
+                if (selectedStartDate.Value < Payment9Start2024FW)
+                {
+                    // Use Period9TotalFromPaymentStart when the selectedStartDate is before Payment9Start2024FW
+                    P27Value = Period9TotalFromPaymentStart.HasValue ? Period9TotalFromPaymentStart.Value.ToString("F2") : "0.00";
+                }
+                else if (selectedStartDate.Value >= Payment9Start2024FW && selectedStartDate.Value <= Payment9End2024FW)
+                {
+                    // Use Period9Total when the selectedStartDate is within the range of Payment9Start2024FW and Payment9End2024FW
+                    P27Value = Period9Total.HasValue ? Period9Total.Value.ToString("F2") : "0.00";
+                }
+            }
+
+            // Append P27 to the IframeUrl
+            IframeUrl += $"&P27={Uri.EscapeDataString(P27Value)}";
+            string P29Value = "0.00"; // Default value
+
+            if (selectedStartDate.HasValue)
+            {
+                if (selectedStartDate.Value < Payment10Start2024FW)
+                {
+                    // Use Period10TotalFromPaymentStart when the selectedStartDate is before Payment10Start2024FW
+                    P29Value = Period10TotalFromPaymentStart.HasValue ? Period10TotalFromPaymentStart.Value.ToString("F2") : "0.00";
+                }
+                else if (selectedStartDate.Value >= Payment10Start2024FW && selectedStartDate.Value <= Payment10End2024FW)
+                {
+                    // Use Period10Total when the selectedStartDate is within the range of Payment10Start2024FW and Payment10End2024FW
+                    P29Value = Period10Total.HasValue ? Period10Total.Value.ToString("F2") : "0.00";
+                }
+            }
+
+            // Append P29 to the IframeUrl
+            IframeUrl += $"&P29={Uri.EscapeDataString(P29Value)}";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         }
