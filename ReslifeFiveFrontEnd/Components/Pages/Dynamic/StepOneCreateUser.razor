@@ -206,41 +206,44 @@
     </div>
 
 
-    <div>
-        <label>First Generation:</label>
-        <div>
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="min-width: 150px;">First Generation:</label>
+        <div style="display: flex; align-items: center; gap: 5px;">
             <input type="radio" name="FirstGeneration" value="true" @onchange="e => OnFirstGenerationChanged(true)" checked="@(FirstGeneration == true)" />
             <label>True</label>
         </div>
-        <div>
+        <div style="display: flex; align-items: center; gap: 5px;">
             <input type="radio" name="FirstGeneration" value="false" @onchange="e => OnFirstGenerationChanged(false)" checked="@(FirstGeneration == false)" />
             <label>False</label>
         </div>
     </div>
 
-    <div>
-        <label>Wheatley VS Scholar:</label>
-        <div>
+
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="min-width: 200px;">Wheatley VS Scholar:</label>
+        <div style="display: flex; align-items: center; gap: 5px;">
             <input type="radio" name="WheatleyVSScholar" value="true" @onchange="e => OnWheatleyVSScholarChanged(true)" checked="@(WheatleyVSScholar == true)" />
             <label>True</label>
         </div>
-        <div>
+        <div style="display: flex; align-items: center; gap: 5px;">
             <input type="radio" name="WheatleyVSScholar" value="false" @onchange="e => OnWheatleyVSScholarChanged(false)" checked="@(WheatleyVSScholar == false)" />
             <label>False</label>
         </div>
     </div>
 
-    <div>
-        <label>Waiting List:</label>
-        <div>
+
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="min-width: 150px;">Waiting List:</label>
+        <div style="display: flex; align-items: center; gap: 5px;">
             <input type="radio" name="WaitingList" value="true" @onchange="e => OnWaitingListChanged(true)" checked="@(WaitingList == true)" />
             <label>True</label>
         </div>
-        <div>
+        <div style="display: flex; align-items: center; gap: 5px;">
             <input type="radio" name="WaitingList" value="false" @onchange="e => OnWaitingListChanged(false)" checked="@(WaitingList == false)" />
             <label>False</label>
         </div>
     </div>
+
 
 
     <div>
