@@ -109,6 +109,8 @@
 <p>Period 10 Days (from Payment10Start): @Period10DaysFromPaymentStart</p>
 <p>Period 10 Total Cost (from Payment10Start): @(Period10TotalFromPaymentStart.HasValue ? $"${Period10TotalFromPaymentStart:F2}" : "Not calculated")</p>
 
+<p>Total Billable Days: @TotalBillable</p>
+<p>Total Billable Amount: @(TotalBillableMoney.HasValue ? $"${TotalBillableMoney.Value:F2}" : "Not calculated")</p>
 
 
 <!-- Conditional Content Rendering -->
@@ -211,6 +213,10 @@ else
     private decimal? Period10Total;
     private int Period10DaysFromPaymentStart;
     private decimal? Period10TotalFromPaymentStart;
+
+    private int TotalBillable { get; set; } // Stores the total number of billable days
+    private decimal? TotalBillableMoney; // Nullable to handle cases where the calculation is invalid
+
 
 
 
@@ -353,25 +359,64 @@ else
         // Calculate Days Difference and Total Cost
         if (selectedStartDate.HasValue && agreementEndDate.HasValue)
         {
-            DaysDifference = (agreementEndDate.Value - selectedStartDate.Value).Days;
-            CombinedDateRangeDisplay = $"{SelectedStartDateDisplay} - {AgreementEndDateDisplay} ({DaysDifference} days)";
-            DaysDifferenceDisplay = DaysDifference.ToString();
-
-            if (DailyRate.HasValue)
+            if (selectedStartDate <= agreementEndDate)
             {
-                var totalCost = DailyRate.Value * DaysDifference;
-                TotalCostDisplay = $"${totalCost:F2}"; // Format as currency
+                // Calculate total days, excluding the end date
+                DaysDifference = (agreementEndDate.Value - selectedStartDate.Value).Days;
+
+                // Calculate unbillable days
+                int unbillableDays = 0;
+
+                if (selectedStartDate <= UnbillEnd2024FW && agreementEndDate >= UnbillStart2024FW)
+                {
+                    // Determine the overlapping unbillable period
+                    var unbillableStart = selectedStartDate.Value > UnbillStart2024FW ? selectedStartDate.Value : UnbillStart2024FW;
+                    var unbillableEnd = agreementEndDate.Value < UnbillEnd2024FW ? agreementEndDate.Value : UnbillEnd2024FW;
+
+                    // Calculate unbillable days (excluding the end date)
+                    unbillableDays = (unbillableEnd - unbillableStart).Days;
+                }
+
+                // Subtract unbillable days
+                TotalBillable = DaysDifference - unbillableDays;
+
+                // Calculate the total cost based on billable days
+                TotalBillableMoney = null; // Reset before calculation
+                if (DailyRate.HasValue && TotalBillable > 0)
+                {
+                    TotalBillableMoney = DailyRate.Value * TotalBillable; // Store calculation
+                    TotalCostDisplay = $"${TotalBillableMoney.Value:F2}";
+                }
+                else
+                {
+                    TotalCostDisplay = "Total cost cannot be calculated";
+                }
+
+                // Update displays
+                CombinedDateRangeDisplay = $"{SelectedStartDateDisplay} - {AgreementEndDateDisplay} ({DaysDifference} days)";
+                DaysDifferenceDisplay = DaysDifference.ToString();
             }
             else
             {
-                TotalCostDisplay = "Daily rate not specified";
+                DaysDifferenceDisplay = "Invalid date range";
+                TotalCostDisplay = "Invalid total cost";
+                TotalBillable = 0; // Set to 0 for invalid ranges
+                TotalBillableMoney = null; // Clear calculation for invalid ranges
             }
         }
         else
         {
             DaysDifferenceDisplay = "Invalid or missing dates";
             TotalCostDisplay = "Total cost cannot be calculated";
+            TotalBillable = 0; // Set to 0 for missing dates
+            TotalBillableMoney = null; // Clear calculation for missing dates
         }
+
+
+
+
+
+
         // Calculate Days Difference and Total Cost for Period 8
         if (selectedStartDate.HasValue)
         {
