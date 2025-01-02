@@ -223,6 +223,7 @@ else
         Payment1Start2024FW = new DateTime(2024, 8, 28);
         Payment1End2024FW = new DateTime(2024, 9, 19);
         Payment1Days = (Payment1End2024FW - Payment1Start2024FW).Days + 1;
+        string payment1Range = $"{Payment1Start2024FW:MMMM dd, yyyy} - {Payment1End2024FW:MMMM dd, yyyy}";
 
         Payment2Start2024FW = new DateTime(2024, 9, 20);
         Payment2End2024FW = new DateTime(2024, 10, 12);
@@ -806,6 +807,7 @@ else
                     P13Value = Period2Total.HasValue ? Period2Total.Value.ToString("F2") : "0.00";
                 }
             }
+            IframeUrl += $"&P12={Uri.EscapeDataString(payment1Range)}";
             IframeUrl += $"&P13={Uri.EscapeDataString(P13Value)}";
 
             string P15Value = "0.00"; // Default value
