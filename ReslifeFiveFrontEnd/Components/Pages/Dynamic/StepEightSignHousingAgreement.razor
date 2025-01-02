@@ -33,15 +33,35 @@
 
 <p>Payment 2 Start Date: @Payment2Start2024FW.ToString("MMMM dd, yyyy")</p>
 <p>Payment 2 End Date: @Payment2End2024FW.ToString("MMMM dd, yyyy")</p>
+<p>Period 2 Days: @Period2Days</p>
+<p>Period 2 Total Cost: @(Period2Total.HasValue ? $"${Period2Total:F2}" : "Not calculated")</p>
+<p>Period 2 Days (from Payment2Start): @Period2DaysFromPaymentStart</p>
+<p>Period 2 Total Cost (from Payment2Start): @(Period2TotalFromPaymentStart.HasValue ? $"${Period2TotalFromPaymentStart:F2}" : "Not calculated")</p>
+
 
 <p>Payment 3 Start Date: @Payment3Start2024FW.ToString("MMMM dd, yyyy")</p>
 <p>Payment 3 End Date: @Payment3End2024FW.ToString("MMMM dd, yyyy")</p>
+<p>Period 3 Days: @Period3Days</p>
+<p>Period 3 Total Cost: @(Period3Total.HasValue ? $"${Period3Total:F2}" : "Not calculated")</p>
+<p>Period 3 Days (from Payment3Start): @Period3DaysFromPaymentStart</p>
+<p>Period 3 Total Cost (from Payment3Start): @(Period3TotalFromPaymentStart.HasValue ? $"${Period3TotalFromPaymentStart:F2}" : "Not calculated")</p>
+
 
 <p>Payment 4 Start Date: @Payment4Start2024FW.ToString("MMMM dd, yyyy")</p>
 <p>Payment 4 End Date: @Payment4End2024FW.ToString("MMMM dd, yyyy")</p>
+<p>Period 4 Days: @Period4Days</p>
+<p>Period 4 Total Cost: @(Period4Total.HasValue ? $"${Period4Total:F2}" : "Not calculated")</p>
+<p>Period 4 Days (from Payment4Start): @Period4DaysFromPaymentStart</p>
+<p>Period 4 Total Cost (from Payment4Start): @(Period4TotalFromPaymentStart.HasValue ? $"${Period4TotalFromPaymentStart:F2}" : "Not calculated")</p>
+
 
 <p>Payment 5 Start Date: @Payment5Start2024FW.ToString("MMMM dd, yyyy")</p>
 <p>Payment 5 End Date: @Payment5End2024FW.ToString("MMMM dd, yyyy")</p>
+<p>Period 5 Days: @Period5Days</p>
+<p>Period 5 Total Cost: @(Period5Total.HasValue ? $"${Period5Total:F2}" : "Not calculated")</p>
+<p>Period 5 Days (from Payment5Start): @Period5DaysFromPaymentStart</p>
+<p>Period 5 Total Cost (from Payment5Start): @(Period5TotalFromPaymentStart.HasValue ? $"${Period5TotalFromPaymentStart:F2}" : "Not calculated")</p>
+
 
 <p>Unbilled Period Start Date: @UnbillStart2024FW.ToString("MMMM dd, yyyy")</p>
 <p>Unbilled Period End Date: @UnbillEnd2024FW.ToString("MMMM dd, yyyy")</p>
@@ -150,7 +170,25 @@ else
     private decimal? Period1Total;
     private int Period1DaysFromPaymentStart;
     private decimal? Period1TotalFromPaymentStart;
+    private int Period2Days;
+    private decimal? Period2Total;
+    private int Period2DaysFromPaymentStart;
+    private decimal? Period2TotalFromPaymentStart;
 
+    private int Period3Days;
+    private decimal? Period3Total;
+    private int Period3DaysFromPaymentStart;
+    private decimal? Period3TotalFromPaymentStart;
+
+    private int Period4Days;
+    private decimal? Period4Total;
+    private int Period4DaysFromPaymentStart;
+    private decimal? Period4TotalFromPaymentStart;
+
+    private int Period5Days;
+    private decimal? Period5Total;
+    private int Period5DaysFromPaymentStart;
+    private decimal? Period5TotalFromPaymentStart;
 
 
     private int Period6Days;
@@ -494,9 +532,121 @@ else
             Period1DaysFromPaymentStart = 0;
             Period1TotalFromPaymentStart = null;
         }
+        // Calculate Days Difference and Total Cost for Period 2
+        if (selectedStartDate.HasValue)
+        {
+            var endDate = Payment2End2024FW;
+            Period2Days = (endDate - selectedStartDate.Value).Days + 1;
+            CombinedDateRangeDisplay = $"{SelectedStartDateDisplay} - {endDate.ToString("MMMM dd, yyyy")} ({Period2Days} days)";
+            DaysDifferenceDisplay = Period2Days.ToString();
 
+            if (DailyRate.HasValue)
+            {
+                Period2Total = DailyRate.Value * Period2Days;
+                TotalCostDisplay = $"${Period2Total:F2}";
+            }
+            else
+            {
+                Period2Total = null;
+            }
 
+            Period2DaysFromPaymentStart = (Payment2End2024FW - Payment2Start2024FW).Days + 1;
+            if (DailyRate.HasValue)
+            {
+                Period2TotalFromPaymentStart = DailyRate.Value * Period2DaysFromPaymentStart;
+            }
+            else
+            {
+                Period2TotalFromPaymentStart = null;
+            }
+        }
 
+        // Calculate Days Difference and Total Cost for Period 3
+        if (selectedStartDate.HasValue)
+        {
+            var endDate = Payment3End2024FW;
+            Period3Days = (endDate - selectedStartDate.Value).Days + 1;
+            CombinedDateRangeDisplay = $"{SelectedStartDateDisplay} - {endDate.ToString("MMMM dd, yyyy")} ({Period3Days} days)";
+            DaysDifferenceDisplay = Period3Days.ToString();
+
+            if (DailyRate.HasValue)
+            {
+                Period3Total = DailyRate.Value * Period3Days;
+                TotalCostDisplay = $"${Period3Total:F2}";
+            }
+            else
+            {
+                Period3Total = null;
+            }
+
+            Period3DaysFromPaymentStart = (Payment3End2024FW - Payment3Start2024FW).Days + 1;
+            if (DailyRate.HasValue)
+            {
+                Period3TotalFromPaymentStart = DailyRate.Value * Period3DaysFromPaymentStart;
+            }
+            else
+            {
+                Period3TotalFromPaymentStart = null;
+            }
+        }
+
+        // Calculate Days Difference and Total Cost for Period 4
+        if (selectedStartDate.HasValue)
+        {
+            var endDate = Payment4End2024FW;
+            Period4Days = (endDate - selectedStartDate.Value).Days + 1;
+            CombinedDateRangeDisplay = $"{SelectedStartDateDisplay} - {endDate.ToString("MMMM dd, yyyy")} ({Period4Days} days)";
+            DaysDifferenceDisplay = Period4Days.ToString();
+
+            if (DailyRate.HasValue)
+            {
+                Period4Total = DailyRate.Value * Period4Days;
+                TotalCostDisplay = $"${Period4Total:F2}";
+            }
+            else
+            {
+                Period4Total = null;
+            }
+
+            Period4DaysFromPaymentStart = (Payment4End2024FW - Payment4Start2024FW).Days + 1;
+            if (DailyRate.HasValue)
+            {
+                Period4TotalFromPaymentStart = DailyRate.Value * Period4DaysFromPaymentStart;
+            }
+            else
+            {
+                Period4TotalFromPaymentStart = null;
+            }
+        }
+
+        // Calculate Days Difference and Total Cost for Period 5
+        if (selectedStartDate.HasValue)
+        {
+            var endDate = Payment5End2024FW;
+            Period5Days = (endDate - selectedStartDate.Value).Days + 1;
+            CombinedDateRangeDisplay = $"{SelectedStartDateDisplay} - {endDate.ToString("MMMM dd, yyyy")} ({Period5Days} days)";
+            DaysDifferenceDisplay = Period5Days.ToString();
+
+            if (DailyRate.HasValue)
+            {
+                Period5Total = DailyRate.Value * Period5Days;
+                TotalCostDisplay = $"${Period5Total:F2}";
+            }
+            else
+            {
+                Period5Total = null;
+            }
+
+            Period5DaysFromPaymentStart = (Payment5End2024FW - Payment5Start2024FW).Days + 1;
+            if (DailyRate.HasValue)
+            {
+                Period5TotalFromPaymentStart = DailyRate.Value * Period5DaysFromPaymentStart;
+            }
+            else
+            {
+                Period5TotalFromPaymentStart = null;
+            }
+        }
 
 
 
