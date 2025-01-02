@@ -46,6 +46,8 @@
 
 <p>Period 6 Days: @Period6Days</p>
 <p>Period 6 Total Cost: @(Period6Total.HasValue ? $"${Period6Total:F2}" : "Not calculated")</p>
+<p>Period 6 Days (from Payment6Start): @Period6DaysFromPaymentStart</p>
+<p>Period 6 Total Cost (from Payment6Start): @(Period6TotalFromPaymentStart.HasValue ? $"${Period6TotalFromPaymentStart:F2}" : "Not calculated")</p>
 
 
 <p>Payment 7 Start Date: @Payment7Start2024FW.ToString("MMMM dd, yyyy")</p>
@@ -119,6 +121,8 @@ else
     private int Payment1Days;
     private int Period6Days;
     private decimal? Period6Total;
+    private int Period6DaysFromPaymentStart;
+    private decimal? Period6TotalFromPaymentStart;
 
     protected override void OnInitialized()
     {
@@ -147,6 +151,8 @@ else
 
         Payment6Start2024FW = new DateTime(2025, 1, 6);
         Payment6End2024FW = new DateTime(2025, 1, 27);
+
+        Period6DaysFromPaymentStart = (Payment6End2024FW - Payment6Start2024FW).Days;
 
         Payment7Start2024FW = new DateTime(2025, 1, 28);
         Payment7End2024FW = new DateTime(2025, 2, 18);
@@ -187,7 +193,7 @@ else
         {
             // Use Payment6End2024FW as the end date
             var endDate = Payment6End2024FW;
-            Period6Days = (endDate - selectedStartDate.Value).Days;
+            Period6Days = (endDate - selectedStartDate.Value).Days + 2;
             CombinedDateRangeDisplay = $"{SelectedStartDateDisplay} - {endDate.ToString("MMMM dd, yyyy")} ({Period6Days} days)";
             DaysDifferenceDisplay = Period6Days.ToString();
 
@@ -200,6 +206,15 @@ else
             {
                 TotalCostDisplay = "Daily rate not specified";
                 Period6Total = null;
+            }
+            Period6DaysFromPaymentStart = (Payment6End2024FW - Payment6Start2024FW).Days +1;
+            if (DailyRate.HasValue)
+            {
+                Period6TotalFromPaymentStart = DailyRate.Value * Period6DaysFromPaymentStart;
+            }
+            else
+            {
+                Period6TotalFromPaymentStart = null;
             }
         }
         else
