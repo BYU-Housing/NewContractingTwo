@@ -3,30 +3,29 @@
 @inject NavigationManager NavigationManager
 
 <h3>Create Test User</h3>
-
+<p>Please create a test user. This user will be deleted upon exit of this contracting process. Please note that if you navigate back to this screen at any point your test user we need to be reset. </p>
 <form>
     <div style="display: flex; align-items: center; gap: 10px;">
         <label style="min-width: 100px;">Enter Name:</label>
         <input type="text" @bind="Name" class="form-control" style="flex-grow: 1;" placeholder="Enter your name" />
     </div>
 
-
-    <div>
-        <label>Enter NetID:</label>
-        <input type="text" @bind="NetID" class="form-control" placeholder="Enter your NetID" />
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="min-width: 100px;">Enter NetID:</label>
+        <input type="text" @bind="NetID" class="form-control" style="flex-grow: 1;" placeholder="Enter your NetID" />
     </div>
-
-    <div>
-        <label>Select Agreement Period:</label>
-        <select @onchange="OnAgreementPeriodChanged" class="form-control">
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="min-width: 150px;">Select Agreement Period:</label>
+        <select @onchange="OnAgreementPeriodChanged" class="form-control" style="flex-grow: 1;">
             <option value="">-- Select --</option>
-            <option value="3">Fall Winter 2025</option>
+            <option value="3">Fall Winter 2024</option>
             <option value="4">Winter 2025</option>
             <option value="5">Spring 2025</option>
             <option value="6">Summer 2025</option>
             <option value="7">Fall Winter 2025</option>
         </select>
     </div>
+
 
     <div>
         <label>Application Eligible:</label>
