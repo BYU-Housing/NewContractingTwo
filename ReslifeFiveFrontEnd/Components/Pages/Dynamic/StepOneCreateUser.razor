@@ -37,78 +37,70 @@
         </div>
     </div>
 
-
-@*     <div>
-        <label>Application Eligible:</label>
-        <div>
-            <input type="radio" name="ApplicationEligible" value="true" @onchange="e => OnApplicationEligibleChanged(true)" checked="@(ApplicationEligible == true)" />
-            <label>Yes</label>
-        </div>
-        <div>
-            <input type="radio" name="ApplicationEligible" value="false" @onchange="e => OnApplicationEligibleChanged(false)" checked="@(ApplicationEligible == false)" />
-            <label>No</label>
-        </div>
-    </div> *@
-
-    <div>
-        <label>Contract Eligible:</label>
-        <div>
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="min-width: 150px;">Contract Eligible:</label>
+        <div style="display: flex; align-items: center; gap: 5px;">
             <input type="radio" name="ContractEligible" value="true" @onchange="e => OnContractEligibleChanged(true)" checked="@(ContractEligible == true)" />
             <label>Yes</label>
         </div>
-        <div>
+        <div style="display: flex; align-items: center; gap: 5px;">
             <input type="radio" name="ContractEligible" value="false" @onchange="e => OnContractEligibleChanged(false)" checked="@(ContractEligible == false)" />
             <label>No</label>
         </div>
     </div>
 
-    <div>
-        <label>Sex At Birth:</label>
-        <div>
+
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="min-width: 150px;">Sex At Birth:</label>
+        <div style="display: flex; align-items: center; gap: 5px;">
             <input type="radio" name="SexAtBirth" value="true" @onchange="e => OnSexAtBirthChanged(true)" checked="@(SexAtBirth == true)" />
             <label>Female</label>
         </div>
-        <div>
+        <div style="display: flex; align-items: center; gap: 5px;">
             <input type="radio" name="SexAtBirth" value="false" @onchange="e => OnSexAtBirthChanged(false)" checked="@(SexAtBirth == false)" />
             <label>Male</label>
         </div>
     </div>
 
-    <div>
-        <label>Community:</label>
-        <div>
+
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="min-width: 150px;">Community:</label>
+        <div style="display: flex; align-items: center; gap: 5px;">
             <input type="radio" name="Community" value="true" @onchange="e => OnCommunityChanged(true)" checked="@(Community == true)" />
             <label>19+</label>
         </div>
-        <div>
+        <div style="display: flex; align-items: center; gap: 5px;">
             <input type="radio" name="Community" value="false" @onchange="e => OnCommunityChanged(false)" checked="@(Community == false)" />
             <label>18-</label>
         </div>
     </div>
 
-    <div>
-        <label>Minor:</label>
-        <div>
+
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="min-width: 150px;">Minor:</label>
+        <div style="display: flex; align-items: center; gap: 5px;">
             <input type="radio" name="Minor" value="true" @onchange="e => OnMinorChanged(true)" checked="@(Minor == true)" />
             <label>True</label>
         </div>
-        <div>
+        <div style="display: flex; align-items: center; gap: 5px;">
             <input type="radio" name="Minor" value="false" @onchange="e => OnMinorChanged(false)" checked="@(Minor == false)" />
             <label>False</label>
         </div>
     </div>
 
-    <div>
-        <label>Athlete:</label>
-        <div>
+
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="min-width: 150px;">Athlete:</label>
+        <div style="display: flex; align-items: center; gap: 5px;">
             <input type="radio" name="Athlete" value="true" @onchange="e => OnAthleteChanged(true)" checked="@(Athlete == true)" />
             <label>True</label>
         </div>
-        <div>
+        <div style="display: flex; align-items: center; gap: 5px;">
             <input type="radio" name="Athlete" value="false" @onchange="e => OnAthleteChanged(false)" checked="@(Athlete == false)" />
             <label>False</label>
         </div>
     </div>
+
 
     <div>
         <label>ADA:</label>
