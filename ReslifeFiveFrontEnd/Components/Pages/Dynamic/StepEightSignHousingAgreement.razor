@@ -25,6 +25,11 @@
 <p>Payment 1 Start Date: @Payment1Start2024FW.ToString("MMMM dd, yyyy")</p>
 <p>Payment 1 End Date: @Payment1End2024FW.ToString("MMMM dd, yyyy")</p>
 <p>Payment 1 Duration: @Payment1Days days</p>
+<p>Period 1 Days: @Period1Days</p>
+<p>Period 1 Total Cost: @(Period1Total.HasValue ? $"${Period1Total:F2}" : "Not calculated")</p>
+<p>Period 1 Days (from Payment1Start): @Period1DaysFromPaymentStart</p>
+<p>Period 1 Total Cost (from Payment1Start): @(Period1TotalFromPaymentStart.HasValue ? $"${Period1TotalFromPaymentStart:F2}" : "Not calculated")</p>
+
 
 <p>Payment 2 Start Date: @Payment2Start2024FW.ToString("MMMM dd, yyyy")</p>
 <p>Payment 2 End Date: @Payment2End2024FW.ToString("MMMM dd, yyyy")</p>
@@ -141,6 +146,13 @@ else
     private DateTime Payment10Start2024FW;
     private DateTime Payment10End2024FW;
     private int Payment1Days;
+    private int Period1Days;
+    private decimal? Period1Total;
+    private int Period1DaysFromPaymentStart;
+    private decimal? Period1TotalFromPaymentStart;
+
+
+
     private int Period6Days;
     private decimal? Period6Total;
     private int Period6DaysFromPaymentStart;
@@ -439,6 +451,48 @@ else
             Period10Total = null;
             Period10DaysFromPaymentStart = 0;
             Period10TotalFromPaymentStart = null;
+        }
+        // Calculate Days Difference and Total Cost for Period 1
+        if (selectedStartDate.HasValue)
+        {
+            // Calculate using selected start date
+            var endDate = Payment1End2024FW;
+            Period1Days = (endDate - selectedStartDate.Value).Days + 1; // Include start and end date
+            CombinedDateRangeDisplay = $"{SelectedStartDateDisplay} - {endDate.ToString("MMMM dd, yyyy")} ({Period1Days} days)";
+            DaysDifferenceDisplay = Period1Days.ToString();
+
+            // Calculate total cost using daily rate
+            if (DailyRate.HasValue)
+            {
+                Period1Total = DailyRate.Value * Period1Days;
+                TotalCostDisplay = $"${Period1Total:F2}";
+            }
+            else
+            {
+                TotalCostDisplay = "Daily rate not specified";
+                Period1Total = null;
+            }
+
+            // Calculate using Payment1Start2024FW
+            Period1DaysFromPaymentStart = (Payment1End2024FW - Payment1Start2024FW).Days + 1; // Include start and end date
+            if (DailyRate.HasValue)
+            {
+                Period1TotalFromPaymentStart = DailyRate.Value * Period1DaysFromPaymentStart;
+            }
+            else
+            {
+                Period1TotalFromPaymentStart = null;
+            }
+        }
+        else
+        {
+            // Handle missing or invalid selected start date
+            DaysDifferenceDisplay = "Invalid or missing dates";
+            TotalCostDisplay = "Total cost cannot be calculated";
+            Period1Days = 0;
+            Period1Total = null;
+            Period1DaysFromPaymentStart = 0;
+            Period1TotalFromPaymentStart = null;
         }
 
 
