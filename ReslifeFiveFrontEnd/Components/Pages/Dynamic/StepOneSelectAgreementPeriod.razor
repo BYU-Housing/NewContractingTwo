@@ -30,46 +30,6 @@
     }
 </div>
 
-<h3>Hidden Developer Notes</h3>
-<!-- Bottom Section: URL Parameters Table -->
-<div class="row">
-    <div class="col-md-12">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Parameter Name</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var param in UrlParameters)
-                {
-                    <tr>
-                        <td>@GetFormattedParameterName(param.Key)</td>
-                        <td>
-                            @if (param.Key == "AgreementPeriod" && int.TryParse(param.Value, out var period))
-                            {
-                                @GetAgreementPeriodDescription(period)
-                            }
-                            else if ((param.Key == "SexAtBirth" || param.Key == "Community") && bool.TryParse(param.Value, out var booleanValue))
-                            {
-                                @GetBooleanDescription(param.Key, booleanValue)
-                            }
-                            else if (DateFields.Contains(param.Key) && DateTime.TryParse(param.Value, out var dateValue))
-                            {
-                                @dateValue.ToString("yyyy-MM-ddTHH:mm:ss")
-                            }
-                            else
-                            {
-                                @param.Value
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
 
 <!-- Additional Section: URL Parameters as String -->
 <div class="mt-4">
@@ -90,7 +50,7 @@
     };
     private Dictionary<int, string> AgreementPeriods = new();
     private Dictionary<string, string?> UrlParameters = new Dictionary<string, string?>();
-    private HashSet<string> DateFields = new() { "HelamanPriorityDate", "HeritagePriorityDate", "WyviewParkPriorityDate", "RivieraPriorityDate" };
+    // private HashSet<string> DateFields = new() { "HelamanPriorityDate", "HeritagePriorityDate", "WyviewParkPriorityDate", "RivieraPriorityDate" };
     private int? SelectedAgreementPeriod;
 
     private string UrlParametersString => string.Join(", ", UrlParameters.Select(p => $"{p.Key}={p.Value ?? "null"}"));
@@ -122,34 +82,34 @@
         }
     }
 
-    private string GetAgreementPeriodDescription(int agreementPeriod)
-    {
-        return AllPossibleAgreementPeriods.TryGetValue(agreementPeriod, out var description)
-            ? description.Name
-            : "Unknown Agreement Period";
-    }
+    // private string GetAgreementPeriodDescription(int agreementPeriod)
+    // {
+    //     return AllPossibleAgreementPeriods.TryGetValue(agreementPeriod, out var description)
+    //         ? description.Name
+    //         : "Unknown Agreement Period";
+    // }
 
-    private string GetBooleanDescription(string key, bool value)
-    {
-        return key switch
-        {
-            "SexAtBirth" => value ? "Female" : "Male",
-            "Community" => value ? "19+" : "18-",
-            _ => value ? "True" : "False"
-        };
-    }
+    // private string GetBooleanDescription(string key, bool value)
+    // {
+    //     return key switch
+    //     {
+    //         "SexAtBirth" => value ? "Female" : "Male",
+    //         "Community" => value ? "19+" : "18-",
+    //         _ => value ? "True" : "False"
+    //     };
+    // }
 
-    private string GetFormattedParameterName(string key)
-    {
-        return key.Replace("PriorityDate", " Priority Date")
-                  .Replace("SexAtBirth", "Sex At Birth")
-                  .Replace("AgreementPeriod", "Agreement Period")
-                  .Replace("Community", "Community")
-                  .Replace("Eligible", "Eligible")
-                  .Replace("REQMet", "Requirement Met")
-                  .Replace("ESA", "Emotional Support Animal")
-                  .Replace("Scholarship", "Scholarship");
-    }
+    // private string GetFormattedParameterName(string key)
+    // {
+    //     return key.Replace("PriorityDate", " Priority Date")
+    //               .Replace("SexAtBirth", "Sex At Birth")
+    //               .Replace("AgreementPeriod", "Agreement Period")
+    //               .Replace("Community", "Community")
+    //               .Replace("Eligible", "Eligible")
+    //               .Replace("REQMet", "Requirement Met")
+    //               .Replace("ESA", "Emotional Support Animal")
+    //               .Replace("Scholarship", "Scholarship");
+    // }
 
     private void OnAgreementPeriodSelected(int periodId)
     {
