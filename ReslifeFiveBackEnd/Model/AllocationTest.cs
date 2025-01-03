@@ -34,6 +34,8 @@ namespace ReslifeFiveBackEnd.Model
         public DateTime? ArrivalTime { get; set; }
         public DateTime? CheckInDate { get; set; }
         public DateTime? CheckOutDate { get; set; }
+        public DateTime? HoldExpiration { get; set; }
+        public DateTime? RoomateRequestExpiration { get; set; }
 
 
     }
