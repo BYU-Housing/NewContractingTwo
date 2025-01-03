@@ -20,6 +20,8 @@ namespace ReslifeFiveBackEnd.Model
         public decimal? DailyRate { get; set; }
         public int? RoomType { get; set; }
         public string TakenBy { get; set; } = string.Empty;
+        public string OnHoldFor { get; set; } = string.Empty;
+        public string RequestedRoommate { get; set; } = string.Empty;
 
     }
 }
