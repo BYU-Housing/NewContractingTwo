@@ -22,6 +22,7 @@ namespace ReslifeFiveBackEnd.Model
         public string TakenBy { get; set; } = string.Empty;
         public string OnHoldFor { get; set; } = string.Empty;
         public string RequestedRoommate { get; set; } = string.Empty;
+        public bool? Sex {  get; set; }
 
     }
 }
