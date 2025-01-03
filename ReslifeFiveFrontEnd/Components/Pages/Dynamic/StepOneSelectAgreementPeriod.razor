@@ -39,6 +39,40 @@
 
 <button class="btn btn-primary mt-3" @onclick="NavigateBack">Back</button>
 
+<h3 class="text-center">Matching Allocation Tests</h3>
+
+@if (MatchingAllocations != null && MatchingAllocations.Any())
+{
+    <div class="table-responsive mt-4">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var allocation in MatchingAllocations)
+                {
+                    <tr>
+                        <td>@allocation.Id</td>
+                        <td>@allocation.Bedspace</td>
+                        <td>@(allocation.Active.HasValue ? (allocation.Active.Value ? "Active" : "Inactive") : "Unknown")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="text-center mt-4">
+        <p>No matching Allocation Tests found for NetId: @NetId</p>
+    </div>
+}
+
+
 @code {
     private Dictionary<int, (string Name, string DateRange)> AllPossibleAgreementPeriods = new()
     {
@@ -55,6 +89,9 @@
 
     private string UrlParametersString => string.Join(", ", UrlParameters.Select(p => $"{p.Key}={p.Value ?? "null"}"));
 
+    private List<AllocationTest> MatchingAllocations = new();
+    private string? NetId;
+
     protected override void OnInitialized()
     {
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
@@ -65,9 +102,23 @@
             if (!string.IsNullOrEmpty(key))
             {
                 UrlParameters[key] = query[key];
+
+                // Capture NetId from the URL
+                if (key == "NetID")
+                {
+                    NetId = query[key];
+                }
+
+                // Capture AgreementPeriod from the URL
+                if (key == "AgreementPeriod" && int.TryParse(query[key], out var agreementPeriod))
+                {
+                    UrlParameters["AgreementPeriod"] = agreementPeriod.ToString();
+                }
             }
         }
 
+        // Fetch AllocationTest rows where NetId matches the URL parameter
+        LoadMatchingAllocations();
         if (UrlParameters.TryGetValue("AgreementPeriod", out var periodValue) && !string.IsNullOrWhiteSpace(periodValue))
         {
             foreach (var period in periodValue.Split(','))
@@ -110,6 +161,25 @@
     //               .Replace("ESA", "Emotional Support Animal")
     //               .Replace("Scholarship", "Scholarship");
     // }
+    private void LoadMatchingAllocations()
+    {
+        if (!string.IsNullOrEmpty(NetId) && UrlParameters.TryGetValue("AgreementPeriod", out var agreementPeriodStr) && int.TryParse(agreementPeriodStr, out var agreementPeriod))
+        {
+            MatchingAllocations = GenService.GetModel<AllocationTest>()
+                                            .Where(a => a.TakenBy == NetId && a.AgreementPeriod == agreementPeriod)
+                                            .ToList();
+        }
+        else if (!string.IsNullOrEmpty(NetId))
+        {
+            MatchingAllocations = GenService.GetModel<AllocationTest>()
+                                            .Where(a => a.TakenBy == NetId)
+                                            .ToList();
+        }
+        else
+        {
+            MatchingAllocations.Clear(); // No valid filtering parameters
+        }
+    }
 
     private void OnAgreementPeriodSelected(int periodId)
     {
