@@ -23,6 +23,13 @@ namespace ReslifeFiveBackEnd.Model
         public string OnHoldFor { get; set; } = string.Empty;
         public string RequestedRoommate { get; set; } = string.Empty;
         public bool? Sex {  get; set; }
+        public bool? Minor { get; set; }
+        public bool? EighteenMinus { get; set; }
+        public bool? NineteenPlus { get; set; }
+        public bool? REQMet { get; set; }
+        public bool? REQNotMet { get; set; }
+        public int? OccupantType { get; set; }
+
 
     }
 }
