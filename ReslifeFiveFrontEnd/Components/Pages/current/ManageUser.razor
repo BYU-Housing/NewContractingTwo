@@ -4,79 +4,200 @@
 @inject ITimeZoneService timeZone
 <h2>Manage Users and Permissions</h2>
 
+<div >
 
-<div>
-    <Button Color="ButtonColor.Primary" @onclick="AddUser">Add New User </Button>
-    <span class="d-flex justify-content-end">All Times Displayed in @_localTimeZone?.DaylightName</span>
+    <div>
+        <Button Color="ButtonColor.Primary" @onclick="AddUser">Add New User </Button>
+        @if(_localTimeZone != null)
+        {
+            <span class="d-flex justify-content-end">All Times Displayed in @_localTimeZone?.DaylightName</span>
+        }
+    </div>
+
+
+
+
+    <div class="row h-100">
+
+        <div class="col-11">
+            <Grid @ref="userGrid" TItem="User"
+                  DataProvider="UserDataProvider"
+                  Class="w-100 table table-hovor table-bordered table-striped"
+                  AllowPaging="true"
+                  FixedHeader="true"
+                  AllowSorting="true"
+                  AllowFiltering="true"
+                  AllowRowClick="true"
+                  OnRowDoubleClick="EditUser"
+                  PageSize="15"
+                  Responsive="true"
+                  AllowSelection = "true"
+                  SelectionMode="GridSelectionMode.Multiple"
+                  SelectedItemsChanged="OnSelectedUsersChanged">
+                <GridColumn TItem="User" HeaderText="Id" PropertyName="Id">
+                    @context.Id
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="PersonId" PropertyName="PersonId">
+                    @context.PersonId
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="Surname" PropertyName="Surname">
+                    @context.Surname
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="Rest Of Name" PropertyName="RestOfName">
+                    @context.RestOfName
+                </GridColumn>
+                <GridColumn TItem=" User" HeaderText="Preferred Name" PropertyName="PreferredFirstName">
+                    @context.PreferredFirstName
+                </GridColumn> 
+                <GridColumn TItem="User" HeaderText="Gender" PropertyName="Gender">
+                    @if (context.Gender == 0)
+                    {
+                        <span>M</span>
+                    }
+                    else
+                    {
+                        <span>F</span>
+                    }
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="Role" PropertyName="Role">
+                    @(context.Role?.Name ?? "Role Not Loaded")
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="Delete">
+                    <Button @onclick="() => DeleteUser(context)">
+                        <Icon Name="IconName.Trash3" />
+                    </Button>
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="BYU ID" PropertyName="ByuId">
+                    @context.ByuId
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="Net ID" PropertyName="NetId">
+                    @context.NetId
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="Date Of Birth" PropertyName="DateOfBirth">
+                    @(timeZone.ConvertUtcToLocal(context.DateOfBirth))
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="Marital Status" PropertyName="MaritalStatus">
+                    @context.MaritalStatus
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="Restricted" PropertyName="IsRestricted">
+                    @context.IsRestricted
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="Citizenship Country" PropertyName="CitizenshipCountry">
+                    @context.CitizenshipCountry
+                </GridColumn>
+            </Grid>
+        </div>
+
+        <div class="col-1">
+            <h3>Options</h3>
+            <Button @onclick="OpenAdditionOffCanvas" Color="ButtonColor.Primary">Add Users (CSV)</Button>
+            <Button @onclick="OpenUpdateOffCanvas" Color="ButtonColor.Primary">Update Users (CSV)</Button>
+        </div>
+    </div>
 </div>
 
 
 
 
 
-<div class="container-fluid vh-100">
-    <Grid @ref="userGrid" TItem="User"
-          DataProvider="UserDataProvider"
-          Class="w-100 table table-hovor table-bordered table-striped"
-          AllowPaging="true"
-          FixedHeader="true"
-          AllowRowClick="true"
-          OnRowDoubleClick="EditUser"
-          PageSize="15"
-          Responsive="true">
-        <GridColumn TItem="User" HeaderText="Id">
-            @context.Id
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="PersonId">
-            @context.PersonId
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Surname">
-            @context.Surname
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Rest Of Name">
-            @context.RestOfName
-        </GridColumn>
-        <GridColumn TItem=" User" HeaderText="Preferred Name">
-            @context.PreferredFirstName
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Gender">
-            @if (context.Gender == 0)
-            {
-                <span>M</span>
-            }
-            else
-            {
-                <span>F</span>
-            }
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Role">
-            @(context.Role?.Name ?? "Role Not Loaded")
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Delete">
-            <Button @onclick="() => DeleteUser(context)">
-                <Icon Name="IconName.Trash3" />
-            </Button>
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="BYU ID">
-            @context.ByuId
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Net ID">
-            @context.NetId
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Date Of Birth">
-            @(timeZone.ConvertUtcToLocal(context.DateOfBirth))
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Marital Status">
-            @context.MaritalStatus
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Restricted">
-            @context.IsRestricted
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Citizenship Country">
-            @context.CitizenshipCountry
-        </GridColumn>
-    </Grid>
-</div>
+<Offcanvas @ref="additionOffCanvas" Size="OffcanvasSize.Large"  Title="Add Users">
+    <BodyTemplate>
+        <Grid @ref="additionGrid" TItem="User" Data="additionUsers">
+            <GridColumn TItem="User" HeaderText="Id">
+                @context.Id
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Person Id">
+                @context.PersonId
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Surname">
+                @context.Surname
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Rest Of Name">
+                @context.RestOfName
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Preferred First Name">
+                @context.PreferredFirstName
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Gender">
+                @context.Gender
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Role">
+                @context.Role?.Name
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="BYU ID">
+                @context.ByuId
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="NetId">
+                @context.NetId
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="DOB">
+                @context.DateOfBirth
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Marital Status">
+                @context.MaritalStatus
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Restricted">
+                @context.IsRestricted
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Country">
+                @context.CitizenshipCountry
+            </GridColumn>
+        </Grid>
+    </BodyTemplate>
+    <FooterTemplate>
+
+    </FooterTemplate>
+</Offcanvas>
+
+
+
+
+<Offcanvas @ref="updateOffCanvas" Title="Update Users">
+    <BodyTemplate>
+        <Grid @ref="additionGrid" TItem="User" Data="additionUsers">
+            <GridColumn TItem="User" HeaderText="Id">
+                @context.Id
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Person Id">
+                @context.PersonId
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Surname">
+                @context.Surname
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Rest Of Name">
+                @context.RestOfName
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Preferred First Name">
+                @context.PreferredFirstName
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Gender">
+                @context.Gender
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Role">
+                @context.Role?.Name
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="BYU ID">
+                @context.ByuId
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="NetId">
+                @context.NetId
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="DOB">
+                @context.DateOfBirth
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Marital Status">
+                @context.MaritalStatus
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Restricted">
+                @context.IsRestricted
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Country">
+                @context.CitizenshipCountry
+            </GridColumn>
+        </Grid>
+    </BodyTemplate>
+</Offcanvas>
+
 
 
 <Modal @ref="ObjectAdditionModal" Title="Add/Edit User">
@@ -106,10 +227,15 @@
         <Button Color="ButtonColor.Primary" @onclick="UpsertObject">Save changes</Button>
     </FooterTemplate>
 </Modal>
-
 <ConfirmDialog @ref="dialog" />
 @code {
     #region Instantiations
+    private Offcanvas additionOffCanvas = default!;
+    private Offcanvas updateOffCanvas = default!;
+    private Grid<User> additionGrid = default!;
+    private Grid<User> updateGrid = default!;
+
+
     private Grid<User> userGrid = default!;
     public IEnumerable<User>? users;
     public User SelectedUser { get; set; } = new User();
@@ -118,15 +244,19 @@
     private ConfirmDialog dialog = default!;
     private bool gridUpdate = false;
     private TimeZoneInfo? _localTimeZone;
-    private DateTime testDateTime = DateTime.Now;
-    private DateTime testUtcDateTime = DateTime.Now;
-    private string localTimeZoneName = string.Empty;
+    private HashSet<User> selectedUsers = new();
+    private List<User> additionUsers = [];
+    private List<User> updateUsers = [];
 
-    protected override async Task OnInitializedAsync()
+
+
+    protected override void OnInitialized()
     {
         Roles = genService.GetModel<Role>().ToList();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
         _localTimeZone = await timeZone.GetUserTimeZoneAsync();
-        localTimeZoneName = await timeZone.GetUserTimeZoneNameAsync();
     }
 
 
@@ -137,8 +267,13 @@
             users = genService.GetModel<User>();
             gridUpdate = false;
         }
-        
+
         return await Task.FromResult(request.ApplyTo(users));
+    }
+    private Task OnSelectedUsersChanged(HashSet<User> users)
+    {
+        selectedUsers = users is not null && users.Any() ? users : new();
+        return Task.CompletedTask;
     }
     #endregion
 
@@ -152,7 +287,6 @@
     {
         SelectedUser = args.Item;
         await ObjectAdditionModal.ShowAsync();
-
     }
 
     private async Task DeleteUser(User user)
@@ -189,7 +323,7 @@
         gridUpdate = true;
         await userGrid.RefreshDataAsync();
         await ObjectAdditionModal.HideAsync();
-        
+
     }
 
     private async Task OnHideModalClick()
@@ -197,4 +331,28 @@
         await ObjectAdditionModal.HideAsync();
     }
     #endregion
+
+
+    #region CsvOffcanvases
+
+    private async Task OpenAdditionOffCanvas()
+    {
+        additionUsers.Clear();
+        await additionOffCanvas.ShowAsync();
+    }
+    private async Task OpenUpdateOffCanvas()
+    {
+        updateUsers.Clear();
+        await updateOffCanvas.ShowAsync();
+    }
+
+
+
+
+    #endregion
+
+
+
+
+
 }
