@@ -30,6 +30,10 @@ namespace ReslifeFiveBackEnd.Model
         public bool? REQNotMet { get; set; }
         public int? OccupantType { get; set; }
         public DateTime? DateContracted { get; set; }
+        public DateTime? DateCanceled { get; set; }
+        public DateTime? ArrivalTime { get; set; }
+        public DateTime? CheckInDate { get; set; }
+        public DateTime? CheckOutDate { get; set; }
 
 
     }
