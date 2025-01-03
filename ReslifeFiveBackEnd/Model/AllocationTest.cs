@@ -36,7 +36,8 @@ namespace ReslifeFiveBackEnd.Model
         public DateTime? CheckOutDate { get; set; }
         public DateTime? HoldExpiration { get; set; }
         public DateTime? RoomateRequestExpiration { get; set; }
-
-
+        public int? SwapPreference { get; set; }
+        public bool? LockCheckIn { get; set; }
+        public bool? FreezeActivity { get; set; }
     }
 }
