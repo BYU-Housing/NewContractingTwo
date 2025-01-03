@@ -19,6 +19,7 @@ namespace ReslifeFiveBackEnd.Model
         public int? AgreementPeriod { get; set; }
         public decimal? DailyRate { get; set; }
         public int? RoomType { get; set; }
+        public string TakenBy { get; set; } = string.Empty;
 
     }
 }
