@@ -40,5 +40,7 @@ namespace ReslifeFiveBackEnd.Model
         public bool? LockCheckIn { get; set; }
         public bool? FreezeActivity { get; set; }
         public int? GroupId { get; set; }
+        public DateTime? AllocationStartDate { get; set; }
+        public DateTime? AllocationEndDate { get; set; }
     }
 }
