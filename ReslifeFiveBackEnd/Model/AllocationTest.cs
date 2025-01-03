@@ -39,5 +39,6 @@ namespace ReslifeFiveBackEnd.Model
         public int? SwapPreference { get; set; }
         public bool? LockCheckIn { get; set; }
         public bool? FreezeActivity { get; set; }
+        public int? GroupId { get; set; }
     }
 }
