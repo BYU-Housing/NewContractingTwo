@@ -29,6 +29,7 @@ namespace ReslifeFiveBackEnd.Model
         public bool? REQMet { get; set; }
         public bool? REQNotMet { get; set; }
         public int? OccupantType { get; set; }
+        public DateTime? DateContracted { get; set; }
 
 
     }
