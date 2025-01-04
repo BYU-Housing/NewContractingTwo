@@ -34,10 +34,11 @@
                             <br />
                             <small>+ Freeze Activity(@GetUserSpecificOptionsWithNoFreeze(1))</small>
                             <br />
-                            <small>+ Taken By (@GetUserSpecificOptionsWithNoFreezeAndNotTaken(1))</small>
+                            <small>+ No Taken By (@GetUserSpecificOptionsWithNoFreezeAndNotTaken(1))</small>
                             <br />
-                            <small>+ On Hold For(@GetUserSpecificOptionsWithNoFreezeNotTakenAndNotOnHold(1))</small>
-
+                            <small>+ No On Hold For(@GetUserSpecificOptionsWithNoFreezeNotTakenAndNotOnHold(1))</small>
+                            <br />
+                            <small>+ No Requested Roommate (@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldAndNoRequestedRoommate(1))</small>
 
 
                         }
@@ -94,9 +95,11 @@
                             <br />
                             <small>+ Freeze Activity(@GetUserSpecificOptionsWithNoFreeze(2))</small>
                             <br />
-                            <small>+ Taken By (@GetUserSpecificOptionsWithNoFreezeAndNotTaken(2))</small>
+                            <small>+ No Taken By (@GetUserSpecificOptionsWithNoFreezeAndNotTaken(2))</small>
                             <br />
-                            <small>+ On Hold For(@GetUserSpecificOptionsWithNoFreezeNotTakenAndNotOnHold(2))</small>
+                            <small>+ No On Hold For(@GetUserSpecificOptionsWithNoFreezeNotTakenAndNotOnHold(2))</small>
+                            <br />
+                            <small>+ No Requested Roommate (@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldAndNoRequestedRoommate(2))</small>
                         }
                     </div>
                 </div>
@@ -152,9 +155,11 @@
                             <br />
                             <small>+ Freeze Activity(@GetUserSpecificOptionsWithNoFreeze(3))</small>
                             <br />
-                            <small>+ Taken By (@GetUserSpecificOptionsWithNoFreezeAndNotTaken(3))</small>
+                            <small>+ No Taken By (@GetUserSpecificOptionsWithNoFreezeAndNotTaken(3))</small>
                             <br />
-                            <small>+ On Hold For(@GetUserSpecificOptionsWithNoFreezeNotTakenAndNotOnHold(3))</small>
+                            <small>+ No On Hold For(@GetUserSpecificOptionsWithNoFreezeNotTakenAndNotOnHold(3))</small>
+                            <br />
+                            <small>+ No Requested Roommate (@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldAndNoRequestedRoommate(3))</small>
                         }
                     </div>
                 </div>
@@ -208,11 +213,13 @@
                             <br />
                             <small>User Specific Options (@GetUserSpecificOptionsCount(4))</small>
                             <br />
-                            <small>+ Freeze Activity(@GetUserSpecificOptionsWithNoFreeze(4))</small>
+                            <small>+ No Freeze Activity(@GetUserSpecificOptionsWithNoFreeze(4))</small>
                             <br />
-                            <small>+ Taken By (@GetUserSpecificOptionsWithNoFreezeAndNotTaken(4))</small>
+                            <small>+ No Taken By (@GetUserSpecificOptionsWithNoFreezeAndNotTaken(4))</small>
                             <br />
-                            <small>+ On Hold For(@GetUserSpecificOptionsWithNoFreezeNotTakenAndNotOnHold(4))</small>
+                            <small>+ No On Hold For(@GetUserSpecificOptionsWithNoFreezeNotTakenAndNotOnHold(4))</small>
+                            <br />
+                            <small>+ No Requested Roommate (@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldAndNoRequestedRoommate(4))</small>
                         }
                     </div>
                 </div>
@@ -512,6 +519,18 @@
         ) ?? 0;
     }
 
+    private int GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldAndNoRequestedRoommate(int area)
+    {
+        return AllocationTests?.Count(a =>
+            a.Active == true &&
+            a.Area == area &&
+            a.AgreementPeriod == AgreementPeriod &&
+            a.FreezeActivity == false &&
+            string.IsNullOrEmpty(a.TakenBy) &&
+            string.IsNullOrEmpty(a.OnHoldFor) &&
+            string.IsNullOrEmpty(a.RequestedRoommate)
+        ) ?? 0;
+    }
 
 
 }
