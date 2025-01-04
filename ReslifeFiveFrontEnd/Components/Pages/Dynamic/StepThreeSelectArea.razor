@@ -43,6 +43,9 @@
                             <small>+ Null Group ID (@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateAndNoGroup(1))</small>
                             <br />
                             <small>+ Occupant Type = Single(@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateNoGroupAndOccupantTypeOne(1))</small>
+                            <br />
+                            <small>+ Match Sex At Birth (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirth(1))</small>
+
 
 
 
@@ -109,6 +112,8 @@
                             <small>+ Null Group ID (@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateAndNoGroup(2))</small>
                             <br />
                             <small>+ Occupant Type = Single(@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateNoGroupAndOccupantTypeOne(2))</small>
+                            <br />
+                            <small>+ Match Sex At Birth (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirth(2))</small>
                         }
                     </div>
                 </div>
@@ -173,6 +178,8 @@
                             <small>+ Null Group ID (@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateAndNoGroup(3))</small>
                             <br />
                             <small>+ Occupant Type = Single(@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateNoGroupAndOccupantTypeOne(3))</small>
+                            <br />
+                            <small>+ Match Sex At Birth (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirth(3))</small>
                         }
                     </div>
                 </div>
@@ -237,6 +244,8 @@
                             <small>+ Null Group ID (@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateAndNoGroup(4))</small>
                             <br />
                             <small>+ Occupant Type = Single(@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateNoGroupAndOccupantTypeOne(4))</small>
+                            <br />
+                            <small>+ Match Sex At Birth (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirth(4))</small>
                         }
                     </div>
                 </div>
@@ -575,6 +584,38 @@
             a.OccupantType == 1
         ) ?? 0;
     }
+
+    private int GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirth(int area)
+    {
+        bool? sexAtBirth = null;
+
+        // Check if the SexAtBirth parameter exists and parse it as a boolean
+        if (UrlParameters.ContainsKey("SexAtBirth") && bool.TryParse(UrlParameters["SexAtBirth"], out var sexAtBirthValue))
+        {
+            sexAtBirth = sexAtBirthValue;
+        }
+
+        return AllocationTests?.Count(a =>
+            a.Active == true &&
+            a.Area == area &&
+            a.AgreementPeriod == AgreementPeriod &&
+            a.FreezeActivity == false &&
+            string.IsNullOrEmpty(a.TakenBy) &&
+            string.IsNullOrEmpty(a.OnHoldFor) &&
+            string.IsNullOrEmpty(a.RequestedRoommate) &&
+            a.GroupId == null &&
+            a.OccupantType == 1 &&
+            (!sexAtBirth.HasValue || a.Sex == sexAtBirth.Value)
+        ) ?? 0;
+    }
+
+
+
+
+
+
+
+
 
 
 }
