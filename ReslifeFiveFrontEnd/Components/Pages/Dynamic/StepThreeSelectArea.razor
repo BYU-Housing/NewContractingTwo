@@ -41,6 +41,8 @@
                             <small>+ No Requested Roommate (@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldAndNoRequestedRoommate(1))</small>
                             <br />
                             <small>+ Null Group ID (@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateAndNoGroup(1))</small>
+                            <br />
+                            <small>+ Occupant Type = Single(@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateNoGroupAndOccupantTypeOne(1))</small>
 
 
 
@@ -105,6 +107,8 @@
                             <small>+ No Requested Roommate (@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldAndNoRequestedRoommate(2))</small>
                             <br />
                             <small>+ Null Group ID (@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateAndNoGroup(2))</small>
+                            <br />
+                            <small>+ Occupant Type = Single(@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateNoGroupAndOccupantTypeOne(2))</small>
                         }
                     </div>
                 </div>
@@ -167,6 +171,8 @@
                             <small>+ No Requested Roommate (@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldAndNoRequestedRoommate(3))</small>
                             <br />
                             <small>+ Null Group ID (@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateAndNoGroup(3))</small>
+                            <br />
+                            <small>+ Occupant Type = Single(@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateNoGroupAndOccupantTypeOne(3))</small>
                         }
                     </div>
                 </div>
@@ -229,6 +235,8 @@
                             <small>+ No Requested Roommate (@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldAndNoRequestedRoommate(4))</small>
                             <br />
                             <small>+ Null Group ID (@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateAndNoGroup(4))</small>
+                            <br />
+                            <small>+ Occupant Type = Single(@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateNoGroupAndOccupantTypeOne(4))</small>
                         }
                     </div>
                 </div>
@@ -551,6 +559,20 @@
             string.IsNullOrEmpty(a.OnHoldFor) &&
             string.IsNullOrEmpty(a.RequestedRoommate) &&
             a.GroupId == null
+        ) ?? 0;
+    }
+    private int GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateNoGroupAndOccupantTypeOne(int area)
+    {
+        return AllocationTests?.Count(a =>
+            a.Active == true &&
+            a.Area == area &&
+            a.AgreementPeriod == AgreementPeriod &&
+            a.FreezeActivity == false &&
+            string.IsNullOrEmpty(a.TakenBy) &&
+            string.IsNullOrEmpty(a.OnHoldFor) &&
+            string.IsNullOrEmpty(a.RequestedRoommate) &&
+            a.GroupId == null &&
+            a.OccupantType == 1
         ) ?? 0;
     }
 
