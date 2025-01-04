@@ -33,6 +33,9 @@
                             <small>User Specific Options (@GetUserSpecificOptionsCount(1))</small>
                             <br />
                             <small>+ Freeze Activity(@GetUserSpecificOptionsWithNoFreeze(1))</small>
+                            <br />
+                            <small>+ Taken By (@GetUserSpecificOptionsWithNoFreezeAndNotTaken(1))</small>
+
 
                         }
                     </div>
@@ -87,6 +90,8 @@
                             <small>User Specific Options (@GetUserSpecificOptionsCount(2))</small>
                             <br />
                             <small>+ Freeze Activity(@GetUserSpecificOptionsWithNoFreeze(2))</small>
+                            <br />
+                            <small>+ Taken By (@GetUserSpecificOptionsWithNoFreezeAndNotTaken(2))</small>
                         }
                     </div>
                 </div>
@@ -141,6 +146,8 @@
                             <small>User Specific Options (@GetUserSpecificOptionsCount(3))</small>
                             <br />
                             <small>+ Freeze Activity(@GetUserSpecificOptionsWithNoFreeze(3))</small>
+                            <br />
+                            <small>+ Taken By (@GetUserSpecificOptionsWithNoFreezeAndNotTaken(3))</small>
                         }
                     </div>
                 </div>
@@ -195,6 +202,8 @@
                             <small>User Specific Options (@GetUserSpecificOptionsCount(4))</small>
                             <br />
                             <small>+ Freeze Activity(@GetUserSpecificOptionsWithNoFreeze(4))</small>
+                            <br />
+                            <small>+ Taken By (@GetUserSpecificOptionsWithNoFreezeAndNotTaken(4))</small>
                         }
                     </div>
                 </div>
@@ -470,5 +479,18 @@
             a.FreezeActivity == false
         ) ?? 0;
     }
+
+    private int GetUserSpecificOptionsWithNoFreezeAndNotTaken(int area)
+    {
+        return AllocationTests?.Count(a =>
+            a.Active == true &&
+            a.Area == area &&
+            a.AgreementPeriod == AgreementPeriod &&
+            a.FreezeActivity == false &&
+            string.IsNullOrEmpty(a.TakenBy)
+        ) ?? 0;
+    }
+
+
 
 }
