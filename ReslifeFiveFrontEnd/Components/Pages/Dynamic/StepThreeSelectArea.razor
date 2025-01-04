@@ -35,6 +35,9 @@
                             <small>+ Freeze Activity(@GetUserSpecificOptionsWithNoFreeze(1))</small>
                             <br />
                             <small>+ Taken By (@GetUserSpecificOptionsWithNoFreezeAndNotTaken(1))</small>
+                            <br />
+                            <small>+ On Hold For(@GetUserSpecificOptionsWithNoFreezeNotTakenAndNotOnHold(1))</small>
+
 
 
                         }
@@ -92,6 +95,8 @@
                             <small>+ Freeze Activity(@GetUserSpecificOptionsWithNoFreeze(2))</small>
                             <br />
                             <small>+ Taken By (@GetUserSpecificOptionsWithNoFreezeAndNotTaken(2))</small>
+                            <br />
+                            <small>+ On Hold For(@GetUserSpecificOptionsWithNoFreezeNotTakenAndNotOnHold(2))</small>
                         }
                     </div>
                 </div>
@@ -148,6 +153,8 @@
                             <small>+ Freeze Activity(@GetUserSpecificOptionsWithNoFreeze(3))</small>
                             <br />
                             <small>+ Taken By (@GetUserSpecificOptionsWithNoFreezeAndNotTaken(3))</small>
+                            <br />
+                            <small>+ On Hold For(@GetUserSpecificOptionsWithNoFreezeNotTakenAndNotOnHold(3))</small>
                         }
                     </div>
                 </div>
@@ -204,6 +211,8 @@
                             <small>+ Freeze Activity(@GetUserSpecificOptionsWithNoFreeze(4))</small>
                             <br />
                             <small>+ Taken By (@GetUserSpecificOptionsWithNoFreezeAndNotTaken(4))</small>
+                            <br />
+                            <small>+ On Hold For(@GetUserSpecificOptionsWithNoFreezeNotTakenAndNotOnHold(4))</small>
                         }
                     </div>
                 </div>
@@ -488,6 +497,18 @@
             a.AgreementPeriod == AgreementPeriod &&
             a.FreezeActivity == false &&
             string.IsNullOrEmpty(a.TakenBy)
+        ) ?? 0;
+    }
+
+    private int GetUserSpecificOptionsWithNoFreezeNotTakenAndNotOnHold(int area)
+    {
+        return AllocationTests?.Count(a =>
+            a.Active == true &&
+            a.Area == area &&
+            a.AgreementPeriod == AgreementPeriod &&
+            a.FreezeActivity == false &&
+            string.IsNullOrEmpty(a.TakenBy) &&
+            string.IsNullOrEmpty(a.OnHoldFor)
         ) ?? 0;
     }
 
