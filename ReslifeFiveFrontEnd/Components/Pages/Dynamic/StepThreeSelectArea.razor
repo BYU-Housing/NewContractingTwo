@@ -29,6 +29,8 @@
                             <small>Swappable (@GetSwappableCount(1) Swappable)</small>
                             <br />
                             <small>Seeking Replacement (@GetSeekingReplacementCount(1))</small>
+                            <br />
+                            <small>User Specific Options (@GetUserSpecificOptionsCount(1))</small>
                         }
                     </div>
                 </div>
@@ -78,6 +80,8 @@
                             <small>Swappable (@GetSwappableCount(2) Swappable)</small>
                             <br />
                             <small>Seeking Replacement (@GetSeekingReplacementCount(2))</small>
+                            <br />
+                            <small>User Specific Options (@GetUserSpecificOptionsCount(2))</small>
                         }
                     </div>
                 </div>
@@ -128,6 +132,8 @@
                             <small>Swappable (@GetSwappableCount(3) Swappable)</small>
                             <br />
                             <small>Seeking Replacement (@GetSeekingReplacementCount(3))</small>
+                            <br />
+                            <small>User Specific Options (@GetUserSpecificOptionsCount(3))</small>
                         }
                     </div>
                 </div>
@@ -178,6 +184,8 @@
                             <small>Swappable (@GetSwappableCount(4) Swappable)</small>
                             <br />
                             <small>Seeking Replacement (@GetSeekingReplacementCount(4))</small>
+                            <br />
+                            <small>User Specific Options (@GetUserSpecificOptionsCount(4))</small>
                         }
                     </div>
                 </div>
@@ -437,5 +445,11 @@
         _timerHeritage?.Dispose();
         _timerRiviera?.Dispose();
         _timerWyview?.Dispose();
+    }
+
+    private int GetUserSpecificOptionsCount(int area)
+    {
+        // Initially, use the same logic as GetActiveCount
+        return AllocationTests?.Count(a => a.Active == true && a.Area == area && a.AgreementPeriod == AgreementPeriod) ?? 0;
     }
 }
