@@ -45,6 +45,9 @@
                             <small>+ Occupant Type = Single(@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateNoGroupAndOccupantTypeOne(1))</small>
                             <br />
                             <small>+ Match Sex At Birth (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirth(1))</small>
+                            <br />
+                            <small>+ Minor (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirthAndOptionalMinorCheck(1))</small>
+
 
 
 
@@ -114,6 +117,8 @@
                             <small>+ Occupant Type = Single(@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateNoGroupAndOccupantTypeOne(2))</small>
                             <br />
                             <small>+ Match Sex At Birth (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirth(2))</small>
+                            <br />
+                            <small>+ Minor (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirthAndOptionalMinorCheck(2))</small>
                         }
                     </div>
                 </div>
@@ -180,6 +185,8 @@
                             <small>+ Occupant Type = Single(@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateNoGroupAndOccupantTypeOne(3))</small>
                             <br />
                             <small>+ Match Sex At Birth (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirth(3))</small>
+                            <br />
+                            <small>+ Minor (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirthAndOptionalMinorCheck(3))</small>
                         }
                     </div>
                 </div>
@@ -246,6 +253,8 @@
                             <small>+ Occupant Type = Single(@GetUserSpecificOptionsWithNoFreezeNotTakenNotOnHoldNoRequestedRoommateNoGroupAndOccupantTypeOne(4))</small>
                             <br />
                             <small>+ Match Sex At Birth (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirth(4))</small>
+                            <br />
+                            <small>+ Minor (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirthAndOptionalMinorCheck(4))</small>
                         }
                     </div>
                 </div>
@@ -609,6 +618,44 @@
         ) ?? 0;
     }
 
+    private int GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirthAndOptionalMinorCheck(int area)
+    {
+        bool? sexAtBirth = null;
+        bool? minor = null;
+        Func<AllocationTest, bool> additionalCondition = _ => true; // Default condition: always true
+
+        // Check if the SexAtBirth parameter exists and parse it as a boolean
+        if (UrlParameters.ContainsKey("SexAtBirth") && bool.TryParse(UrlParameters["SexAtBirth"], out var sexAtBirthValue))
+        {
+            sexAtBirth = sexAtBirthValue;
+        }
+
+        // Check if the Minor parameter exists and parse it as a boolean
+        if (UrlParameters.ContainsKey("Minor") && bool.TryParse(UrlParameters["Minor"], out var minorValue))
+        {
+            minor = minorValue;
+
+            // Add a condition for Minor only if Minor is true in the URL
+            if (minor == true)
+            {
+                additionalCondition = a => a.Minor == true;
+            }
+        }
+
+        return AllocationTests?.Count(a =>
+            a.Active == true &&
+            a.Area == area &&
+            a.AgreementPeriod == AgreementPeriod &&
+            a.FreezeActivity == false &&
+            string.IsNullOrEmpty(a.TakenBy) &&
+            string.IsNullOrEmpty(a.OnHoldFor) &&
+            string.IsNullOrEmpty(a.RequestedRoommate) &&
+            a.GroupId == null &&
+            a.OccupantType == 1 &&
+            (!sexAtBirth.HasValue || a.Sex == sexAtBirth.Value) &&
+            additionalCondition(a) // Apply the Minor condition dynamically
+        ) ?? 0;
+    }
 
 
 
