@@ -47,6 +47,9 @@
                             <small>+ Match Sex At Birth (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirth(1))</small>
                             <br />
                             <small>+ Minor (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirthAndOptionalMinorCheck(1))</small>
+                            <br />
+                            <small>+ Community (@AddCommunity(1))</small>
+
 
 
 
@@ -119,6 +122,8 @@
                             <small>+ Match Sex At Birth (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirth(2))</small>
                             <br />
                             <small>+ Minor (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirthAndOptionalMinorCheck(2))</small>
+                            <br />
+                            <small>+ Community (@AddCommunity(2))</small>
                         }
                     </div>
                 </div>
@@ -187,6 +192,8 @@
                             <small>+ Match Sex At Birth (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirth(3))</small>
                             <br />
                             <small>+ Minor (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirthAndOptionalMinorCheck(3))</small>
+                            <br />
+                            <small>+ Community (@AddCommunity(3))</small>
                         }
                     </div>
                 </div>
@@ -255,6 +262,8 @@
                             <small>+ Match Sex At Birth (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirth(4))</small>
                             <br />
                             <small>+ Minor (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirthAndOptionalMinorCheck(4))</small>
+                            <br />
+                            <small>+ Community (@AddCommunity(4))</small>
                         }
                     </div>
                 </div>
@@ -657,6 +666,46 @@
         ) ?? 0;
     }
 
+    private int AddCommunity(int area)
+    {
+        bool? sexAtBirth = null;
+        bool? minor = null;
+        Func<AllocationTest, bool> additionalCondition = _ => true; // Default condition: always true
+
+        // Parse SexAtBirth parameter
+        if (UrlParameters.ContainsKey("SexAtBirth") && bool.TryParse(UrlParameters["SexAtBirth"], out var sexAtBirthValue))
+        {
+            sexAtBirth = sexAtBirthValue;
+        }
+
+        // Parse Minor parameter
+        if (UrlParameters.ContainsKey("Minor") && bool.TryParse(UrlParameters["Minor"], out var minorValue))
+        {
+            minor = minorValue;
+
+            // Add a condition for Minor if Minor is true in the URL
+            if (minor == true)
+            {
+                additionalCondition = a => a.Minor == true;
+            }
+        }
+
+        // Filter allocation tests with all conditions
+        return AllocationTests?.Count(a =>
+            a.Active == true &&
+            a.Area == area &&
+            a.AgreementPeriod == AgreementPeriod &&
+            a.FreezeActivity == false &&
+            string.IsNullOrEmpty(a.TakenBy) &&
+            string.IsNullOrEmpty(a.OnHoldFor) &&
+            string.IsNullOrEmpty(a.RequestedRoommate) &&
+            a.GroupId == null &&
+            a.OccupantType == 1 &&
+            (!sexAtBirth.HasValue || a.Sex == sexAtBirth.Value) &&
+            additionalCondition(a) // Apply Minor condition dynamically
+
+        ) ?? 0;
+    }
 
 
 
