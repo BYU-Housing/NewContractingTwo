@@ -43,26 +43,17 @@
 
 @if (MatchingAllocations != null && MatchingAllocations.Any())
 {
-    <div class="table-responsive mt-4">
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var allocation in MatchingAllocations)
-                {
-                    <tr>
-                        <td>@allocation.Id</td>
-                        <td>@allocation.Bedspace</td>
-                        <td>@(allocation.Active.HasValue ? (allocation.Active.Value ? "Active" : "Inactive") : "Unknown")</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <div class="mt-4">
+        @foreach (var allocation in MatchingAllocations)
+        {
+            <div class="card mb-3 w-100" style="border: 1px solid #ccc;">
+                <div class="card-body">
+                    <p class="card-text">
+                        You are currently contracted for this agreement period. Your contract is for <strong>@allocation.Bedspace</strong>.
+                    </p>
+                </div>
+            </div>
+        }
     </div>
 }
 else
@@ -71,6 +62,9 @@ else
         <p>No matching Allocation Tests found for NetId: @NetId</p>
     </div>
 }
+
+
+
 
 
 @code {
