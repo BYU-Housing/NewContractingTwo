@@ -49,6 +49,8 @@
                             <small>+ Minor (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirthAndOptionalMinorCheck(1))</small>
                             <br />
                             <small>+ Community (@AddCommunity(1))</small>
+                            <br />
+                            <small>+ Community and REQMet (@AddCommunityAndREQMet(1))</small>
 
 
 
@@ -124,6 +126,9 @@
                             <small>+ Minor (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirthAndOptionalMinorCheck(2))</small>
                             <br />
                             <small>+ Community (@AddCommunity(2))</small>
+                            <br />
+                            <small>+ Community and REQMet (@AddCommunityAndREQMet(2))</small>
+
                         }
                     </div>
                 </div>
@@ -194,6 +199,9 @@
                             <small>+ Minor (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirthAndOptionalMinorCheck(3))</small>
                             <br />
                             <small>+ Community (@AddCommunity(3))</small>
+                            <br />
+                            <small>+ Community and REQMet (@AddCommunityAndREQMet(3))</small>
+
                         }
                     </div>
                 </div>
@@ -264,6 +272,9 @@
                             <small>+ Minor (@GetUserSpecificOptionsWithAllConditionsAndMatchingSexAtBirthAndOptionalMinorCheck(4))</small>
                             <br />
                             <small>+ Community (@AddCommunity(4))</small>
+                            <br />
+                            <small>+ Community and REQMet (@AddCommunityAndREQMet(4))</small>
+
                         }
                     </div>
                 </div>
@@ -714,6 +725,61 @@
         ) ?? 0;
     }
 
+    private int AddCommunityAndREQMet(int area)
+    {
+        bool? sexAtBirth = null;
+        bool? minor = null;
+        bool? community = null; // Community parameter
+        bool? reqMet = null;    // REQMet parameter
+        Func<AllocationTest, bool> additionalCondition = _ => true; // Default condition: always true
+
+        // Parse SexAtBirth parameter
+        if (UrlParameters.ContainsKey("SexAtBirth") && bool.TryParse(UrlParameters["SexAtBirth"], out var sexAtBirthValue))
+        {
+            sexAtBirth = sexAtBirthValue;
+        }
+
+        // Parse Minor parameter
+        if (UrlParameters.ContainsKey("Minor") && bool.TryParse(UrlParameters["Minor"], out var minorValue))
+        {
+            minor = minorValue;
+
+            // Add a condition for Minor if Minor is true in the URL
+            if (minor == true)
+            {
+                additionalCondition = a => a.Minor == true;
+            }
+        }
+
+        // Parse Community parameter
+        if (UrlParameters.ContainsKey("Community") && bool.TryParse(UrlParameters["Community"], out var communityValue))
+        {
+            community = communityValue;
+        }
+
+        // Parse REQMet parameter
+        if (UrlParameters.ContainsKey("REQMet") && bool.TryParse(UrlParameters["REQMet"], out var reqMetValue))
+        {
+            reqMet = reqMetValue;
+        }
+
+        // Filter allocation tests with all conditions
+        return AllocationTests?.Count(a =>
+            a.Active == true &&
+            a.Area == area &&
+            a.AgreementPeriod == AgreementPeriod &&
+            a.FreezeActivity == false &&
+            string.IsNullOrEmpty(a.TakenBy) &&
+            string.IsNullOrEmpty(a.OnHoldFor) &&
+            string.IsNullOrEmpty(a.RequestedRoommate) &&
+            a.GroupId == null &&
+            a.OccupantType == 1 &&
+            (!sexAtBirth.HasValue || a.Sex == sexAtBirth.Value) &&
+            additionalCondition(a) && // Apply Minor condition dynamically
+            (community == true ? a.NineteenPlus == true : a.EighteenMinus == true) && // Community condition
+            (reqMet == true ? a.REQMet == true : a.REQNotMet == true) // REQMet condition
+        ) ?? 0;
+    }
 
 
 
