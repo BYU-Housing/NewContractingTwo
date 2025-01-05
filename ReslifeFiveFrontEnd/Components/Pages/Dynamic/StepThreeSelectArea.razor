@@ -670,6 +670,7 @@
     {
         bool? sexAtBirth = null;
         bool? minor = null;
+        bool? community = null; // Community parameter
         Func<AllocationTest, bool> additionalCondition = _ => true; // Default condition: always true
 
         // Parse SexAtBirth parameter
@@ -690,6 +691,12 @@
             }
         }
 
+        // Parse Community parameter
+        if (UrlParameters.ContainsKey("Community") && bool.TryParse(UrlParameters["Community"], out var communityValue))
+        {
+            community = communityValue;
+        }
+
         // Filter allocation tests with all conditions
         return AllocationTests?.Count(a =>
             a.Active == true &&
@@ -702,10 +709,11 @@
             a.GroupId == null &&
             a.OccupantType == 1 &&
             (!sexAtBirth.HasValue || a.Sex == sexAtBirth.Value) &&
-            additionalCondition(a) // Apply Minor condition dynamically
-
+            additionalCondition(a) && // Apply Minor condition dynamically
+            (community == true ? a.NineteenPlus == true : a.EighteenMinus == true) // Add Community condition
         ) ?? 0;
     }
+
 
 
 
