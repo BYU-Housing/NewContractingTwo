@@ -160,34 +160,6 @@ else
         }
     }
 
-    // private string GetAgreementPeriodDescription(int agreementPeriod)
-    // {
-    //     return AllPossibleAgreementPeriods.TryGetValue(agreementPeriod, out var description)
-    //         ? description.Name
-    //         : "Unknown Agreement Period";
-    // }
-
-    // private string GetBooleanDescription(string key, bool value)
-    // {
-    //     return key switch
-    //     {
-    //         "SexAtBirth" => value ? "Female" : "Male",
-    //         "Community" => value ? "19+" : "18-",
-    //         _ => value ? "True" : "False"
-    //     };
-    // }
-
-    // private string GetFormattedParameterName(string key)
-    // {
-    //     return key.Replace("PriorityDate", " Priority Date")
-    //               .Replace("SexAtBirth", "Sex At Birth")
-    //               .Replace("AgreementPeriod", "Agreement Period")
-    //               .Replace("Community", "Community")
-    //               .Replace("Eligible", "Eligible")
-    //               .Replace("REQMet", "Requirement Met")
-    //               .Replace("ESA", "Emotional Support Animal")
-    //               .Replace("Scholarship", "Scholarship");
-    // }
     private void LoadMatchingAllocations()
     {
         if (!string.IsNullOrEmpty(NetId) && UrlParameters.TryGetValue("AgreementPeriod", out var agreementPeriodStr) && int.TryParse(agreementPeriodStr, out var agreementPeriod))
