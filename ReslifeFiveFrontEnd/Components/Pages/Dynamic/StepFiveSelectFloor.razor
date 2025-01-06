@@ -1,4 +1,5 @@
 ﻿@page "/stepFiveSelectFloor"
+@inject IGenService GenService
 @inject NavigationManager NavigationManager
 
 <h1 style="text-align: center;">Contracting Portal</h1>
@@ -18,19 +19,27 @@
     Please select the floor that you would like to live in.
 </p>
 
-
-<!-- Display Blocks Based on Area -->
+<!-- Display Floors with Total Allocations -->
 <div class="container">
-    @foreach (var block in AvailableBlocks)
+    @if (FloorsWithCounts.Any())
     {
-        <div class="card mb-3">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <span class="card-title">Floor @block</span>
+        @foreach (var floor in FloorsWithCounts)
+        {
+            <div class="card mb-3">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="card-title">Floor @floor.Key</span>
+                        <br />
+                        <small>Available Allocations: @floor.Value</small>
+                    </div>
+                    <button class="btn btn-primary" @onclick="() => NavigateToStepSix(floor.Key)">Select</button>
                 </div>
-                <button class="btn btn-primary" @onclick="() => NavigateToStepSix(block)">Select</button>
             </div>
-        </div>
+        }
+    }
+    else
+    {
+        <p>No floors available for the selected building.</p>
     }
 </div>
 
@@ -42,41 +51,42 @@
 
 @code {
     private string UrlParametersString = string.Empty;
-    private List<string> AvailableBlocks = new();
-    private int? Area;
+    private Dictionary<string, int> FloorsWithCounts = new();
+    private int? BuildingId;
+    private List<AllocationTest> AllocationTests = new();
 
     protected override void OnInitialized()
     {
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
 
-        // Use "&" as the parameter delimiter
+        // Combine all URL parameters into a single string
         UrlParametersString = string.Join("&", query.AllKeys.Select(key => $"{key}={query[key]}"));
 
-        // Parse the Area parameter
-        if (query["Area"] != null && int.TryParse(query["Area"], out var area))
+        // Parse the BuildingId parameter
+        if (query["BuildingId"] != null && int.TryParse(query["BuildingId"], out var buildingId))
         {
-            Area = area;
-            SetAvailableBlocks();
+            BuildingId = buildingId;
         }
+
+        // Load AllocationTests and calculate floor counts
+        AllocationTests = GenService.GetModel<AllocationTest>().Where(a => a.Building == BuildingId).ToList();
+        SetFloorsWithCounts();
     }
 
-    private void SetAvailableBlocks()
+    private void SetFloorsWithCounts()
     {
-        AvailableBlocks = Area switch
-        {
-            1 => new List<string> { "1100", "1200", "2100", "2000", "2200", "3100", "3200" },
-            2 => new List<string> { "1", "2", "3", "4" },
-            3 => new List<string> { "1", "2", "3" },
-            4 => new List<string> { "1", "2", "3" },
-            _ => new List<string> { "No blocks available for this area" }
-        };
+        FloorsWithCounts = AllocationTests
+            .GroupBy(a => a.Floor?.ToString() ?? "Unknown")
+            .ToDictionary(g => g.Key, g => g.Count());
     }
 
-    private void NavigateToStepSix(string block)
+
+    private void NavigateToStepSix(string floor)
     {
         // Construct query string with the selected floor
-        var queryParams = $"{UrlParametersString}&Floor={block}";
+        var queryParams = $"{UrlParametersString}&Floor={floor}";
         NavigationManager.NavigateTo($"/stepSixSelectBedspace?{queryParams}");
     }
 }
+
