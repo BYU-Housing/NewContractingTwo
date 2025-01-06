@@ -23,7 +23,18 @@ else
         <p>Image not available</p>
     </div>
 }
-
+<h4>Color Key</h4>
+<div class="color-key">
+    <div class="color-item">
+        <span class="color-box bg-danger"></span> Red = Employee
+    </div>
+    <div class="color-item">
+        <span class="color-box bg-secondary"></span> Gray = Not Available
+    </div>
+    <div class="color-item">
+        <span class="color-box bg-primary"></span> Blue = Available
+    </div>
+</div>
 <h4>Filtered Allocation Test Bedspaces:</h4>
 @if (FilteredAllocationTests.Any())
 {
@@ -37,11 +48,16 @@ else
         } *@
         @foreach (var allocation in FilteredAllocationTests.OrderBy(a => a.Bedspace))
         {
-            <button class="btn @(SelectedId == allocation.Id ? "btn-success" : "btn-primary")"
+            <button class="btn @(SelectedId == allocation.Id ? "btn-success" :
+                        (allocation.OccupantType == 7 ? "btn-danger" :
+                        (allocation.OccupantType == 5 ? "btn-secondary" :
+                        (allocation.OccupantType == 1 ? "btn-primary" : "btn-danger"))))"
                     @onclick="() => OnAllocationSelected(allocation)">
                 @GetFormattedBedspace(allocation.Bedspace)
             </button>
         }
+
+
 
     </div>
 }
@@ -86,7 +102,38 @@ else
 <div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #f8f9fa; color: gray; text-align: center; padding: 10px; font-size: small; border-top: 1px solid #ddd;">
     <p>@AllUrlParameters</p>
 </div>
+<style>
+    .color-key {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
 
+    .color-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+
+    .color-box {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+        border: 1px solid #ddd;
+    }
+
+    .bg-danger {
+        background-color: #dc3545; /* Red */
+    }
+
+    .bg-secondary {
+        background-color: #6c757d; /* Gray */
+    }
+
+    .bg-primary {
+        background-color: #007bff; /* Blue */
+    }
+</style>
 @code {
     private string AllUrlParameters = string.Empty;
     private List<AllocationTest> FilteredAllocationTests = new();
