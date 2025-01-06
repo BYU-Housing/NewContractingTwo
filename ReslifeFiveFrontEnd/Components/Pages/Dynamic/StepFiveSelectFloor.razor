@@ -53,6 +53,12 @@
     private string UrlParametersString = string.Empty;
     private Dictionary<string, int> FloorsWithCounts = new();
     private int? BuildingId;
+    private int? Area;
+    private bool? SexAtBirth;
+    private bool? Minor;
+    private bool? Community;
+    private bool? ReqMet;
+    private int? AgreementPeriod;
     private List<AllocationTest> AllocationTests = new();
 
     protected override void OnInitialized()
@@ -63,24 +69,74 @@
         // Combine all URL parameters into a single string
         UrlParametersString = string.Join("&", query.AllKeys.Select(key => $"{key}={query[key]}"));
 
+        // Parse the Area parameter
+        if (query["Area"] != null && int.TryParse(query["Area"], out var area))
+        {
+            Area = area;
+        }
+
         // Parse the BuildingId parameter
         if (query["BuildingId"] != null && int.TryParse(query["BuildingId"], out var buildingId))
         {
             BuildingId = buildingId;
         }
 
+        // Parse other parameters
+        if (query["SexAtBirth"] != null && bool.TryParse(query["SexAtBirth"], out var sexAtBirth))
+        {
+            SexAtBirth = sexAtBirth;
+        }
+        if (query["Minor"] != null && bool.TryParse(query["Minor"], out var minor))
+        {
+            Minor = minor;
+        }
+        if (query["Community"] != null && bool.TryParse(query["Community"], out var community))
+        {
+            Community = community;
+        }
+        if (query["REQMet"] != null && bool.TryParse(query["REQMet"], out var reqMet))
+        {
+            ReqMet = reqMet;
+        }
+        if (query["AgreementPeriod"] != null && int.TryParse(query["AgreementPeriod"], out var agreementPeriod))
+        {
+            AgreementPeriod = agreementPeriod;
+        }
+
         // Load AllocationTests and calculate floor counts
-        AllocationTests = GenService.GetModel<AllocationTest>().Where(a => a.Building == BuildingId).ToList();
+        AllocationTests = GenService.GetModel<AllocationTest>().ToList();
         SetFloorsWithCounts();
     }
 
     private void SetFloorsWithCounts()
     {
+        Func<AllocationTest, bool> additionalCondition = _ => true; // Default condition
+
+        if (Minor == true)
+        {
+            additionalCondition = a => a.Minor == true;
+        }
+
         FloorsWithCounts = AllocationTests
+            .Where(a =>
+                a.Active == true &&
+                a.Area == Area &&
+                a.Building == BuildingId &&
+                a.AgreementPeriod == AgreementPeriod &&
+                a.FreezeActivity == false &&
+                string.IsNullOrEmpty(a.TakenBy) &&
+                string.IsNullOrEmpty(a.OnHoldFor) &&
+                string.IsNullOrEmpty(a.RequestedRoommate) &&
+                a.GroupId == null &&
+                a.OccupantType == 1 &&
+                (!SexAtBirth.HasValue || a.Sex == SexAtBirth.Value) &&
+                additionalCondition(a) &&
+                (Community == true ? a.NineteenPlus == true : a.EighteenMinus == true) &&
+                (ReqMet == true ? a.REQMet == true : a.REQNotMet == true)
+            )
             .GroupBy(a => a.Floor?.ToString() ?? "Unknown")
             .ToDictionary(g => g.Key, g => g.Count());
     }
-
 
     private void NavigateToStepSix(string floor)
     {
@@ -89,4 +145,3 @@
         NavigationManager.NavigateTo($"/stepSixSelectBedspace?{queryParams}");
     }
 }
-
