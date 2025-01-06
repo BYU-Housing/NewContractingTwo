@@ -54,6 +54,17 @@
                     <p class="card-text">
                         Active: <strong>@(allocation.Active == true ? "Yes" : "No")</strong>
                     </p>
+                    <div class="button-container">
+                        <button class="btn btn-primary uniform-button">
+                            Cancel My Agreement
+                        </button>
+                        <button class="btn btn-primary uniform-button">
+                            Seeking Replacement
+                        </button>
+                        <button class="btn btn-primary uniform-button">
+                            Seeking Swap
+                        </button>
+                    </div>
                 </div>
             </div>
         }
@@ -61,13 +72,26 @@
 }
 else
 {
-    <div class="text-center mt-4">
+@*     <div class="text-center mt-4">
         <p>No rows</p>
-    </div>
+    </div> *@
 }
 
 
 
+<style>
+    .button-container {
+        display: flex;
+        justify-content: space-between; /* Ensures even spacing between buttons */
+        gap: 10px; /* Additional space between buttons */
+    }
+
+    .uniform-button {
+        flex: 1; /* Ensures all buttons are the same size */
+        min-width: 120px; /* Minimum width for the buttons */
+        text-align: center; /* Centers text inside the buttons */
+    }
+</style>
 
 
 
