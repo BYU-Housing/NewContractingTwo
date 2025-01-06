@@ -76,6 +76,47 @@ else
         <p>No rows</p>
     </div> *@
 }
+<h3 class="text-center">Allocations On Hold For You</h3>
+
+@if (OnHoldAllocations != null && OnHoldAllocations.Any())
+{
+    <div class="mt-4">
+        @foreach (var allocation in OnHoldAllocations)
+        {
+            <div class="card mb-3 w-100" style="border: 1px solid #ccc;">
+                <div class="card-body">
+                    <p class="card-text">
+                        The Bedspace: <strong>@allocation.Bedspace</strong> has been placed on an administrative hold for you. You have 24 hours to accept this hold before it will expire and be offered to someone else. 
+                    </p>
+
+@*                     <div class="button-container">
+                        <button class="btn btn-primary uniform-button">
+                            Accept Hold
+                        </button>
+                        <button class="btn btn-primary uniform-button">
+                            Decline Hold
+                        </button>
+
+                    </div> *@
+                    <div class="button-container">
+                        <button class="btn btn-success uniform-button">
+                            Accept Hold
+                        </button>
+                        <button class="btn btn-danger uniform-button">
+                            Decline Hold
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="text-center mt-4">
+        <p>No allocations on hold for you.</p>
+    </div>
+}
 
 
 
@@ -91,6 +132,26 @@ else
         min-width: 120px; /* Minimum width for the buttons */
         text-align: center; /* Centers text inside the buttons */
     }
+
+    .btn-success {
+        background-color: #28a745; /* Green */
+        border-color: #28a745; /* Green border */
+    }
+
+        .btn-success:hover {
+            background-color: #218838; /* Darker green on hover */
+            border-color: #1e7e34;
+        }
+
+    .btn-danger {
+        background-color: #dc3545; /* Red */
+        border-color: #dc3545; /* Red border */
+    }
+
+        .btn-danger:hover {
+            background-color: #c82333; /* Darker red on hover */
+            border-color: #bd2130;
+        }
 </style>
 
 
@@ -115,6 +176,7 @@ else
 
     private List<AllocationTest> MatchingAllocations = new();
     private string? NetId;
+    private List<AllocationTest> OnHoldAllocations = new();
 
     protected override void OnInitialized()
     {
@@ -143,6 +205,7 @@ else
 
         // Fetch AllocationTest rows where NetId matches the URL parameter
         LoadMatchingAllocations();
+        LoadOnHoldAllocations();
         if (UrlParameters.TryGetValue("AgreementPeriod", out var periodValue) && !string.IsNullOrWhiteSpace(periodValue))
         {
             foreach (var period in periodValue.Split(','))
@@ -179,6 +242,19 @@ else
         }
     }
 
+    private void LoadOnHoldAllocations()
+    {
+        if (!string.IsNullOrEmpty(NetId))
+        {
+            OnHoldAllocations = GenService.GetModel<AllocationTest>()
+                                          .Where(a => a.OnHoldFor == NetId && a.Active == true)
+                                          .ToList();
+        }
+        else
+        {
+            OnHoldAllocations.Clear(); // No valid filtering parameters
+        }
+    }
 
     private void OnAgreementPeriodSelected(int periodId)
     {
@@ -207,4 +283,8 @@ else
         var queryParams = string.Join("&", UrlParameters.Select(p => $"{Uri.EscapeDataString(p.Key)}={Uri.EscapeDataString(p.Value ?? string.Empty)}"));
         NavigationManager.NavigateTo($"/createTestUser?{queryParams}");
     }
+
+
+
+
 }
