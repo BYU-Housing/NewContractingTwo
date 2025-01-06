@@ -52,6 +52,7 @@
                         You are currently contracted for this agreement period. Your contract is for <strong>@allocation.Bedspace</strong>.
                     </p>
                     <p>
+                        <!-- Cancel My Contract Button -->
                         <button class="btn btn-primary" disabled>
                             @if (allocation.DateCanceled == null)
                             {
@@ -60,6 +61,23 @@
                             else
                             {
                                 <span>@allocation.DateCanceled?.ToString("MM/dd/yyyy")</span>
+                            }
+                        </button>
+                    </p>
+                    <p>
+                        <!-- Seeking Replacement Button -->
+                        <button class="btn @(allocation.SeekingReplacement == true ? "btn-danger" : "btn-success")" disabled>
+                            @if (allocation.SeekingReplacement == true)
+                            {
+                                <span>Seeking Replacement</span>
+                            }
+                            else if (allocation.SeekingReplacement == false)
+                            {
+                                <span>Not Seeking Replacement</span>
+                            }
+                            else
+                            {
+                                <span>Unknown</span>
                             }
                         </button>
                     </p>
@@ -74,6 +92,7 @@ else
         <p>No matching Allocation Tests found for NetId: @NetId</p>
     </div>
 }
+
 
 
 
