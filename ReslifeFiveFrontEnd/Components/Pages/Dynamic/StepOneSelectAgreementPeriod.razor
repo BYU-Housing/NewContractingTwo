@@ -75,7 +75,15 @@
                             <span>Status: Unknown</span>
                         }
                     </p>
-                    <button class="btn btn-primary">Cancel My Contract</button>
+                    @if (allocation.DateCanceled == null)
+                    {
+                        <button class="btn btn-primary">Cancel My Contract</button>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Canceled On @allocation.DateCanceled?.ToString("MM/dd/yyyy")</span>
+                    }
+
 
                 </div>
             </div>
