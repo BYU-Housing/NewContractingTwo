@@ -49,42 +49,11 @@
             <div class="card mb-3 w-100" style="border: 1px solid #ccc;">
                 <div class="card-body">
                     <p class="card-text">
-                        You are currently contracted for this agreement period. Your contract is for <strong>@allocation.Bedspace</strong>.
+                        Bedspace: <strong>@allocation.Bedspace</strong>
                     </p>
-                    <p>
-                        @if (allocation.DateCanceled == null)
-                        {
-                            <span>Contract is active</span>
-                        }
-                        else
-                        {
-                            <span>Contract canceled on @allocation.DateCanceled?.ToString("MM/dd/yyyy")</span>
-                        }
+                    <p class="card-text">
+                        Active: <strong>@(allocation.Active == true ? "Yes" : "No")</strong>
                     </p>
-                    <p>
-                        @if (allocation.SeekingReplacement == true)
-                        {
-                            <span>Status: Seeking Replacement</span>
-                        }
-                        else if (allocation.SeekingReplacement == false)
-                        {
-                            <span>Status: Not Seeking Replacement</span>
-                        }
-                        else
-                        {
-                            <span>Status: Unknown</span>
-                        }
-                    </p>
-                    @if (allocation.DateCanceled == null)
-                    {
-                        <button class="btn btn-primary">Cancel My Contract</button>
-                    }
-                    else
-                    {
-                        <span class="text-muted">Canceled On @allocation.DateCanceled?.ToString("MM/dd/yyyy")</span>
-                    }
-
-
                 </div>
             </div>
         }
@@ -93,7 +62,7 @@
 else
 {
     <div class="text-center mt-4">
-        <p>No matching Allocation Tests found for NetId: @NetId</p>
+        <p>No rows</p>
     </div>
 }
 
@@ -169,13 +138,15 @@ else
         if (!string.IsNullOrEmpty(NetId) && UrlParameters.TryGetValue("AgreementPeriod", out var agreementPeriodStr) && int.TryParse(agreementPeriodStr, out var agreementPeriod))
         {
             MatchingAllocations = GenService.GetModel<AllocationTest>()
-                                            .Where(a => a.TakenBy == NetId && a.AgreementPeriod == agreementPeriod)
+                                            .Where(a => a.TakenBy == NetId
+                                                        && a.AgreementPeriod == agreementPeriod
+                                                        && a.Active == true)
                                             .ToList();
         }
         else if (!string.IsNullOrEmpty(NetId))
         {
             MatchingAllocations = GenService.GetModel<AllocationTest>()
-                                            .Where(a => a.TakenBy == NetId)
+                                            .Where(a => a.TakenBy == NetId && a.Active == true)
                                             .ToList();
         }
         else
@@ -183,6 +154,7 @@ else
             MatchingAllocations.Clear(); // No valid filtering parameters
         }
     }
+
 
     private void OnAgreementPeriodSelected(int periodId)
     {
