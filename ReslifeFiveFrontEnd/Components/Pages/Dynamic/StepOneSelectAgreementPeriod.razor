@@ -283,28 +283,56 @@ else
     {
         if (!string.IsNullOrEmpty(NetId))
         {
-            OnHoldAllocations = GenService.GetModel<AllocationTest>()
-                                          .Where(a => a.OnHoldFor == NetId && a.Active == true)
-                                          .ToList();
+            if (UrlParameters.TryGetValue("AgreementPeriod", out var agreementPeriodStr) && int.TryParse(agreementPeriodStr, out var agreementPeriod))
+            {
+                // Filter with both NetId and AgreementPeriod
+                OnHoldAllocations = GenService.GetModel<AllocationTest>()
+                                              .Where(a => a.OnHoldFor == NetId
+                                                          && a.Active == true
+                                                          && a.AgreementPeriod == agreementPeriod)
+                                              .ToList();
+            }
+            else
+            {
+                // Filter only with NetId if AgreementPeriod is not provided
+                OnHoldAllocations = GenService.GetModel<AllocationTest>()
+                                              .Where(a => a.OnHoldFor == NetId && a.Active == true)
+                                              .ToList();
+            }
         }
         else
         {
             OnHoldAllocations.Clear(); // No valid filtering parameters
         }
     }
+
     private void LoadRequestedRoommateAllocations()
     {
         if (!string.IsNullOrEmpty(NetId))
         {
-            RequestedRoommateAllocations = GenService.GetModel<AllocationTest>()
-                                                    .Where(a => a.RequestedRoommate == NetId && a.Active == true)
-                                                    .ToList();
+            if (UrlParameters.TryGetValue("AgreementPeriod", out var agreementPeriodStr) && int.TryParse(agreementPeriodStr, out var agreementPeriod))
+            {
+                // Filter with both NetId and AgreementPeriod
+                RequestedRoommateAllocations = GenService.GetModel<AllocationTest>()
+                                                         .Where(a => a.RequestedRoommate == NetId
+                                                                     && a.Active == true
+                                                                     && a.AgreementPeriod == agreementPeriod)
+                                                         .ToList();
+            }
+            else
+            {
+                // Filter only with NetId if AgreementPeriod is not provided
+                RequestedRoommateAllocations = GenService.GetModel<AllocationTest>()
+                                                         .Where(a => a.RequestedRoommate == NetId && a.Active == true)
+                                                         .ToList();
+            }
         }
         else
         {
             RequestedRoommateAllocations.Clear(); // No valid filtering parameters
         }
     }
+
 
     private void OnAgreementPeriodSelected(int periodId)
     {
