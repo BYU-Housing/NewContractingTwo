@@ -85,6 +85,7 @@ else
     private int? Floor { get; set; }
     private int? Area { get; set; }
     private int? BuildingId { get; set; }
+    private int? AgreementPeriod { get; set; } // Add this line
     private int? SelectedId { get; set; } // Track the selected button ID
     private AllocationTest? SelectedAllocation { get; set; } // Nullable to avoid initialization warnings
     private string? SelectedSwapPreference { get; set; } // Nullable to avoid initialization warnings
@@ -106,15 +107,21 @@ else
 
         // Extract BuildingId parameter
         BuildingId = queryParams.TryGetValue("BuildingId", out var buildingIdValue) && int.TryParse(buildingIdValue, out var bId) ? bId : (int?)null;
+       
+        // Extract AgreementPeriod parameter
+        AgreementPeriod = queryParams.TryGetValue("AgreementPeriod", out var agreementValue) && int.TryParse(agreementValue, out var agreement) ? agreement : (int?)null;
+
 
         // Fetch and filter AllocationTest rows
         FilteredAllocationTests = GenService.GetModel<AllocationTest>()
-            .Where(allocation =>
-                allocation.Active == true && // Only rows where Active = true
-                (!Area.HasValue || allocation.Area == Area.Value) &&
-                (!BuildingId.HasValue || allocation.Building == BuildingId.Value) &&
-                (!Floor.HasValue || allocation.Floor == Floor.Value))
-            .ToList();
+                .Where(a =>
+                    a.Area == Area &&
+                    a.Building == BuildingId &&
+                    a.AgreementPeriod == AgreementPeriod &&
+                    a.Floor == Floor &&
+                    a.Active == true
+                )
+                .ToList();
     }
 
     private void OnAllocationSelected(AllocationTest allocation)
