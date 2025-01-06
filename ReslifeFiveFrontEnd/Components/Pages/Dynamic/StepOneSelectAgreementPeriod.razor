@@ -1,8 +1,27 @@
 ﻿@page "/selectAgreementPeriod"
 @inject IGenService GenService
 @inject NavigationManager NavigationManager
+<h1 style="text-align: center;">Contracting Portal</h1>
+<!-- Progress Bar -->
+<div class="progress mb-4">
+    <div class="progress-bar"
+         role="progressbar"
+         style="width: 10%; background-color: #007bff;"
+         aria-valuenow="1"
+         aria-valuemin="0"
+         aria-valuemax="10">
+        Step 1 of 10
+    </div>
+</div>
+<h5>Step 1 - Select an Agreement Period</h5>
+<p>Please select an agreement period for which you would like to contract. Please note that if you
+    have already signed a contract for an agreement period you will need resolve that contract before you may sign another.
+    If your signed contract has not started .... If your contract has started you will need to SeekReplacement SubmitPetition or Swap...
+    If a hold has been placed for you, you will need to accept or reject that hold....
+</p>
 
-<h3>Select Agreement Period</h3>
+
+
 
 <!-- Top Section: Dynamic Agreement Period Blocks -->
 <div class="mb-4">
@@ -31,11 +50,6 @@
 </div>
 
 
-<!-- Additional Section: URL Parameters as String -->
-<div class="mt-4">
-    <h4 style="opacity: 0.1;">URL Parameters String</h4>
-    <p style="opacity: 0.1;">@UrlParametersString</p>
-</div>
 
 <button class="btn btn-primary mt-3" @onclick="NavigateBack">Back</button>
 
@@ -170,7 +184,11 @@ else
         }
 </style>
 
-
+<!-- Additional Section: URL Parameters as String -->
+<div class="mt-4">
+    <h4 style="opacity: 0.1;">URL Parameters String</h4>
+    <p style="opacity: 0.1;">@UrlParametersString</p>
+</div>
 
 
 
