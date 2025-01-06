@@ -58,14 +58,15 @@ else
                         (allocation.OccupantType == 7 ? "btn-danger" :
                         (allocation.OccupantType == 5 ? "btn-secondary" :
                         (allocation.OccupantType == 1
-                            ? (!string.IsNullOrEmpty(allocation.RequestedRoommate)
-                                ? "btn-warning text-dark" :
-                                (!string.IsNullOrEmpty(allocation.OnHoldFor) ? "btn-warning" : "btn-primary"))
+                            ? (!string.IsNullOrEmpty(allocation.TakenBy) ? "btn-purple" :
+                                (!string.IsNullOrEmpty(allocation.RequestedRoommate) ? "btn-warning text-dark" :
+                                (!string.IsNullOrEmpty(allocation.OnHoldFor) ? "btn-warning" : "btn-primary")))
                             : "btn-danger"))))"
                     @onclick="() => OnAllocationSelected(allocation)">
                 @GetFormattedBedspace(allocation.Bedspace)
             </button>
         }
+
 
 
 
@@ -153,6 +154,17 @@ else
     .bg-success {
         background-color: #28a745; /* Green */
     }
+
+    .btn-purple {
+        background-color: #6f42c1; /* Bootstrap's purple */
+        color: #fff; /* White text for contrast */
+        border-color: #6f42c1; /* Match border to background */
+    }
+
+        .btn-purple:hover {
+            background-color: #5a379d; /* Darker purple for hover effect */
+            border-color: #5a379d;
+        }
 </style>
 @code {
     private string AllUrlParameters = string.Empty;
