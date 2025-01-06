@@ -118,6 +118,40 @@ else
     </div>
 }
 
+<h3 class="text-center">Requested Roommate Allocations</h3>
+
+@if (RequestedRoommateAllocations != null && RequestedRoommateAllocations.Any())
+{
+    <div class="mt-4">
+        @foreach (var allocation in RequestedRoommateAllocations)
+        {
+            <div class="card mb-3 w-100" style="border: 1px solid #ccc;">
+                <div class="card-body">
+                    <p class="card-text">
+                        Bedspace: <strong>@allocation.Bedspace</strong>
+                    </p>
+                    <p class="card-text">
+                        Requested By: <strong>@allocation.RequestedRoommate</strong>
+                    </p>
+                    <div class="button-container">
+                        <button class="btn btn-success uniform-button">
+                            Accept Request
+                        </button>
+                        <button class="btn btn-danger uniform-button">
+                            Decline Request
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="text-center mt-4">
+        <p>No roommate requests found.</p>
+    </div>
+}
 
 
 <style>
@@ -177,6 +211,7 @@ else
     private List<AllocationTest> MatchingAllocations = new();
     private string? NetId;
     private List<AllocationTest> OnHoldAllocations = new();
+    private List<AllocationTest> RequestedRoommateAllocations = new();
 
     protected override void OnInitialized()
     {
@@ -206,6 +241,8 @@ else
         // Fetch AllocationTest rows where NetId matches the URL parameter
         LoadMatchingAllocations();
         LoadOnHoldAllocations();
+        LoadRequestedRoommateAllocations();
+
         if (UrlParameters.TryGetValue("AgreementPeriod", out var periodValue) && !string.IsNullOrWhiteSpace(periodValue))
         {
             foreach (var period in periodValue.Split(','))
@@ -253,6 +290,19 @@ else
         else
         {
             OnHoldAllocations.Clear(); // No valid filtering parameters
+        }
+    }
+    private void LoadRequestedRoommateAllocations()
+    {
+        if (!string.IsNullOrEmpty(NetId))
+        {
+            RequestedRoommateAllocations = GenService.GetModel<AllocationTest>()
+                                                    .Where(a => a.RequestedRoommate == NetId && a.Active == true)
+                                                    .ToList();
+        }
+        else
+        {
+            RequestedRoommateAllocations.Clear(); // No valid filtering parameters
         }
     }
 
