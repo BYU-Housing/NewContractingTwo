@@ -34,6 +34,12 @@ else
     <div class="color-item">
         <span class="color-box bg-primary"></span> Blue = Available
     </div>
+    <div class="color-item">
+        <span class="color-box bg-warning text-dark" style="background-color: orange;"></span> Orange = On Hold
+    </div>
+    <div class="color-item">
+        <span class="color-box bg-success"></span> Green = Selected
+    </div>
 </div>
 <h4>Filtered Allocation Test Bedspaces:</h4>
 @if (FilteredAllocationTests.Any())
@@ -51,11 +57,17 @@ else
             <button class="btn @(SelectedId == allocation.Id ? "btn-success" :
                         (allocation.OccupantType == 7 ? "btn-danger" :
                         (allocation.OccupantType == 5 ? "btn-secondary" :
-                        (allocation.OccupantType == 1 ? "btn-primary" : "btn-danger"))))"
+                        (allocation.OccupantType == 1
+                            ? (!string.IsNullOrEmpty(allocation.RequestedRoommate)
+                                ? "btn-warning text-dark" :
+                                (!string.IsNullOrEmpty(allocation.OnHoldFor) ? "btn-warning" : "btn-primary"))
+                            : "btn-danger"))))"
                     @onclick="() => OnAllocationSelected(allocation)">
                 @GetFormattedBedspace(allocation.Bedspace)
             </button>
         }
+
+
 
 
 
@@ -132,6 +144,14 @@ else
 
     .bg-primary {
         background-color: #007bff; /* Blue */
+    }
+
+    .bg-warning {
+        background-color: #ffc107; /* Yellow/Orange */
+    }
+
+    .bg-success {
+        background-color: #28a745; /* Green */
     }
 </style>
 @code {
