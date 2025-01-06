@@ -51,6 +51,18 @@
                     <p class="card-text">
                         You are currently contracted for this agreement period. Your contract is for <strong>@allocation.Bedspace</strong>.
                     </p>
+                    <p>
+                        <button class="btn btn-primary" disabled>
+                            @if (allocation.DateCanceled == null)
+                            {
+                                <span>Cancel My Contract</span>
+                            }
+                            else
+                            {
+                                <span>@allocation.DateCanceled?.ToString("MM/dd/yyyy")</span>
+                            }
+                        </button>
+                    </p>
                 </div>
             </div>
         }
@@ -62,6 +74,8 @@ else
         <p>No matching Allocation Tests found for NetId: @NetId</p>
     </div>
 }
+
+
 
 
 
