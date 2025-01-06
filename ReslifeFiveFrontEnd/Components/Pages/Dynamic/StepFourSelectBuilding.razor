@@ -37,11 +37,11 @@
 
 
 
-<!-- Display URL Parameters as a String -->
+@* <!-- Display URL Parameters as a String -->
 <div class="mt-4">
     <h4>URL Parameters</h4>
     <p>@UrlParametersString</p>
-</div>
+</div> *@
 
 @code {
     private int? Area;
@@ -157,20 +157,7 @@
         // Load AllocationTests from GenService
         AllocationTests = GenService.GetModel<AllocationTest>().ToList();
     }
-    // private int GetAvailableCount(int buildingId)
-    // {
-    //     return AllocationTests?.Count(a =>
-    //         a.Active == true &&
-    //         a.Area == Area &&
-    //         a.Building == buildingId &&
-    //         a.FreezeActivity == false &&
-    //         string.IsNullOrEmpty(a.TakenBy) &&
-    //         string.IsNullOrEmpty(a.OnHoldFor) &&
-    //         string.IsNullOrEmpty(a.RequestedRoommate) &&
-    //         a.GroupId == null &&
-    //         a.OccupantType == 1
-    //     ) ?? 0;
-    // }
+
     private int GetAvailableCount(int buildingId)
     {
         Func<AllocationTest, bool> additionalCondition = _ => true; // Default condition
