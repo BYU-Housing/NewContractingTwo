@@ -39,7 +39,6 @@
 
 <button class="btn btn-primary mt-3" @onclick="NavigateBack">Back</button>
 
-@* <h3 class="text-center">Matching Allocation Tests</h3> *@
 
 @if (MatchingAllocations != null && MatchingAllocations.Any())
 {
@@ -72,11 +71,9 @@
 }
 else
 {
-@*     <div class="text-center mt-4">
-        <p>No rows</p>
-    </div> *@
+
 }
-@* <h3 class="text-center">Allocations On Hold For You</h3> *@
+
 
 @if (OnHoldAllocations != null && OnHoldAllocations.Any())
 {
@@ -89,15 +86,6 @@ else
                         The Bedspace: <strong>@allocation.Bedspace</strong> has been placed on an administrative hold for you. You have 24 hours to accept this hold before it will expire and be offered to someone else. 
                     </p>
 
-@*                     <div class="button-container">
-                        <button class="btn btn-primary uniform-button">
-                            Accept Hold
-                        </button>
-                        <button class="btn btn-primary uniform-button">
-                            Decline Hold
-                        </button>
-
-                    </div> *@
                     <div class="button-container">
                         <button class="btn btn-success uniform-button">
                             Accept Hold
@@ -113,12 +101,10 @@ else
 }
 else
 {
-@*     <div class="text-center mt-4">
-        <p>No allocations on hold for you.</p>
-    </div> *@
+
 }
 
-@* <h3 class="text-center">Requested Roommate Allocations</h3> *@
+
 
 @if (RequestedRoommateAllocations != null && RequestedRoommateAllocations.Any())
 {
@@ -146,9 +132,7 @@ else
 }
 else
 {
-@*     <div class="text-center mt-4">
-        <p>No roommate requests found.</p>
-    </div> *@
+
 }
 
 
