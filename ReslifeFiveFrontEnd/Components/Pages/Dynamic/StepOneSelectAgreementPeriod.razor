@@ -39,7 +39,7 @@
 
 <button class="btn btn-primary mt-3" @onclick="NavigateBack">Back</button>
 
-<h3 class="text-center">Matching Allocation Tests</h3>
+@* <h3 class="text-center">Matching Allocation Tests</h3> *@
 
 @if (MatchingAllocations != null && MatchingAllocations.Any())
 {
@@ -76,7 +76,7 @@ else
         <p>No rows</p>
     </div> *@
 }
-<h3 class="text-center">Allocations On Hold For You</h3>
+@* <h3 class="text-center">Allocations On Hold For You</h3> *@
 
 @if (OnHoldAllocations != null && OnHoldAllocations.Any())
 {
@@ -113,12 +113,12 @@ else
 }
 else
 {
-    <div class="text-center mt-4">
+@*     <div class="text-center mt-4">
         <p>No allocations on hold for you.</p>
-    </div>
+    </div> *@
 }
 
-<h3 class="text-center">Requested Roommate Allocations</h3>
+@* <h3 class="text-center">Requested Roommate Allocations</h3> *@
 
 @if (RequestedRoommateAllocations != null && RequestedRoommateAllocations.Any())
 {
@@ -128,10 +128,8 @@ else
             <div class="card mb-3 w-100" style="border: 1px solid #ccc;">
                 <div class="card-body">
                     <p class="card-text">
-                        Bedspace: <strong>@allocation.Bedspace</strong>
-                    </p>
-                    <p class="card-text">
-                        Requested By: <strong>@allocation.RequestedRoommate</strong>
+                        Harry Potter (wizard12) has submitted a roommate request for you to room in Bedspace: <strong>@allocation.Bedspace</strong>. You have 24 hours to accept or deny this invitation
+                        before this offer will expire.
                     </p>
                     <div class="button-container">
                         <button class="btn btn-success uniform-button">
@@ -148,9 +146,9 @@ else
 }
 else
 {
-    <div class="text-center mt-4">
+@*     <div class="text-center mt-4">
         <p>No roommate requests found.</p>
-    </div>
+    </div> *@
 }
 
 
