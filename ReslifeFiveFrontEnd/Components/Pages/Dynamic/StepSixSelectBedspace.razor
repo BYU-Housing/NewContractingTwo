@@ -28,13 +28,21 @@ else
 @if (FilteredAllocationTests.Any())
 {
     <div class="button-grid">
-        @foreach (var allocation in FilteredAllocationTests)
+@*         @foreach (var allocation in FilteredAllocationTests)
+        {
+            <button class="btn @(SelectedId == allocation.Id ? "btn-success" : "btn-primary")"
+                    @onclick="() => OnAllocationSelected(allocation)">
+                @GetFormattedBedspace(allocation.Bedspace)
+            </button>
+        } *@
+        @foreach (var allocation in FilteredAllocationTests.OrderBy(a => a.Bedspace))
         {
             <button class="btn @(SelectedId == allocation.Id ? "btn-success" : "btn-primary")"
                     @onclick="() => OnAllocationSelected(allocation)">
                 @GetFormattedBedspace(allocation.Bedspace)
             </button>
         }
+
     </div>
 }
 else
