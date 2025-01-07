@@ -8,28 +8,28 @@
     <h4>Selected Meal Plan:</h4>
     <p>@SelectedMealPlanDisplay</p>
     <h4>Daily Rate:</h4>
-    <p>@DailyRate</p>
+    <p>@SelectedMealPlanRate</p>
 </div>
 
 @code {
     private int? SelectedMealPlan; // Nullable to handle missing parameter
     private string SelectedMealPlanDisplay = "Not specified";
-    private const decimal DailyRate = 12.25m; // Daily rate
+    private decimal SelectedMealPlanRate = 0.00m; // Default rate if no meal plan is selected
 
-    // Dictionary to map integers to meal plan names
-    private readonly Dictionary<int, string> MealPlans = new()
+    // Dictionary to map integers to meal plan names and their corresponding daily rates
+    private readonly Dictionary<int, (string Name, decimal Rate)> MealPlans = new()
     {
-        { 1, "19+" },
-        { 2, "Dining Plus" },
-        { 3, "EZ Dining 100" },
-        { 4, "EZ Dining 150" },
-        { 5, "EZ Dining 200" },
-        { 6, "Open Door" },
-        { 7, "True Blue Dining 500" },
-        { 8, "True Blue Dining 500 Weekly" },
-        { 9, "True Blue Dining 800" },
-        { 10, "True Blue Dining 800 Weekly" },
-        { 11, "No Meal Plan" }
+        { 1, ("19+", 10.00m) },
+        { 2, ("Dining Plus", 11.00m) },
+        { 3, ("EZ Dining 100", 12.00m) },
+        { 4, ("EZ Dining 150", 13.00m) },
+        { 5, ("EZ Dining 200", 14.00m) },
+        { 6, ("Open Door", 15.00m) },
+        { 7, ("True Blue Dining 500", 16.00m) },
+        { 8, ("True Blue Dining 500 Weekly", 17.00m) },
+        { 9, ("True Blue Dining 800", 18.00m) },
+        { 10, ("True Blue Dining 800 Weekly", 19.00m) },
+        { 11, ("No Meal Plan", 20.00m) }
     };
 
     protected override void OnInitialized()
@@ -43,10 +43,17 @@
         {
             SelectedMealPlan = parsedMealPlan;
 
-            // Lookup the meal plan name in the dictionary
-            SelectedMealPlanDisplay = MealPlans.TryGetValue(parsedMealPlan, out var mealPlanName)
-                ? mealPlanName
-                : "Unknown Meal Plan";
+            // Lookup the meal plan name and rate in the dictionary
+            if (MealPlans.TryGetValue(parsedMealPlan, out var mealPlanInfo))
+            {
+                SelectedMealPlanDisplay = mealPlanInfo.Name;
+                SelectedMealPlanRate = mealPlanInfo.Rate;
+            }
+            else
+            {
+                SelectedMealPlanDisplay = "Unknown Meal Plan";
+                SelectedMealPlanRate = 0.00m;
+            }
         }
     }
 }
