@@ -43,12 +43,6 @@
     }
 </div>
 
-<!-- Display URL Parameters as a String -->
-@* <div class="mt-4">
-    <h4>URL Parameters</h4>
-    <p>@UrlParametersString</p>
-</div> *@
-
 @code {
     private string UrlParametersString = string.Empty;
     private Dictionary<string, int> FloorsWithCounts = new();
@@ -59,9 +53,8 @@
     private bool? Community;
     private bool? ReqMet;
     private int? AgreementPeriod;
-    private List<AllocationTest> AllocationTests = new();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
@@ -69,74 +62,69 @@
         // Combine all URL parameters into a single string
         UrlParametersString = string.Join("&", query.AllKeys.Select(key => $"{key}={query[key]}"));
 
-        // Parse the Area parameter
-        if (query["Area"] != null && int.TryParse(query["Area"], out var area))
-        {
-            Area = area;
-        }
+        // Parse query parameters
+        if (query["Area"] != null && int.TryParse(query["Area"], out var area)) Area = area;
+        if (query["BuildingId"] != null && int.TryParse(query["BuildingId"], out var buildingId)) BuildingId = buildingId;
+        if (query["SexAtBirth"] != null && bool.TryParse(query["SexAtBirth"], out var sexAtBirth)) SexAtBirth = sexAtBirth;
+        if (query["Minor"] != null && bool.TryParse(query["Minor"], out var minor)) Minor = minor;
+        if (query["Community"] != null && bool.TryParse(query["Community"], out var community)) Community = community;
+        if (query["REQMet"] != null && bool.TryParse(query["REQMet"], out var reqMet)) ReqMet = reqMet;
+        if (query["AgreementPeriod"] != null && int.TryParse(query["AgreementPeriod"], out var agreementPeriod)) AgreementPeriod = agreementPeriod;
 
-        // Parse the BuildingId parameter
-        if (query["BuildingId"] != null && int.TryParse(query["BuildingId"], out var buildingId))
-        {
-            BuildingId = buildingId;
-        }
-
-        // Parse other parameters
-        if (query["SexAtBirth"] != null && bool.TryParse(query["SexAtBirth"], out var sexAtBirth))
-        {
-            SexAtBirth = sexAtBirth;
-        }
-        if (query["Minor"] != null && bool.TryParse(query["Minor"], out var minor))
-        {
-            Minor = minor;
-        }
-        if (query["Community"] != null && bool.TryParse(query["Community"], out var community))
-        {
-            Community = community;
-        }
-        if (query["REQMet"] != null && bool.TryParse(query["REQMet"], out var reqMet))
-        {
-            ReqMet = reqMet;
-        }
-        if (query["AgreementPeriod"] != null && int.TryParse(query["AgreementPeriod"], out var agreementPeriod))
-        {
-            AgreementPeriod = agreementPeriod;
-        }
-
-        // Load AllocationTests and calculate floor counts
-        AllocationTests = GenService.GetModel<AllocationTest>().ToList();
-        SetFloorsWithCounts();
+        // Fetch the floor counts directly from the database
+        FloorsWithCounts = await FetchFloorCountsAsync();
     }
-
-    private void SetFloorsWithCounts()
+    // private async Task<Dictionary<string, int>> FetchFloorCountsAsync()
+    // {
+    //     return await Task.Run(() =>
+    //         GenService.GetModel<AllocationTest>()
+    //             .Where(a =>
+    //                 a.Active == true &&
+    //                 a.Area == Area &&
+    //                 a.Building == BuildingId &&
+    //                 a.AgreementPeriod == AgreementPeriod &&
+    //                 a.FreezeActivity == false &&
+    //                 string.IsNullOrEmpty(a.TakenBy) &&
+    //                 string.IsNullOrEmpty(a.OnHoldFor) &&
+    //                 string.IsNullOrEmpty(a.RequestedRoommate) &&
+    //                 a.GroupId == null &&
+    //                 a.OccupantType == 1 &&
+    //                 (!SexAtBirth.HasValue || a.Sex == SexAtBirth.Value) &&
+    //                 (Minor == true ? a.Minor == true : true) &&
+    //                 (Community == true ? a.NineteenPlus == true : a.EighteenMinus == true) &&
+    //                 (ReqMet == true ? a.REQMet == true : a.REQNotMet == true)
+    //             )
+    //             .GroupBy(a => a.Floor != null ? a.Floor.ToString() : "Unknown") // Avoid null-propagating operator
+    //             .Select(g => new { Floor = g.Key, Count = g.Count() })
+    //             .ToDictionary(g => g.Floor, g => g.Count)
+    //     );
+    // }
+    private async Task<Dictionary<string, int>> FetchFloorCountsAsync()
     {
-        Func<AllocationTest, bool> additionalCondition = _ => true; // Default condition
-
-        if (Minor == true)
-        {
-            additionalCondition = a => a.Minor == true;
-        }
-
-        FloorsWithCounts = AllocationTests
-            .Where(a =>
-                a.Active == true &&
-                a.Area == Area &&
-                a.Building == BuildingId &&
-                a.AgreementPeriod == AgreementPeriod &&
-                a.FreezeActivity == false &&
-                string.IsNullOrEmpty(a.TakenBy) &&
-                string.IsNullOrEmpty(a.OnHoldFor) &&
-                string.IsNullOrEmpty(a.RequestedRoommate) &&
-                a.GroupId == null &&
-                a.OccupantType == 1 &&
-                (!SexAtBirth.HasValue || a.Sex == SexAtBirth.Value) &&
-                additionalCondition(a) &&
-                (Community == true ? a.NineteenPlus == true : a.EighteenMinus == true) &&
-                (ReqMet == true ? a.REQMet == true : a.REQNotMet == true)
-            )
-            .GroupBy(a => a.Floor?.ToString() ?? "Unknown")
-            .ToDictionary(g => g.Key, g => g.Count());
+        return await Task.Run(() =>
+            GenService.GetModel<AllocationTest>()
+                .Where(a =>
+                    a.Active == true &&
+                    a.Area == Area &&
+                    a.Building == BuildingId &&
+                    a.AgreementPeriod == AgreementPeriod &&
+                    a.FreezeActivity == false &&
+                    string.IsNullOrEmpty(a.TakenBy) &&
+                    string.IsNullOrEmpty(a.OnHoldFor) &&
+                    string.IsNullOrEmpty(a.RequestedRoommate) &&
+                    a.GroupId == null &&
+                    a.OccupantType == 1 &&
+                    (!SexAtBirth.HasValue || a.Sex == SexAtBirth.Value) &&
+                    (Minor == true ? a.Minor == true : true) &&
+                    (Community == true ? a.NineteenPlus == true : a.EighteenMinus == true) &&
+                    (ReqMet == true ? a.REQMet == true : a.REQNotMet == true)
+                )
+                .GroupBy(a => a.Floor != null ? a.Floor.ToString()! : "Unknown") // Ensure Floor is non-null
+                .Select(g => new { Floor = g.Key, Count = g.Count() })
+                .ToDictionary(g => g.Floor!, g => g.Count) // Ensure Floor is non-null in the dictionary
+        );
     }
+
 
     private void NavigateToStepSix(string floor)
     {
