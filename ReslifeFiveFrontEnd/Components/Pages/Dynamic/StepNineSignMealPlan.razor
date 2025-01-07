@@ -7,11 +7,14 @@
 <div>
     <h4>Selected Meal Plan:</h4>
     <p>@SelectedMealPlanDisplay</p>
+    <h4>Daily Rate:</h4>
+    <p>@DailyRate</p>
 </div>
 
 @code {
     private int? SelectedMealPlan; // Nullable to handle missing parameter
     private string SelectedMealPlanDisplay = "Not specified";
+    private const decimal DailyRate = 12.25m; // Daily rate
 
     // Dictionary to map integers to meal plan names
     private readonly Dictionary<int, string> MealPlans = new()
