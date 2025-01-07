@@ -19,7 +19,7 @@
     </div>
 
     <!-- Right-side: Content -->
-    <div class="col-md-9">
+@*     <div class="col-md-9">
         <div class="content-container">
             @if (SelectedMealPlan != null)
             {
@@ -56,7 +56,49 @@
                 <p>Please select a meal plan to see details.</p>
             }
         </div>
+    </div> *@
+    <div class="col-md-9">
+        <div class="content-container">
+            @if (SelectedMealPlan != null)
+            {
+                <div>
+                    @MealPlanDescriptions[SelectedMealPlan]
+                </div>
+
+                <div class="mt-3">
+                    <h5>Do you have any dietary restrictions?</h5>
+                    <div>
+                        <input type="radio" id="yes" name="dietaryRestrictions" value="yes" checked="@(HasDietaryRestrictions == true)" @onchange="() => HandleDietaryRestrictionsChange(true)" />
+                        <label for="yes">Yes</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="no" name="dietaryRestrictions" value="no" checked="@(HasDietaryRestrictions == false)" @onchange="() => HandleDietaryRestrictionsChange(false)" />
+                        <label for="no">No</label>
+                    </div>
+                </div>
+
+                @if (HasDietaryRestrictions == true)
+                {
+                    <div class="mt-3">
+                        <h5>Please provide a description of your dietary restrictions:</h5>
+                        <textarea class="form-control" @bind="DietaryRestrictionDescription" rows="3" @oninput="HandleDietaryRestrictionInput"></textarea>
+                    </div>
+                }
+
+                @if (HasDietaryRestrictions == false || !string.IsNullOrWhiteSpace(DietaryRestrictionDescription))
+                {
+                    <div class="mt-3">
+                        <button class="btn btn-primary" @onclick="ProceedToSignAgreement">Proceed to Sign Agreement</button>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>Please select a meal plan to see details.</p>
+            }
+        </div>
     </div>
+
 </div>
 
 @code {
@@ -75,20 +117,34 @@
         "No Meal Plan"
     };
 
-    private Dictionary<string, string> MealPlanDescriptions = new Dictionary<string, string>
-    {
-        { "19 + ", "This meal plan offers 19 meals per week with unlimited access to the dining halls." },
-        { "Dining Plus", "Dining Plus provides a flexible balance of dining hall meals and on-campus restaurant credits." },
-        { "EZ Dining 100", "The EZ Dining 100 plan includes 100 dining dollars for use across campus." },
-        { "EZ Dining 150", "The EZ Dining 150 plan includes 150 dining dollars for use across campus." },
-        { "EZ Dining 200", "The EZ Dining 200 plan includes 200 dining dollars for use across campus." },
-        { "Open Door", "Open Door offers access to dining halls with pay-per-meal options." },
-        { "True Blue Dining 500", "True Blue Dining 500 provides 500 meals per semester with access to premium options." },
-        { "True Blue Dining 500 Weekly", "True Blue Dining 500 Weekly offers 500 meals per semester, distributed weekly." },
-        { "True Blue Dining 800", "True Blue Dining 800 provides 800 meals per semester with access to all dining facilities." },
-        { "True Blue Dining 800 Weekly", "True Blue Dining 800 Weekly offers 800 meals per semester, distributed weekly." },
-        { "No Meal Plan", "No Meal Plan allows students to opt out of on-campus dining options." }
-    };
+    // private Dictionary<string, string> MealPlanDescriptions = new Dictionary<string, string>
+    // {
+    //     { "19 + ", "This meal plan offers 19 meals per week with unlimited access to the dining halls." },
+    //     { "Dining Plus", "Dining Plus provides a flexible balance of dining hall meals and on-campus restaurant credits." },
+    //     { "EZ Dining 100", "The EZ Dining 100 plan includes 100 dining dollars for use across campus." },
+    //     { "EZ Dining 150", "The EZ Dining 150 plan includes 150 dining dollars for use across campus." },
+    //     { "EZ Dining 200", "The EZ Dining 200 plan includes 200 dining dollars for use across campus." },
+    //     { "Open Door", "Open Door offers access to dining halls with pay-per-meal options." },
+    //     { "True Blue Dining 500", "True Blue Dining 500 provides 500 meals per semester with access to premium options." },
+    //     { "True Blue Dining 500 Weekly", "True Blue Dining 500 Weekly offers 500 meals per semester, distributed weekly." },
+    //     { "True Blue Dining 800", "True Blue Dining 800 provides 800 meals per semester with access to all dining facilities." },
+    //     { "True Blue Dining 800 Weekly", "True Blue Dining 800 Weekly offers 800 meals per semester, distributed weekly." },
+    //     { "No Meal Plan", "No Meal Plan allows students to opt out of on-campus dining options." }
+    // };
+    private Dictionary<string, MarkupString> MealPlanDescriptions = new Dictionary<string, MarkupString>
+{
+    { "19 + ", (MarkupString)"<p>This meal plan offers <strong>19 meals per week</strong> with unlimited access to the dining halls.</p>" },
+    { "Dining Plus", (MarkupString)"<p><strong>Dining Plus</strong> provides a flexible balance of <em>dining hall meals</em> and on-campus restaurant credits.</p>" },
+    { "EZ Dining 100", (MarkupString)"<p>The <strong>EZ Dining 100</strong> plan includes <strong>100 dining dollars</strong> for use across campus.</p>" },
+    { "EZ Dining 150", (MarkupString)"<p>The <strong>EZ Dining 150</strong> plan includes <strong>150 dining dollars</strong> for use across campus.</p>" },
+    { "EZ Dining 200", (MarkupString)"<p>The <strong>EZ Dining 200</strong> plan includes <strong>200 dining dollars</strong> for use across campus.</p>" },
+    { "Open Door", (MarkupString)"<p><strong>Open Door</strong> offers access to dining halls with <em>pay-per-meal</em> options.</p>" },
+    { "True Blue Dining 500", (MarkupString)"<p><strong>True Blue Dining 500</strong> provides <strong>500 meals per semester</strong> with access to premium options.</p>" },
+    { "True Blue Dining 500 Weekly", (MarkupString)"<p><strong>True Blue Dining 500 Weekly</strong> offers <strong>500 meals per semester</strong>, distributed weekly.</p>" },
+    { "True Blue Dining 800", (MarkupString)"<p><strong>True Blue Dining 800</strong> provides <strong>800 meals per semester</strong> with access to all dining facilities.</p>" },
+    { "True Blue Dining 800 Weekly", (MarkupString)"<p><strong>True Blue Dining 800 Weekly</strong> offers <strong>800 meals per semester</strong>, distributed weekly.</p>" },
+    { "No Meal Plan", (MarkupString)"<p><strong>No Meal Plan</strong> allows students to <em>opt out</em> of on-campus dining options.</p>" }
+};
 
     private string? SelectedMealPlan;
     private int? SelectedMealPlanIndex;
