@@ -1,8 +1,49 @@
 ﻿@page "/stepNineSignMealPlanAgreement"
 @inject NavigationManager NavigationManager
 @inject IGenService GenService
-<h3>StepNineSignMealPlan</h3>
+
+<h3>Step Nine: Sign Meal Plan Agreement</h3>
+
+<div>
+    <h4>Selected Meal Plan:</h4>
+    <p>@SelectedMealPlanDisplay</p>
+</div>
 
 @code {
+    private int? SelectedMealPlan; // Nullable to handle missing parameter
+    private string SelectedMealPlanDisplay = "Not specified";
 
+    // Dictionary to map integers to meal plan names
+    private readonly Dictionary<int, string> MealPlans = new()
+    {
+        { 1, "19+" },
+        { 2, "Dining Plus" },
+        { 3, "EZ Dining 100" },
+        { 4, "EZ Dining 150" },
+        { 5, "EZ Dining 200" },
+        { 6, "Open Door" },
+        { 7, "True Blue Dining 500" },
+        { 8, "True Blue Dining 500 Weekly" },
+        { 9, "True Blue Dining 800" },
+        { 10, "True Blue Dining 800 Weekly" },
+        { 11, "No Meal Plan" }
+    };
+
+    protected override void OnInitialized()
+    {
+        // Parse the current URL to extract the SelectedMealPlan parameter
+        var uri = new Uri(NavigationManager.Uri);
+        var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+
+        if (queryParams.TryGetValue("SelectedMealPlan", out var mealPlanValue) &&
+            int.TryParse(mealPlanValue, out var parsedMealPlan))
+        {
+            SelectedMealPlan = parsedMealPlan;
+
+            // Lookup the meal plan name in the dictionary
+            SelectedMealPlanDisplay = MealPlans.TryGetValue(parsedMealPlan, out var mealPlanName)
+                ? mealPlanName
+                : "Unknown Meal Plan";
+        }
+    }
 }
