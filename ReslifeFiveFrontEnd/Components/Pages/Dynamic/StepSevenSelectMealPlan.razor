@@ -18,45 +18,6 @@
         </div>
     </div>
 
-    <!-- Right-side: Content -->
-@*     <div class="col-md-9">
-        <div class="content-container">
-            @if (SelectedMealPlan != null)
-            {
-                <p>@MealPlanDescriptions[SelectedMealPlan]</p>
-                <div class="mt-3">
-                    <h5>Do you have any dietary restrictions?</h5>
-                    <div>
-                        <input type="radio" id="yes" name="dietaryRestrictions" value="yes" checked="@(HasDietaryRestrictions == true)" @onchange="() => HandleDietaryRestrictionsChange(true)" />
-                        <label for="yes">Yes</label>
-                    </div>
-                    <div>
-                        <input type="radio" id="no" name="dietaryRestrictions" value="no" checked="@(HasDietaryRestrictions == false)" @onchange="() => HandleDietaryRestrictionsChange(false)" />
-                        <label for="no">No</label>
-                    </div>
-                </div>
-
-                @if (HasDietaryRestrictions == true)
-                {
-                    <div class="mt-3">
-                        <h5>Please provide a description of your dietary restrictions:</h5>
-                        <textarea class="form-control" @bind="DietaryRestrictionDescription" rows="3" @oninput="HandleDietaryRestrictionInput"></textarea>
-                    </div>
-                }
-
-                @if (HasDietaryRestrictions == false || !string.IsNullOrWhiteSpace(DietaryRestrictionDescription))
-                {
-                    <div class="mt-3">
-                        <button class="btn btn-primary" @onclick="ProceedToSignAgreement">Proceed to Sign Agreement</button>
-                    </div>
-                }
-            }
-            else
-            {
-                <p>Please select a meal plan to see details.</p>
-            }
-        </div>
-    </div> *@
     <div class="col-md-9">
         <div class="content-container">
             @if (SelectedMealPlan != null)
@@ -117,23 +78,102 @@
         "No Meal Plan"
     };
 
-    // private Dictionary<string, string> MealPlanDescriptions = new Dictionary<string, string>
-    // {
-    //     { "19 + ", "This meal plan offers 19 meals per week with unlimited access to the dining halls." },
-    //     { "Dining Plus", "Dining Plus provides a flexible balance of dining hall meals and on-campus restaurant credits." },
-    //     { "EZ Dining 100", "The EZ Dining 100 plan includes 100 dining dollars for use across campus." },
-    //     { "EZ Dining 150", "The EZ Dining 150 plan includes 150 dining dollars for use across campus." },
-    //     { "EZ Dining 200", "The EZ Dining 200 plan includes 200 dining dollars for use across campus." },
-    //     { "Open Door", "Open Door offers access to dining halls with pay-per-meal options." },
-    //     { "True Blue Dining 500", "True Blue Dining 500 provides 500 meals per semester with access to premium options." },
-    //     { "True Blue Dining 500 Weekly", "True Blue Dining 500 Weekly offers 500 meals per semester, distributed weekly." },
-    //     { "True Blue Dining 800", "True Blue Dining 800 provides 800 meals per semester with access to all dining facilities." },
-    //     { "True Blue Dining 800 Weekly", "True Blue Dining 800 Weekly offers 800 meals per semester, distributed weekly." },
-    //     { "No Meal Plan", "No Meal Plan allows students to opt out of on-campus dining options." }
-    // };
     private Dictionary<string, MarkupString> MealPlanDescriptions = new Dictionary<string, MarkupString>
 {
-    { "19 + ", (MarkupString)"<p>This meal plan offers <strong>19 meals per week</strong> with unlimited access to the dining halls.</p>" },
+    { "19 + ", (MarkupString)@"<div  style=""width: 100%; max-height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 15px;"">
+    <p>Plan Description</p>
+    <p>
+        With the 19+ meal plan, plan holders receive a $1650 Dining Dollar allotment per semester/term.
+        The 19+ meal plan is only available to residents of Helaman Halls who turn 19 prior to January 1, 2024.
+    </p>
+
+    <p>Plan Details:</p>
+    <ul>
+        <li>Cost:</li>
+        <ul>
+            <li>Fall-Winter Semesters - $3260.00 (Fall Semester - $1630.00, Winter Semester - $1630.00)</li>
+        </ul>
+        <li>Meal Charges at The Commons:</li>
+        <ul>
+            <li>Discount: 20% off door rate</li>
+            <li><em>*Rates are subject to change*</em></li>
+        </ul>
+        <li>This meal plan is available only to residents of Helaman Halls who had their 19th birthday prior to January 1st, 2024.</li>
+        <li>Dining Dollars may be used at Dining Services locations, excluding Concessions and Campus Floral.</li>
+        <li>
+            Holders are exempt from delivery fees associated with orders placed with CougarDash and Meals To-go
+            when placing orders using dining dollars.
+        </li>
+        <li>Dining Dollars are accessible during the Christmas break for those with Fall-Winter agreements.</li>
+        <li>
+            The Cannon Commons does not maintain regular hours during the break and may close during a portion of the break.
+        </li>
+        <li>Plan holders receive the full semester allotment on the first day of the agreement.</li>
+        <li>
+            Additional blocks of 55 Dining Dollars may be added for $50. These blocks can be added via My Dining Account
+            but must be paid for in My Financial Center.
+        </li>
+        <li>
+            Until the add/drop deadline for classes each semester, any requests for meal plan changes or cancellations from
+            students will be automatically approved, excluding Helaman Halls residents who may switch between Helaman Halls
+            approved meal plan options but not cancel.
+        </li>
+        <li>
+            For changes or cancellations after the add/drop deadline, students must submit petitions which are subject to review.
+        </li>
+        <li>
+            If a meal plan holder fails to enroll in a new meal plan at the end of the current agreement period,
+            and does not meet the exceptions above, any unused Dining Dollars will be forfeited at 11:59 p.m. on
+            the last day of the agreement period.
+        </li>
+        <li>
+            If a plan holder who does not meet the above exemptions purchases a new contract after their previous
+            agreement period has terminated, they will be eligible to access their previously forfeited Dining Dollars.
+        </li>
+        <li>
+            A plan holder living on campus may be released from their meal plan only if released from their on-campus housing agreement.
+        </li>
+        <li>
+            If released from their on-campus housing agreement, the meal plan charge will be pro-rated based upon the last day of the housing agreement.
+        </li>
+        <li>
+            If a meal plan holder uses more than the pro-rated amount, then they will be charged for the amount used.
+        </li>
+        <li>
+            If, during a semester/term, a student moves from Helaman Halls and cancels/changes the meal plan,
+            any charge(s) and credit(s) will be pro-rated based upon the move date.
+        </li>
+        <li>
+            Meal plan holders may petition to discontinue/change their meal plan at any time. Petitions are subject to review by
+            the Meal Plan Review Board on an individual basis. It is understood that if their petition to discontinue is granted,
+            the meal plan holder will forfeit:
+        </li>
+        <ul>
+            <li>Any accumulated Dining Dollar rollover from previous semesters.</li>
+            <li>Any current Dining Dollar accrual from the current agreement period.</li>
+        </ul>
+        <li>
+            Additionally, if the meal plan holder is released from the meal plan agreement, the meal plan charge will
+            be pro-rated based upon the length of time remaining in the agreement.
+        </li>
+        <li>
+            If a plan holder is released from the meal plan during the agreement period, any unused Dining Dollars
+            will be forfeited at 11:59 p.m. on the release date.
+        </li>
+        <li>
+            If the plan holder begins or is released from their agreement on any day except those listed as official
+            start and end dates, all charges and Dining Dollar allotment will be prorated.
+        </li>
+    </ul>
+
+    <p>The Cannon Commons will be closed the following dates:</p>
+    <ul>
+        <li>After Dinner Nov 27, 2024 – Before Dinner Nov 30, 2024</li>
+        <li>After Breakfast Dec 19, 2024 – Before Lunch Jan 6, 2025</li>
+        <li>After Breakfast Aug 15, 2025 – Before Dinner Aug 16, 2025</li>
+    </ul>
+</div>
+" },
     { "Dining Plus", (MarkupString)"<p><strong>Dining Plus</strong> provides a flexible balance of <em>dining hall meals</em> and on-campus restaurant credits.</p>" },
     { "EZ Dining 100", (MarkupString)"<p>The <strong>EZ Dining 100</strong> plan includes <strong>100 dining dollars</strong> for use across campus.</p>" },
     { "EZ Dining 150", (MarkupString)"<p>The <strong>EZ Dining 150</strong> plan includes <strong>150 dining dollars</strong> for use across campus.</p>" },
