@@ -1085,6 +1085,38 @@ else
     };
     private void NavigateToMealPlanAgreement()
     {
-        NavigationManager.NavigateTo("/stepNineSignMealPlanAgreement");
+        // Get the current URI and its query parameters
+        var uri = new Uri(NavigationManager.Uri);
+        var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+
+        // Construct a new query string from the existing parameters
+        var newQueryString = string.Join("&", queryParams.Select(kvp =>
+        {
+            var value = kvp.Value.ToString(); // Convert StringValues to string
+            return $"{kvp.Key}={Uri.EscapeDataString(value ?? string.Empty)}";
+        }));
+
+        // Navigate to the next page with the query string
+        NavigationManager.NavigateTo($"/stepNineSignMealPlanAgreement?{newQueryString}");
     }
+
+
+    // private void NavigateToMealPlanAgreement()
+    // {
+    //     // Get the current URI and its query parameters
+    //     var uri = new Uri(NavigationManager.Uri);
+    //     var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+
+    //     // Construct a new query string from the existing parameters
+    //     var newQueryString = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
+
+    //     // Navigate to the next page with the query string
+    //     NavigationManager.NavigateTo($"/stepNineSignMealPlanAgreement?{newQueryString}");
+    // }
+
+
+    // private void NavigateToMealPlanAgreement()
+    // {
+    //     NavigationManager.NavigateTo("/stepNineSignMealPlanAgreement");
+    // }
 }
