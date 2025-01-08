@@ -4,7 +4,7 @@
 
 <h3>Step Nine: Sign Meal Plan Agreement</h3>
 
-
+@* 
 <h4>Sign Your Agreement</h4>
 <div>
     <iframe src="https://byusign.na2.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhDo1XW7OnanDKGOVDsvxssCBPRXL5D9FFQ6fIXQtyFZ1yaZTFOtNuBr-t6IGklXdqU*&hosted=false"
@@ -13,7 +13,23 @@
             frameborder="0"
             style="border: 0; overflow: hidden; min-height: 500px; min-width: 600px;">
     </iframe>
-</div>
+</div> *@
+<h4>Sign Your Agreement</h4>
+@if (SelectedMealPlan == 1)
+{
+    <div>
+        <iframe src="https://byusign.na2.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhDo1XW7OnanDKGOVDsvxssCBPRXL5D9FFQ6fIXQtyFZ1yaZTFOtNuBr-t6IGklXdqU*&hosted=false"
+                width="100%"
+                height="100%"
+                frameborder="0"
+                style="border: 0; overflow: hidden; min-height: 500px; min-width: 600px;">
+        </iframe>
+    </div>
+}
+else
+{
+    <p>Meal Plan needs to be updated.</p>
+}
 
 
 <div>
