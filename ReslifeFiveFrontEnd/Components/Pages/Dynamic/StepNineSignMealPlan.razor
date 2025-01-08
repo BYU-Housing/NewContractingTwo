@@ -28,6 +28,30 @@
     private string SelectedStartDateDisplay = "Not specified"; // Default value for SelectedStartDate
     private string AgreementEndDateDisplay = "Not specified"; // Default value for AgreementEndDate
 
+    // New variables for periods
+    private DateTime Period1Start = new DateTime(2024, 8, 28);
+    private DateTime Period1End = new DateTime(2024, 9, 20);
+    private DateTime Period2Start = new DateTime(2024, 9, 20);
+    private DateTime Period2End = new DateTime(2024, 10, 13);
+    private DateTime Period3Start = new DateTime(2024, 10, 13);
+    private DateTime Period3End = new DateTime(2024, 11, 5);
+    private DateTime Period4Start = new DateTime(2024, 11, 5);
+    private DateTime Period4End = new DateTime(2024, 11, 28);
+    private DateTime Period5Start = new DateTime(2024, 11, 28);
+    private DateTime Period5End = new DateTime(2024, 12, 19);
+    private DateTime UnbillStart = new DateTime(2024, 12, 19);
+    private DateTime UnbillEnd = new DateTime(2025, 1, 6);
+    private DateTime Period6Start = new DateTime(2025, 1, 6);
+    private DateTime Period6End = new DateTime(2025, 1, 28);
+    private DateTime Period7Start = new DateTime(2025, 1, 28);
+    private DateTime Period7End = new DateTime(2025, 2, 19);
+    private DateTime Period8Start = new DateTime(2025, 2, 19);
+    private DateTime Period8End = new DateTime(2025, 3, 13);
+    private DateTime Period9Start = new DateTime(2025, 3, 13);
+    private DateTime Period9End = new DateTime(2025, 4, 4);
+    private DateTime Period10Start = new DateTime(2025, 4, 4);
+    private DateTime Period10End = new DateTime(2025, 4, 26);
+
     // Dictionary to map integers to meal plan names and their corresponding daily rates
     private readonly Dictionary<int, (string Name, decimal Rate)> MealPlans = new()
     {
