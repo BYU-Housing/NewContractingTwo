@@ -20,6 +20,7 @@ builder.Services.AddScoped<IGenRepository,GenRepository>();
 builder.Services.AddScoped<IGenService, GenService>();
 builder.Services.AddScoped<ITimeZoneService, TimeZoneService>();
 builder.Services.AddScoped<ITargetUserService, TargetUserService>();
+builder.Services.AddScoped<ICsvService, CsvService>();
 builder.Services.AddBlazorBootstrap();
 
 

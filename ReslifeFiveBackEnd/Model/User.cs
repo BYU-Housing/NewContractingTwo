@@ -6,8 +6,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
-
-
+using CsvHelper.Configuration.Attributes;
 
 namespace ReslifeFiveBackEnd.Model
 {
@@ -26,11 +25,14 @@ namespace ReslifeFiveBackEnd.Model
         public bool IsRestricted { get; set; }
         public string CitizenshipCountry { get; set; } = string.Empty;
         public int RoleId { get; set; }
+        [Ignore]
         public virtual Role? Role { get; set; }
         [NotMapped]
         public string PreferredFullName => PreferredFirstName + " " + Surname;
         [NotMapped]
         public string SearchBarInformation => $"{PreferredFullName}\n{NetId} {ByuId}\n{DateOfBirth:MM-dd-yyyy}";
+        [NotMapped]
+        public string RoleName => Role?.Name ?? "Role Not Loaded";
 
     }
 }
