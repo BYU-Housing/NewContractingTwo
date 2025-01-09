@@ -25,7 +25,6 @@ namespace ReslifeFiveFrontEnd.Application.Services
         public async Task<TimeZoneInfo> GetUserTimeZoneAsync()
         {
             var timeZoneId = await GetUserTimeZoneNameAsync();
-            Console.WriteLine(timeZoneId);
             try
             {
                 // Find the time zone using the identifier

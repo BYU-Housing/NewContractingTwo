@@ -100,7 +100,7 @@
 
 <Offcanvas @ref="additionOffCanvas" Size="OffcanvasSize.Large"  Title="Add Users">
     <BodyTemplate>
-        <InputFile OnChange="HandleAdditionFileUpload" />
+        <InputFile id="additionCsvUpload" OnChange=@((e) => HandleFileUpload(e, "addition")) />
         <Grid @ref="additionGrid" TItem="User" Data="additionUsers"
               Class="w-100 table table-hovor table-bordered table-striped"
               AllowRowClick="true"
@@ -162,28 +162,36 @@
 
 
 @* ------------------------------------------------------------------------------------------------------------------------------------------------------------ pick up here*@
-<Offcanvas @ref="updateOffCanvas" Title="Update Users">
+<Offcanvas @ref="updateOffCanvas" Size="OffcanvasSize.Large" Title="Update Users">
     <BodyTemplate>
-        <table class="custom-table">
-           <tr>
-               <th>Id</th>
-                <th>Property - <select>@foreach (var att in typeof(User).GetProperties(BindingFlags.Public | System.Reflection.BindingFlags.Instance)) { <option value="@att.Name">@att.Name</option>}</select></th>
-            </tr>
-            @foreach(var user in updateUsers)
+        <InputFile OnChange=@((e) => HandleFileUpload(e, "update")) />
+        <Grid @ref="updateGrid"
+            TItem="User"
+            Data="updateUsers"
+              Class="w-100 table table-hovor table-bordered table-striped"
+              AllowRowClick="true"
+              OnRowDoubleClick="EditNonExistingUser">
+              <GridColumn TItem="User" HeaderText="Id">
+                  @context.Id
+              </GridColumn>
+            @foreach(var prop in typeof(User).GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
-                
+                @if(prop.Name == "Id" || prop.Name == "DateOfBirth")
+                {
+                    continue;
+                }
+                if (updateUsers.Any(user =>
+                {
+                    var value = prop.GetValue(user);
+                    return value != null && !(value is string str && string.IsNullOrWhiteSpace(str));
+                }))
+                {
+                    <GridColumn TItem="User" HeaderText="@prop.Name">
+                        @RenderPropertyValue(context, prop)
+                    </GridColumn>
+                }
             }
-
-
-
-
-       </table>
-
-
-
-
-
-
+        </Grid>
     </BodyTemplate>
 </Offcanvas>
 
@@ -275,6 +283,7 @@
     private HashSet<User> selectedUsers = new();
     private List<User> additionUsers = [];
     private List<User> updateUsers = [];
+    private Dictionary<string, bool> updateColumnData = new();
 
 
 
@@ -385,7 +394,7 @@
         await updateOffCanvas.ShowAsync();
     }
 
-    private async Task HandleAdditionFileUpload(InputFileChangeEventArgs e)
+    private async Task HandleFileUpload(InputFileChangeEventArgs e, string elementOrigin = "default")
     {
         var file = e.File;
 
@@ -394,9 +403,19 @@
             try
             {
                 using var stream = file.OpenReadStream();
-                additionUsers = await Csv.ParseCsvAsync<User>(stream);
 
 
+
+
+                if(elementOrigin == "addition")
+                {
+                    additionUsers = await Csv.ParseCsvAsync<User>(stream);
+                }
+                else if(elementOrigin == "update")
+                {
+                    (updateUsers, updateColumnData) = await Csv.ParseCsvWithNullColsAsync<User>(stream);
+                    await updateOffCanvas.ShowAsync();
+                }
             }
             catch(Exception ex)
             {
@@ -404,6 +423,8 @@
             }
         }
     }
+
+
 
     private string GetRowClass(User user)
     {
@@ -421,6 +442,11 @@
         }
     }
 
+    private string RenderPropertyValue(User context, PropertyInfo prop)
+    {
+        var value = prop.GetValue(context);
+        return value?.ToString() ?? string.Empty;
+    }
     #endregion
 
 
