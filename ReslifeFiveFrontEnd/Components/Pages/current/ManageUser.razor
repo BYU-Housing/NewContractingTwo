@@ -100,7 +100,7 @@
 
 <Offcanvas @ref="additionOffCanvas" Size="OffcanvasSize.Large"  Title="Add Users">
     <BodyTemplate>
-        <InputFile id="additionCsvUpload" OnChange=@((e) => HandleFileUpload(e, "addition")) />
+        <InputFile id="additionCsvUpload" OnChange=@((e) => HandleFileUpload(e, "addition"))/> <Button Color="ButtonColor.Primary" @onclick=@(() => Console.WriteLine("button was clicked")) Disabled=@(updateUsers.Any(user => GetRowClass(user) == "table-danger"))>Add Users</Button>
         <Grid @ref="additionGrid" TItem="User" Data="additionUsers"
               Class="w-100 table table-hovor table-bordered table-striped"
               AllowRowClick="true"
@@ -164,19 +164,21 @@
 @* ------------------------------------------------------------------------------------------------------------------------------------------------------------ pick up here*@
 <Offcanvas @ref="updateOffCanvas" Size="OffcanvasSize.Large" Title="Update Users">
     <BodyTemplate>
-        <InputFile OnChange=@((e) => HandleFileUpload(e, "update")) />
+        <InputFile OnChange=@((e) => HandleFileUpload(e, "update")) /> <Button Color="ButtonColor.Danger" @onclick="() => updateUsers = new List<User>()">Clear</Button> 
+
         <Grid @ref="updateGrid"
             TItem="User"
             Data="updateUsers"
               Class="w-100 table table-hovor table-bordered table-striped"
               AllowRowClick="true"
+              FixedHeader="true"
               OnRowDoubleClick="EditNonExistingUser">
               <GridColumn TItem="User" HeaderText="Id">
                   @context.Id
               </GridColumn>
             @foreach(var prop in typeof(User).GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
-                @if(prop.Name == "Id" || prop.Name == "DateOfBirth")
+                @if (new List<string> { "Id", "DateOfBirth", "SearchBarInformation","RoleName" }.Contains(prop.Name))
                 {
                     continue;
                 }
@@ -284,7 +286,7 @@
     private List<User> additionUsers = [];
     private List<User> updateUsers = [];
     private Dictionary<string, bool> updateColumnData = new();
-
+    private string updatePropertyName = string.Empty;
 
 
     protected override void OnInitialized()
@@ -413,7 +415,7 @@
                 }
                 else if(elementOrigin == "update")
                 {
-                    (updateUsers, updateColumnData) = await Csv.ParseCsvWithNullColsAsync<User>(stream);
+                    updateUsers = await Csv.ParseCsvWithNullColsAsync<User>(stream);
                     await updateOffCanvas.ShowAsync();
                 }
             }
