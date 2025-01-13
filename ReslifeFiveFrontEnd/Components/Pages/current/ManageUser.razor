@@ -100,12 +100,12 @@
 
 <Offcanvas @ref="additionOffCanvas" Size="OffcanvasSize.Large"  Title="Add Users">
     <BodyTemplate>
-        <InputFile id="additionCsvUpload" OnChange=@((e) => HandleFileUpload(e, "addition"))/> <Button Color="ButtonColor.Primary" @onclick=@(() => Console.WriteLine("button was clicked")) Disabled=@(updateUsers.Any(user => GetRowClass(user) == "table-danger"))>Add Users</Button>
+        <InputFile id="additionCsvUpload" OnChange=@((e) => HandleFileUpload(e, "addition"))/> <Button Color="ButtonColor.Primary" @onclick=@(() => Console.WriteLine("button was clicked")) Disabled=@(updateUsers.Any(user => AdditionRowClass(user) == "table-danger"))>Add Users</Button>
         <Grid @ref="additionGrid" TItem="User" Data="additionUsers"
               Class="w-100 table table-hovor table-bordered table-striped"
               AllowRowClick="true"
               OnRowDoubleClick="EditNonExistingUser"
-              RowClass="GetRowClass">
+              RowClass="AdditionRowClass">
             <GridColumn TItem="User" HeaderText="Id">
                 @context.Id
             </GridColumn>
@@ -160,11 +160,17 @@
 </Offcanvas>
 
 
-
-@* ------------------------------------------------------------------------------------------------------------------------------------------------------------ pick up here*@
 <Offcanvas @ref="updateOffCanvas" Size="OffcanvasSize.Large" Title="Update Users">
     <BodyTemplate>
-        <InputFile OnChange=@((e) => HandleFileUpload(e, "update")) /> <Button Color="ButtonColor.Danger" @onclick="() => updateUsers = new List<User>()">Clear</Button> 
+        <InputFile OnChange=@((e) => HandleFileUpload(e, "update")) />
+        <select @bind="@updatePropertyName">@foreach (var prop in typeof(User).GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(prop => !Attribute.IsDefined(prop, typeof(NotMappedAttribute)) && prop.Name != "Role" && prop.Name != "Gender"))
+            {
+                <option value="@prop.Name">@prop.Name</option>
+            }</select>     <Button Color="ButtonColor.Danger" @onclick="() => updateUsers = new List<User>()">Clear</Button>
+        <Button Color="ButtonColor.Primary" @onclick="UpdateBatchUsers"
+                disabled="@(CanEnableButton() ? false : true)">
+            Update Items
+        </Button>
 
         <Grid @ref="updateGrid"
             TItem="User"
@@ -172,13 +178,14 @@
               Class="w-100 table table-hovor table-bordered table-striped"
               AllowRowClick="true"
               FixedHeader="true"
-              OnRowDoubleClick="EditNonExistingUser">
+              OnRowDoubleClick="EditNonExistingUser"
+              RowClass="UpdateRowClass">
               <GridColumn TItem="User" HeaderText="Id">
                   @context.Id
               </GridColumn>
             @foreach(var prop in typeof(User).GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
-                @if (new List<string> { "Id", "DateOfBirth", "SearchBarInformation","RoleName" }.Contains(prop.Name))
+                @if (new List<string> { "Id", "DateOfBirth", "SearchBarInformation","RoleName", "Role", "Gender" }.Contains(prop.Name))
                 {
                     continue;
                 }
@@ -288,6 +295,9 @@
     private Dictionary<string, bool> updateColumnData = new();
     private string updatePropertyName = string.Empty;
 
+    ToastsPlacement toastsPlacement = ToastsPlacement.TopRight;
+    List<ToastMessage> toastMessages = [];
+
 
     protected override void OnInitialized()
     {
@@ -373,12 +383,14 @@
         gridUpdate = true;
         await userGrid.RefreshDataAsync();
         await ObjectAdditionModal.HideAsync();
+        StateHasChanged();
 
     }
 
     private async Task OnHideModalClick()
     {
         await ObjectAdditionModal.HideAsync();
+        StateHasChanged();
     }
     #endregion
 
@@ -428,7 +440,7 @@
 
 
 
-    private string GetRowClass(User user)
+    private string AdditionRowClass(User user)
     {
         if (user.Id > 0)//ensures that the id is 0 because these are new user objects
         {
@@ -443,12 +455,127 @@
             return string.Empty;
         }
     }
+    private string UpdateRowClass(User user)
+    {
+        if (user.Id == 0)
+        {
+            return "table-danger";
+        }
+        else if (!genService.GetModel<User>().Any(x => x.Id == user.Id))
+        {
+            return "table-danger";
+        }
+        else
+        {
+            return string.Empty;
+        }
+    }
 
     private string RenderPropertyValue(User context, PropertyInfo prop)
     {
         var value = prop.GetValue(context);
         return value?.ToString() ?? string.Empty;
     }
+
+
+    private bool CanEnableButton()
+    {
+        // Ensure there's always an "Id" column.
+        int populatedColumnCount = 1;
+
+        if (updateUsers != null && updateUsers.Any())
+        {
+            var properties = typeof(User).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            foreach (var prop in properties)
+            {
+                if (prop.Name == "Id" || prop.Name == "DateOfBirth" ||
+                    prop.Name == "SearchBarInformation" || prop.Name == "RoleName")
+                {
+                    continue;
+                }
+
+                // Check if any user has a value in this column
+                if (updateUsers.Any(user =>
+                {
+                    var value = prop.GetValue(user);
+                    return value != null && !(value is string str && string.IsNullOrWhiteSpace(str));
+                }))
+                {
+                    populatedColumnCount++;
+                }
+
+                // Early exit if more than 2 columns are populated
+                if (populatedColumnCount > 2)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+
+    private async Task UpdateBatchUsers()
+    {
+        try
+        {
+            if (updateUsers == null || !updateUsers.Any())
+            {
+                _logger.LogInformation("No users to update.");
+                return;
+            }
+
+            // Get all public instance properties of the User class
+            var properties = typeof(User).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(prop => prop.Name != "Id" &&
+                               prop.Name != "DateOfBirth" &&
+                               prop.Name != "SearchBarInformation" &&
+                               prop.Name != "RoleName") // Exclude non-editable columns
+                .ToList();
+
+            // Identify the single editable column in the grid
+            var editableColumn = properties.FirstOrDefault(prop =>
+                updateUsers.Any(user =>
+                {
+                    var value = prop.GetValue(user);
+                    return value != null && !(value is string str && string.IsNullOrWhiteSpace(str));
+                }));
+
+            if (editableColumn == null)
+            {
+                _logger.LogInformation("No editable column detected.");
+                return;
+            }
+            foreach (var user in updateUsers)
+            {
+                if (user.Id == 0)
+                {
+                    _logger.LogWarning($"Skipping user with invalid ID: {user}");
+                    continue;
+                }
+
+                var newValue = editableColumn.GetValue(user);
+                if (newValue != null)
+                {
+                    await genService.UpdateSinglePropertyAsync<User>(user.Id, editableColumn.Name, newValue);
+                    _logger.LogInformation($"Updated {editableColumn.Name} for user ID {user.Id} with value: {newValue}.");
+                }
+
+            }
+
+            // Clear the grid after updates
+            updateUsers = new List<User>();
+            StateHasChanged();
+            toastMessages.Add(new ToastMessage(){Title="Success",Message="Items Updated Successfully", AutoHide=true});
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error during update: {ex.Message}");
+        }
+    }
+
+
     #endregion
 
 

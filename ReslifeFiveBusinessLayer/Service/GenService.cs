@@ -154,6 +154,33 @@ namespace ReslifeFiveBusinessLayer.Service
             return await _repo.Set<T>().CountAsync(predicate);
         }
 
+        public async Task UpdateSinglePropertyAsync<T>(int id, string propertyName, object newValue) where T : class
+        {
+
+            try
+            {
+                var objectToUpdate = GetByIdAsync<T>(id);
+                if (objectToUpdate != null)
+                {
+                    foreach(var prop in typeof(T).GetProperties())
+                    {
+                        if(prop.Name == propertyName)
+                        {
+                            prop.SetValue(objectToUpdate, newValue);
+                        }
+                    }
+                    await _repo.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Could not retrieve item to update (genService.UpdateSinglePropertyAsync())");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error updating property ({ex.Message})");
+            }
+        }
 
     }
 }
