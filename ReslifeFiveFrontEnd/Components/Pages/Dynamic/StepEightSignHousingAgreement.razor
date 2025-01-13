@@ -7,7 +7,7 @@
 
 
 
-<p>Area: @AreaDisplayName</p>
+@* <p>Area: @AreaDisplayName</p>
 <p>NetID: @NetID</p>
 <p>Name: @Name</p>
 <p>Building: @BuildingName</p>
@@ -110,7 +110,7 @@
 <p>Period 10 Total Cost (from Payment10Start): @(Period10TotalFromPaymentStart.HasValue ? $"${Period10TotalFromPaymentStart:F2}" : "Not calculated")</p>
 
 <p>Total Billable Days: @TotalBillable</p>
-<p>Total Billable Amount: @(TotalBillableMoney.HasValue ? $"${TotalBillableMoney.Value:F2}" : "Not calculated")</p>
+<p>Total Billable Amount: @(TotalBillableMoney.HasValue ? $"${TotalBillableMoney.Value:F2}" : "Not calculated")</p> *@
 
 
 <!-- Conditional Content Rendering -->
