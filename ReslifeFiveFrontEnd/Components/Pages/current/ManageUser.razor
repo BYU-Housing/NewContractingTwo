@@ -167,8 +167,7 @@
             {
                 <option value="@prop.Name">@prop.Name</option>
             }</select>     <Button Color="ButtonColor.Danger" @onclick="() => updateUsers = new List<User>()">Clear</Button>
-        <Button Color="ButtonColor.Primary" @onclick="UpdateBatchUsers"
-                disabled="@(CanEnableButton() ? false : true)">
+        <Button Color="ButtonColor.Primary" @onclick="UpdateBatchUsers">
             Update Items
         </Button>
 
@@ -204,7 +203,7 @@
     </BodyTemplate>
 </Offcanvas>
 
-
+<Toasts Class="p-3" Messages="toastMessages" Placement="ToastsPlacement.TopRight" />
 
 <Modal @ref="ObjectAdditionModal" Title="Add/Edit User">
     <BodyTemplate>
@@ -478,42 +477,7 @@
     }
 
 
-    private bool CanEnableButton()
-    {
-        // Ensure there's always an "Id" column.
-        int populatedColumnCount = 1;
 
-        if (updateUsers != null && updateUsers.Any())
-        {
-            var properties = typeof(User).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            foreach (var prop in properties)
-            {
-                if (prop.Name == "Id" || prop.Name == "DateOfBirth" ||
-                    prop.Name == "SearchBarInformation" || prop.Name == "RoleName")
-                {
-                    continue;
-                }
-
-                // Check if any user has a value in this column
-                if (updateUsers.Any(user =>
-                {
-                    var value = prop.GetValue(user);
-                    return value != null && !(value is string str && string.IsNullOrWhiteSpace(str));
-                }))
-                {
-                    populatedColumnCount++;
-                }
-
-                // Early exit if more than 2 columns are populated
-                if (populatedColumnCount > 2)
-                {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
 
 
     private async Task UpdateBatchUsers()
@@ -526,52 +490,41 @@
                 return;
             }
 
-            // Get all public instance properties of the User class
-            var properties = typeof(User).GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(prop => prop.Name != "Id" &&
-                               prop.Name != "DateOfBirth" &&
-                               prop.Name != "SearchBarInformation" &&
-                               prop.Name != "RoleName") // Exclude non-editable columns
-                .ToList();
+            var editableColumn = typeof(User).GetProperties().FirstOrDefault(x => x.Name == updatePropertyName);
 
-            // Identify the single editable column in the grid
-            var editableColumn = properties.FirstOrDefault(prop =>
-                updateUsers.Any(user =>
+            if(editableColumn != null)
+            {
+                foreach (var user in updateUsers)
                 {
-                    var value = prop.GetValue(user);
-                    return value != null && !(value is string str && string.IsNullOrWhiteSpace(str));
-                }));
+                    if (user.Id == 0)
+                    {
+                        _logger.LogWarning($"Skipping user with invalid ID: {user}");
+                        continue;
+                    }
 
-            if (editableColumn == null)
-            {
-                _logger.LogInformation("No editable column detected.");
-                return;
-            }
-            foreach (var user in updateUsers)
-            {
-                if (user.Id == 0)
-                {
-                    _logger.LogWarning($"Skipping user with invalid ID: {user}");
-                    continue;
+                    var newValue = editableColumn.GetValue(user);
+                    if (newValue != null)
+                    {
+                        await genService.UpdateSinglePropertyAsync<User>(user.Id, editableColumn.Name, newValue);
+                        _logger.LogInformation($"Updated {editableColumn.Name} for user ID {user.Id} with value: {newValue}.");
+                    }
+
                 }
 
-                var newValue = editableColumn.GetValue(user);
-                if (newValue != null)
-                {
-                    await genService.UpdateSinglePropertyAsync<User>(user.Id, editableColumn.Name, newValue);
-                    _logger.LogInformation($"Updated {editableColumn.Name} for user ID {user.Id} with value: {newValue}.");
-                }
-
+                // Clear the grid after updates
+                updateUsers = new List<User>();
+                StateHasChanged();
+                toastMessages.Add(new ToastMessage() { Title = "Success", Message = "Items Updated Successfully", AutoHide = true });
             }
-
-            // Clear the grid after updates
-            updateUsers = new List<User>();
-            StateHasChanged();
-            toastMessages.Add(new ToastMessage(){Title="Success",Message="Items Updated Successfully", AutoHide=true});
+            else
+            {
+                toastMessages.Add(new ToastMessage() { Title = "No Property Specified", Message="You must specify which property to update to perform this operation.", AutoHide=true, Type=ToastType.Danger });
+            }
         }
         catch (Exception ex)
         {
             _logger.LogError($"Error during update: {ex.Message}");
+            toastMessages.Add(new ToastMessage() { Title = "Error", Message = $"Error performing the operation: {ex.Message}", Type=ToastType.Danger, AutoHide=true });
         }
     }
 

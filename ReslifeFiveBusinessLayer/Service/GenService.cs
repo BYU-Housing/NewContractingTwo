@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Update;
+using Microsoft.Extensions.Logging;
 using ReslifeFiveBackEnd.Repository;
 using System;
 using System.Collections.Generic;
@@ -12,9 +14,11 @@ namespace ReslifeFiveBusinessLayer.Service
     public class GenService : IGenService
     {
         private readonly IGenRepository _repo;
-        public GenService(IGenRepository repo)
+        private readonly ILogger<GenService> _logger;   
+        public GenService(IGenRepository repo, ILogger<GenService> logger)
         {
             _repo = repo;
+            _logger = logger;
         }
 
         public IQueryable<T> GetModel<T>() where T : class
@@ -159,17 +163,20 @@ namespace ReslifeFiveBusinessLayer.Service
 
             try
             {
-                var objectToUpdate = GetByIdAsync<T>(id);
+                var objectToUpdate = await GetByIdAsync<T>(id);
                 if (objectToUpdate != null)
                 {
-                    foreach(var prop in typeof(T).GetProperties())
-                    {
-                        if(prop.Name == propertyName)
-                        {
-                            prop.SetValue(objectToUpdate, newValue);
-                        }
-                    }
-                    await _repo.SaveChangesAsync();
+                    var propToUpdate = typeof(T).GetProperties().FirstOrDefault(x => x.Name == propertyName);
+                   if(propToUpdate != null)
+                   {
+                        propToUpdate.SetValue(objectToUpdate, newValue);
+                        await _repo.SaveChangesAsync();
+                   }
+                   else
+                   {
+                        _logger.LogWarning($"Tried to update property of {typeof(T)} object, but no property match was found  (genService.UpdateSinglePropertyAsync())");
+                   }
+                    
                 }
                 else
                 {
