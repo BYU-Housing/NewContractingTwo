@@ -1,10 +1,15 @@
 ﻿@page "/counter"
 @rendermode InteractiveServer
+@inject ITargetUserService target
 @attribute [Authorize(Roles = "Director, Manager")]
 
 
 
 <PageTitle>Counter</PageTitle>
+    @if (target.targetUser != null && !string.IsNullOrWhiteSpace(target.targetUser.PreferredFullName))
+        {
+            <h3>Target User is @target.targetUser.PreferredFullName</h3>
+        }
 
 <h1>Counter</h1>
 
@@ -13,7 +18,11 @@
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
 @code {
+    private User targetUser = new User();
     private int currentCount = 0;
+
+   
+
 
     private void IncrementCount()
     {

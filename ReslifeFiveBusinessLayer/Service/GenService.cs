@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Update;
+using Microsoft.Extensions.Logging;
 using ReslifeFiveBackEnd.Repository;
 using System;
 using System.Collections.Generic;
@@ -12,9 +14,11 @@ namespace ReslifeFiveBusinessLayer.Service
     public class GenService : IGenService
     {
         private readonly IGenRepository _repo;
-        public GenService(IGenRepository repo)
+        private readonly ILogger<GenService> _logger;   
+        public GenService(IGenRepository repo, ILogger<GenService> logger)
         {
             _repo = repo;
+            _logger = logger;
         }
 
         public IQueryable<T> GetModel<T>() where T : class
@@ -154,6 +158,36 @@ namespace ReslifeFiveBusinessLayer.Service
             return await _repo.Set<T>().CountAsync(predicate);
         }
 
+        public async Task UpdateSinglePropertyAsync<T>(int id, string propertyName, object newValue) where T : class
+        {
+
+            try
+            {
+                var objectToUpdate = await GetByIdAsync<T>(id);
+                if (objectToUpdate != null)
+                {
+                    var propToUpdate = typeof(T).GetProperties().FirstOrDefault(x => x.Name == propertyName);
+                   if(propToUpdate != null)
+                   {
+                        propToUpdate.SetValue(objectToUpdate, newValue);
+                        await _repo.SaveChangesAsync();
+                   }
+                   else
+                   {
+                        _logger.LogWarning($"Tried to update property of {typeof(T)} object, but no property match was found  (genService.UpdateSinglePropertyAsync())");
+                   }
+                    
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Could not retrieve item to update (genService.UpdateSinglePropertyAsync())");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error updating property ({ex.Message})");
+            }
+        }
 
     }
 }

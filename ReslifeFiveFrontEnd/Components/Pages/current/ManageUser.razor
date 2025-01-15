@@ -2,85 +2,213 @@
 @inject IGenService genService
 @inject IJSRuntime JS
 @inject ITimeZoneService timeZone
+@inject ICsvService Csv
+@inject ILogger<ManageUser> _logger
 <h2>Manage Users and Permissions</h2>
 
+<div style="height: 100%">
 
-<div>
-    <Button Color="ButtonColor.Primary" @onclick="AddUser">Add New User </Button>
-    <span class="d-flex justify-content-end">All Times Displayed in @_localTimeZone?.DaylightName</span>
+    <div >
+        <Button Color="ButtonColor.Primary" @onclick="AddUser">Add New User </Button>
+        <Button Color="ButtonColor.Danger" @onclick="DeleteBatchUsers">Delete Users</Button>
+        @if(_localTimeZone != null)
+        {
+            <span class="d-flex justify-content-end">All Times Displayed in @_localTimeZone?.DaylightName</span>
+        }
+    </div>
+
+
+
+
+    <div class="row h-100" style="height: 100%">
+
+        <div class="col-11" style="height: 100%">
+            <Grid @ref="userGrid" TItem="User"
+                  DataProvider="UserDataProvider"
+                  Class="w-100 table table-hovor table-bordered table-striped"
+                  AllowPaging="true"
+                  FixedHeader="true"
+                  AllowSorting="true"
+                  AllowFiltering="true"
+                  AllowRowClick="true"
+                  OnRowDoubleClick="EditExistingUser"
+                  PageSize="15"
+                  Responsive="true"
+                  AllowSelection = "true"
+                  SelectionMode="GridSelectionMode.Multiple"
+                  SelectedItemsChanged="OnSelectedUsersChanged">
+                <GridColumn TItem="User" HeaderText="Id" PropertyName="Id" SortKeySelector="item => item.Id">
+                    @context.Id
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="PersonId" PropertyName="PersonId" SortKeySelector="item => item.PersonId">
+                    @context.PersonId
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="Surname" PropertyName="Surname" SortKeySelector="item => item.Surname">
+                    @context.Surname
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="Rest Of Name" PropertyName="RestOfName" SortKeySelector="item => item.RestOfName">
+                    @context.RestOfName
+                </GridColumn>
+                <GridColumn TItem=" User" HeaderText="Preferred Name" PropertyName="PreferredFirstName" SortKeySelector="item => item.PreferredFirstName">
+                    @context.PreferredFirstName
+                </GridColumn> 
+                <GridColumn TItem="User" HeaderText="Gender" PropertyName="Gender" SortKeySelector="item => item.Gender">
+                    @if (context.Gender == 0)
+                    {
+                        <span>M</span>
+                    }
+                    else
+                    {
+                        <span>F</span>
+                    }
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="Role" PropertyName="RoleName" SortKeySelector="item => item.RoleName">
+                    @context.RoleName
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="BYU ID" PropertyName="ByuId" SortKeySelector="item => item.ByuId">
+                    @context.ByuId
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="Net ID" PropertyName="NetId" SortKeySelector="item => item.NetId">
+                    @context.NetId
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="Date Of Birth" PropertyName="DateOfBirth" SortKeySelector="item => item.DateOfBirth">
+                    @(timeZone.ConvertUtcToLocal(context.DateOfBirth))
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="Marital Status" PropertyName="MaritalStatus" SortKeySelector="item => item.MaritalStatus">
+                    @context.MaritalStatus
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="Restricted" PropertyName="IsRestricted" SortKeySelector="item => item.IsRestricted">
+                    @context.IsRestricted
+                </GridColumn>
+                <GridColumn TItem="User" HeaderText="Citizenship Country" PropertyName="CitizenshipCountry" SortKeySelector="item => item.CitizenshipCountry">
+                    @context.CitizenshipCountry
+                </GridColumn>
+            </Grid>
+        </div>
+
+        <div class="col-1">
+            <h3>Options</h3>
+            <Button @onclick="OpenAdditionOffCanvas" Color="ButtonColor.Primary">Add Users (CSV)</Button>
+            <br />
+            <Button @onclick="OpenUpdateOffCanvas" Color="ButtonColor.Primary">Update User Properties (CSV)</Button>
+        </div>
+    </div>
 </div>
 
 
 
 
 
-<div class="container-fluid vh-100">
-    <Grid @ref="userGrid" TItem="User"
-          DataProvider="UserDataProvider"
-          Class="w-100 table table-hovor table-bordered table-striped"
-          AllowPaging="true"
-          FixedHeader="true"
-          AllowRowClick="true"
-          OnRowDoubleClick="EditUser"
-          PageSize="15"
-          Responsive="true">
-        <GridColumn TItem="User" HeaderText="Id">
-            @context.Id
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="PersonId">
-            @context.PersonId
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Surname">
-            @context.Surname
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Rest Of Name">
-            @context.RestOfName
-        </GridColumn>
-        <GridColumn TItem=" User" HeaderText="Preferred Name">
-            @context.PreferredFirstName
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Gender">
-            @if (context.Gender == 0)
-            {
-                <span>M</span>
-            }
-            else
-            {
-                <span>F</span>
-            }
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Role">
-            @(context.Role?.Name ?? "Role Not Loaded")
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Delete">
-            <Button @onclick="() => DeleteUser(context)">
-                <Icon Name="IconName.Trash3" />
-            </Button>
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="BYU ID">
-            @context.ByuId
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Net ID">
-            @context.NetId
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Date Of Birth">
-            @(timeZone.ConvertUtcToLocal(context.DateOfBirth))
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Marital Status">
-            @context.MaritalStatus
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Restricted">
-            @context.IsRestricted
-        </GridColumn>
-        <GridColumn TItem="User" HeaderText="Citizenship Country">
-            @context.CitizenshipCountry
-        </GridColumn>
-    </Grid>
-</div>
+<Offcanvas @ref="additionOffCanvas" Size="OffcanvasSize.Large"  Title="Add Users">
+    <BodyTemplate>
+        <InputFile id="additionCsvUpload" OnChange=@((e) => HandleFileUpload(e, "addition")) /> <Button Color="ButtonColor.Primary" @onclick=@(AddBatchUsers)>Add Users</Button>
+        <Grid @ref="additionGrid" TItem="User" Data="additionUsers"
+              Class="w-100 table table-hovor table-bordered table-striped"
+              AllowRowClick="true"
+              OnRowDoubleClick="EditNonExistingUser"
+              RowClass="AdditionRowClass">
+            <GridColumn TItem="User" HeaderText="Id">
+                @context.Id
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Person Id">
+                @context.PersonId
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Surname">
+                @context.Surname
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Rest Of Name">
+                @context.RestOfName
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Preferred First Name">
+                @context.PreferredFirstName
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Gender">
+                @if (context.Gender == 0)
+                {
+                    <span>M</span>
+                }
+                else
+                {
+                    <span>F</span>
+                }
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Role">
+                @context.Role?.Name
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="BYU ID">
+                @context.ByuId
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="NetId">
+                @context.NetId
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="DOB">
+                @context.DateOfBirth
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Marital Status">
+                @context.MaritalStatus
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Restricted">
+                @context.IsRestricted
+            </GridColumn>
+            <GridColumn TItem="User" HeaderText="Country">
+                @context.CitizenshipCountry
+            </GridColumn>
+        </Grid>
+    </BodyTemplate>
+    <FooterTemplate>
 
+    </FooterTemplate>
+</Offcanvas>
+
+
+<Offcanvas @ref="updateOffCanvas" Size="OffcanvasSize.Large" Title="Update Users">
+    <BodyTemplate>
+        <InputFile OnChange=@((e) => HandleFileUpload(e, "update")) />
+        <select @bind="@updatePropertyName">@foreach (var prop in typeof(User).GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(prop => !Attribute.IsDefined(prop, typeof(NotMappedAttribute)) && prop.Name != "Role" && prop.Name != "Gender"))
+            {
+                <option value="@prop.Name">@prop.Name</option>
+            }</select>     <Button Color="ButtonColor.Danger" @onclick="() => updateUsers = new List<User>()">Clear</Button>
+        <Button Color="ButtonColor.Primary" @onclick="UpdateBatchUsers">
+            Update Items
+        </Button>
+
+        <Grid @ref="updateGrid"
+            TItem="User"
+            Data="updateUsers"
+              Class="w-100 table table-hovor table-bordered table-striped"
+              AllowRowClick="true"
+              FixedHeader="true"
+              OnRowDoubleClick="EditNonExistingUser"
+              RowClass="UpdateRowClass">
+              <GridColumn TItem="User" HeaderText="Id">
+                  @context.Id
+              </GridColumn>
+            @foreach(var prop in typeof(User).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                @if (new List<string> { "Id", "DateOfBirth", "SearchBarInformation","RoleName", "Role", "Gender" }.Contains(prop.Name))
+                {
+                    continue;
+                }
+                if (updateUsers.Any(user =>
+                {
+                    var value = prop.GetValue(user);
+                    return value != null && !(value is string str && string.IsNullOrWhiteSpace(str));
+                }))
+                {
+                    <GridColumn TItem="User" HeaderText="@prop.Name">
+                        @RenderPropertyValue(context, prop)
+                    </GridColumn>
+                }
+            }
+        </Grid>
+    </BodyTemplate>
+</Offcanvas>
+
+<Toasts Class="p-3" Messages="toastMessages" Placement="ToastsPlacement.TopRight" />
 
 <Modal @ref="ObjectAdditionModal" Title="Add/Edit User">
     <BodyTemplate>
+        
         @if (SelectedUser.Id != 0)
         {
             <h4>Id: @SelectedUser.Id</h4>
@@ -102,14 +230,58 @@
         <h4>Role: <select @bind=SelectedUser.RoleId>@foreach (var role in Roles){<option value="@role.Id">@role.Name</option>}</select></h4>
     </BodyTemplate>
     <FooterTemplate>
+        @if(SelectedUser.Id > 0)
+        {
+            <Button Color="ButtonColor.Danger" @onclick="() => DeleteUser(SelectedUser)">Delete User</Button>
+        }
         <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
-        <Button Color="ButtonColor.Primary" @onclick="UpsertObject">Save changes</Button>
+        @if(isEditOrSingle)
+        {
+            <Button Color="ButtonColor.Primary" @onclick="UpsertObject">Save changes</Button>
+        }
     </FooterTemplate>
 </Modal>
-
 <ConfirmDialog @ref="dialog" />
+
+<style>
+    .custom-table {
+        width: 100%; /* Full width */
+        border-collapse: collapse; /* Merge table borders */
+        border: 1px solid #dee2e6; /* Light border for the table */
+        font-size: 1rem; /* Adjust font size */
+        background-color: #fff; /* White background */
+    }
+
+        .custom-table th, .custom-table td {
+            border: 1px solid #dee2e6; /* Borders between cells */
+            padding: 0.75rem; /* Padding inside cells */
+            text-align: left; /* Align text to the left */
+        }
+
+        .custom-table th {
+            background-color: #f8f9fa; /* Light gray background for headers */
+            font-weight: bold; /* Make header text bold */
+        }
+
+        .custom-table tbody tr:nth-child(odd) {
+            background-color: #f8f9fa; /* Striped rows */
+        }
+
+        .custom-table tbody tr:hover {
+            background-color: #e9ecef; /* Slightly darker gray on hover */
+            cursor: pointer; /* Show pointer cursor on hover */
+        }
+
+</style>
 @code {
     #region Instantiations
+    private Offcanvas additionOffCanvas = default!;
+    private Offcanvas updateOffCanvas = default!;
+    private Grid<User> additionGrid = default!;
+    private Grid<User> updateGrid = default!;
+
+
+    private bool isEditOrSingle = true;
     private Grid<User> userGrid = default!;
     public IEnumerable<User>? users;
     public User SelectedUser { get; set; } = new User();
@@ -118,15 +290,23 @@
     private ConfirmDialog dialog = default!;
     private bool gridUpdate = false;
     private TimeZoneInfo? _localTimeZone;
-    private DateTime testDateTime = DateTime.Now;
-    private DateTime testUtcDateTime = DateTime.Now;
-    private string localTimeZoneName = string.Empty;
+    private HashSet<User> selectedUsers = new();
+    private List<User> additionUsers = [];
+    private List<User> updateUsers = [];
+    private Dictionary<string, bool> updateColumnData = new();
+    private string updatePropertyName = string.Empty;
 
-    protected override async Task OnInitializedAsync()
+    ToastsPlacement toastsPlacement = ToastsPlacement.TopRight;
+    List<ToastMessage> toastMessages = [];
+
+
+    protected override void OnInitialized()
     {
         Roles = genService.GetModel<Role>().ToList();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
         _localTimeZone = await timeZone.GetUserTimeZoneAsync();
-        localTimeZoneName = await timeZone.GetUserTimeZoneNameAsync();
     }
 
 
@@ -137,8 +317,13 @@
             users = genService.GetModel<User>();
             gridUpdate = false;
         }
-        
+
         return await Task.FromResult(request.ApplyTo(users));
+    }
+    private Task OnSelectedUsersChanged(HashSet<User> users)
+    {
+        selectedUsers = users is not null && users.Any() ? users : new();
+        return Task.CompletedTask;
     }
     #endregion
 
@@ -146,13 +331,46 @@
     private async Task AddUser()
     {
         SelectedUser = new User();
+        isEditOrSingle = true;
         await ObjectAdditionModal.ShowAsync();
     }
-    private async Task EditUser(GridRowEventArgs<User> args)
+    private async Task EditExistingUser(GridRowEventArgs<User> args)
     {
         SelectedUser = args.Item;
+        isEditOrSingle = true;
         await ObjectAdditionModal.ShowAsync();
+    }
+    private async Task EditNonExistingUser(GridRowEventArgs<User> args)
+    {
+        SelectedUser = args.Item;
+        isEditOrSingle = false;
+        await ObjectAdditionModal.ShowAsync();
+    }
 
+
+    private async Task DeleteBatchUsers()
+    {
+        var options = new ConfirmDialogOptions()
+            {
+                YesButtonText = "Yes",
+                NoButtonText = "No"
+            };
+        var confirmation = await dialog.ShowAsync(
+            title: "Delete Users?",
+            message1: "Are you sure you want to delete these users? This action cannot be reversed.",
+            confirmDialogOptions: options);
+
+        if (confirmation)
+        {
+            await dialog.DisposeAsync();
+            foreach (var user in selectedUsers)
+            {
+                genService.Remove<User>(user);
+            }
+            await genService.SaveChangesAsync();
+            await userGrid.RefreshDataAsync();
+            StateHasChanged();
+        }
     }
 
     private async Task DeleteUser(User user)
@@ -169,14 +387,29 @@
 
         if (confirmation)
         {
+            await dialog.DisposeAsync();
             genService.Remove<User>(user);
             genService.SaveChanges();
             gridUpdate = true;
             await userGrid.RefreshDataAsync();
+            await ObjectAdditionModal.HideAsync();
             StateHasChanged();
         }
     }
 
+    private async Task AddBatchUsers()
+    {
+        foreach(var user in additionUsers)
+        {
+            user.DateOfBirth = user.DateOfBirth.ToUniversalTime();
+            genService.Upsert<User>(user);
+        }
+        await genService.SaveChangesAsync();
+        additionUsers = new List<User>();
+        await additionOffCanvas.HideAsync();
+        await userGrid.RefreshDataAsync();
+        toastMessages.Add(new ToastMessage(){Title="Success", Message="Items added successfully", AutoHide=true, Type=ToastType.Success});
+    }
 
     private async Task UpsertObject()
     {
@@ -189,12 +422,160 @@
         gridUpdate = true;
         await userGrid.RefreshDataAsync();
         await ObjectAdditionModal.HideAsync();
-        
+        StateHasChanged();
+
     }
 
     private async Task OnHideModalClick()
     {
         await ObjectAdditionModal.HideAsync();
+        StateHasChanged();
     }
+    
+    private async Task UpdateBatchUsers()
+    {
+        try
+        {
+            if (updateUsers == null || !updateUsers.Any())
+            {
+                _logger.LogInformation("No users to update.");
+                return;
+            }
+
+            var editableColumn = typeof(User).GetProperties().FirstOrDefault(x => x.Name == updatePropertyName);
+
+            if (editableColumn != null)
+            {
+                foreach (var user in updateUsers)
+                {
+                    var newValue = editableColumn.GetValue(user);
+                    var userToUpdate = genService.GetModel<User>().FirstOrDefault(x => x.Id == user.Id);
+
+                    editableColumn.SetValue(userToUpdate, newValue);
+
+                    if (userToUpdate != null)
+                    {
+                        userToUpdate.DateOfBirth = userToUpdate.DateOfBirth.ToUniversalTime();
+                        genService.Upsert<User>(userToUpdate);
+                    }
+                    else
+                    {
+                        toastMessages.Add(new ToastMessage() { Title = "Error", Type = ToastType.Danger, AutoHide = true, Message = $"Error when attempting to update object with ID: {userToUpdate?.Id}" });
+                        return;
+                    }
+
+                }
+
+                // Clear the grid after updates
+                updateUsers = new List<User>();
+                StateHasChanged();
+                await genService.SaveChangesAsync();
+                await updateOffCanvas.HideAsync();
+                toastMessages.Add(new ToastMessage() { Title = "Success", Message = "Items Updated Successfully", AutoHide = true, Type = ToastType.Success });
+            }
+            else
+            {
+                toastMessages.Add(new ToastMessage() { Title = "No Property Specified", Message = "You must specify which property to update to perform this operation.", AutoHide = true, Type = ToastType.Danger });
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error during update: {ex.Message}");
+            toastMessages.Add(new ToastMessage() { Title = "Error", Message = $"Error performing the operation: {ex.Message}", Type = ToastType.Danger, AutoHide = true });
+        }
+    }
+
     #endregion
+
+
+    #region CsvOffcanvases
+
+    private async Task OpenAdditionOffCanvas()
+    {
+        additionUsers.Clear();
+        await additionOffCanvas.ShowAsync();
+    }
+    private async Task OpenUpdateOffCanvas()
+    {
+        updateUsers.Clear();
+        await updateOffCanvas.ShowAsync();
+    }
+
+    private async Task HandleFileUpload(InputFileChangeEventArgs e, string elementOrigin = "default")
+    {
+        var file = e.File;
+
+        if(file != null)
+        {
+            try
+            {
+                using var stream = file.OpenReadStream();
+
+
+
+
+                if(elementOrigin == "addition")
+                {
+                    additionUsers = await Csv.ParseCsvAsync<User>(stream);
+                }
+                else if(elementOrigin == "update")
+                {
+                    updateUsers = await Csv.ParseCsvWithNullColsAsync<User>(stream);
+                    await updateOffCanvas.ShowAsync();
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.LogInformation($"Issue parsing csv {ex.Message}");
+            }
+        }
+    }
+
+
+
+    private string AdditionRowClass(User user)
+    {
+        if (user.Id > 0)//ensures that the id is 0 because these are new user objects
+        {
+            return "table-danger";
+        }
+        else if (genService.GetModel<User>().Any(x => x.NetId == user.NetId) || genService.GetModel<User>().Any(x => x.ByuId == user.ByuId)) //checks db for matching netid or byuid
+        {
+            return "table-danger";
+        }
+        else
+        {
+            return string.Empty;
+        }
+    }
+    private string UpdateRowClass(User user)
+    {
+        if (user.Id == 0)
+        {
+            return "table-danger";
+        }
+        else if (!genService.GetModel<User>().Any(x => x.Id == user.Id))
+        {
+            return "table-danger";
+        }
+        else
+        {
+            return string.Empty;
+        }
+    }
+
+    private string RenderPropertyValue(User context, PropertyInfo prop)
+    {
+        var value = prop.GetValue(context);
+        return value?.ToString() ?? string.Empty;
+    }
+
+
+
+    #endregion
+
+
+
+
+
 }
