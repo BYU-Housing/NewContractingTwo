@@ -12,8 +12,8 @@
             </Button>
         </div>        
         <div>
-            <Button @onclick="ToggleUserPortals" style="color: white;"><span class="person-lines-fill" style="color: white;"></span>User Portals</Button>
-            <Collapse @ref="UserPortalsCollapse">
+            <Button @onclick="ToggleUserPortals" style="color: white;" @onmouseenter="() => UserPortalsCollapse.ShowAsync()"><span class="person-lines-fill" style="color: white;"></span>User Portals</Button>
+            <Collapse @ref="UserPortalsCollapse" @onmouseleave="() => UserPortalsCollapse.HideAsync()">
                     <Card class="bg-light">
                     <NavLink class="nav-link custom-nav-item custom-text" href="Login">
                         <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Login
@@ -27,9 +27,9 @@
                 </Card>
             </Collapse>
         </div>
-        <div>
-            <Button @onclick="ToggleAdminPortals" style="color: white;"><span class="key" style="color: white;"></span>Admin Portals</Button>
-            <Collapse @ref="AdminPortalsCollapse">
+        <div> 
+            <Button @onclick="ToggleAdminPortals" style="color: white;" @onmouseenter="() => AdminPortalsCollapse.ShowAsync()" ><span class="key" style="color: white;"></span>Admin Portals</Button>
+            <Collapse @ref="AdminPortalsCollapse" @onmouseleave="() => AdminPortalsCollapse.HideAsync()">
                 <Card>
                     <NavLink class="nav-link custom-nav-item custom-text" href="gridBlockTestJ">
                         <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Block J Readonly
@@ -122,13 +122,14 @@
     Collapse AdminPortalsCollapse = default!;
     Collapse UserPortalsCollapse = default!;
     private Offcanvas ProfileOffCanvas = default!;
-    private string ProfileImage = "default.png";
     private User LoggedInUser = new User();
     private User TargetUser = new User();
     private bool IsUserAuthenticated = false;
     private List<Collapse> CollapsesList = [];
     private AutoComplete<User> UserAutoComplete = default!;
     private string selectedUserName = string.Empty;
+
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -205,26 +206,14 @@
 
     private async Task ToggleUserPortals()
     {
-        await CloseAllCollapsesAsync(UserPortalsCollapse);
         await UserPortalsCollapse.ToggleAsync();
     }
 
     private async Task ToggleAdminPortals()
     {
-        await CloseAllCollapsesAsync(AdminPortalsCollapse);
         await AdminPortalsCollapse.ToggleAsync();
     }
 
-    private async Task CloseAllCollapsesAsync(Collapse collapseToExclude)
-    {
-        foreach (var collapse in CollapsesList)
-        {
-            if (collapse != null && collapse != collapseToExclude)
-            {
-                await collapse.HideAsync();
-            }
-        }
-    }
 
     private void NavigateToHome() => navigation.NavigateTo("/");
     private void NavToLogin() => navigation.NavigateTo("/Login");

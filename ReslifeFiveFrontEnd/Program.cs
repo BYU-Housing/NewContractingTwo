@@ -7,6 +7,7 @@ using ReslifeFiveFrontEnd.Application.Authentication;
 using ReslifeFiveFrontEnd.Components;
 using ReslifeFiveFrontEnd.Application.Services;
 using ReslifeFiveFrontEnd.Application.Services.CsvService;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReslifeFiveBackEnd.Model;
 using System;
 using System.Collections.Generic;

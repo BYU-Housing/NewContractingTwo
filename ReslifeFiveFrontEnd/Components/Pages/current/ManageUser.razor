@@ -6,10 +6,11 @@
 @inject ILogger<ManageUser> _logger
 <h2>Manage Users and Permissions</h2>
 
-<div >
+<div style="height: 100%">
 
-    <div>
+    <div >
         <Button Color="ButtonColor.Primary" @onclick="AddUser">Add New User </Button>
+        <Button Color="ButtonColor.Danger" @onclick="DeleteBatchUsers">Delete Users</Button>
         @if(_localTimeZone != null)
         {
             <span class="d-flex justify-content-end">All Times Displayed in @_localTimeZone?.DaylightName</span>
@@ -19,9 +20,9 @@
 
 
 
-    <div class="row h-100">
+    <div class="row h-100" style="height: 100%">
 
-        <div class="col-11">
+        <div class="col-11" style="height: 100%">
             <Grid @ref="userGrid" TItem="User"
                   DataProvider="UserDataProvider"
                   Class="w-100 table table-hovor table-bordered table-striped"
@@ -100,7 +101,7 @@
 
 <Offcanvas @ref="additionOffCanvas" Size="OffcanvasSize.Large"  Title="Add Users">
     <BodyTemplate>
-        <InputFile id="additionCsvUpload" OnChange=@((e) => HandleFileUpload(e, "addition"))/> <Button Color="ButtonColor.Primary" @onclick=@(() => Console.WriteLine("button was clicked")) Disabled=@(updateUsers.Any(user => AdditionRowClass(user) == "table-danger"))>Add Users</Button>
+        <InputFile id="additionCsvUpload" OnChange=@((e) => HandleFileUpload(e, "addition")) /> <Button Color="ButtonColor.Primary" @onclick=@(AddBatchUsers)>Add Users</Button>
         <Grid @ref="additionGrid" TItem="User" Data="additionUsers"
               Class="w-100 table table-hovor table-bordered table-striped"
               AllowRowClick="true"
@@ -207,6 +208,7 @@
 
 <Modal @ref="ObjectAdditionModal" Title="Add/Edit User">
     <BodyTemplate>
+        
         @if (SelectedUser.Id != 0)
         {
             <h4>Id: @SelectedUser.Id</h4>
@@ -346,6 +348,31 @@
     }
 
 
+    private async Task DeleteBatchUsers()
+    {
+        var options = new ConfirmDialogOptions()
+            {
+                YesButtonText = "Yes",
+                NoButtonText = "No"
+            };
+        var confirmation = await dialog.ShowAsync(
+            title: "Delete Users?",
+            message1: "Are you sure you want to delete these users? This action cannot be reversed.",
+            confirmDialogOptions: options);
+
+        if (confirmation)
+        {
+            await dialog.DisposeAsync();
+            foreach (var user in selectedUsers)
+            {
+                genService.Remove<User>(user);
+            }
+            await genService.SaveChangesAsync();
+            await userGrid.RefreshDataAsync();
+            StateHasChanged();
+        }
+    }
+
     private async Task DeleteUser(User user)
     {
         var options = new ConfirmDialogOptions()
@@ -370,6 +397,19 @@
         }
     }
 
+    private async Task AddBatchUsers()
+    {
+        foreach(var user in additionUsers)
+        {
+            user.DateOfBirth = user.DateOfBirth.ToUniversalTime();
+            genService.Upsert<User>(user);
+        }
+        await genService.SaveChangesAsync();
+        additionUsers = new List<User>();
+        await additionOffCanvas.HideAsync();
+        await userGrid.RefreshDataAsync();
+        toastMessages.Add(new ToastMessage(){Title="Success", Message="Items added successfully", AutoHide=true, Type=ToastType.Success});
+    }
 
     private async Task UpsertObject()
     {
@@ -391,6 +431,60 @@
         await ObjectAdditionModal.HideAsync();
         StateHasChanged();
     }
+    
+    private async Task UpdateBatchUsers()
+    {
+        try
+        {
+            if (updateUsers == null || !updateUsers.Any())
+            {
+                _logger.LogInformation("No users to update.");
+                return;
+            }
+
+            var editableColumn = typeof(User).GetProperties().FirstOrDefault(x => x.Name == updatePropertyName);
+
+            if (editableColumn != null)
+            {
+                foreach (var user in updateUsers)
+                {
+                    var newValue = editableColumn.GetValue(user);
+                    var userToUpdate = genService.GetModel<User>().FirstOrDefault(x => x.Id == user.Id);
+
+                    editableColumn.SetValue(userToUpdate, newValue);
+
+                    if (userToUpdate != null)
+                    {
+                        userToUpdate.DateOfBirth = userToUpdate.DateOfBirth.ToUniversalTime();
+                        genService.Upsert<User>(userToUpdate);
+                    }
+                    else
+                    {
+                        toastMessages.Add(new ToastMessage() { Title = "Error", Type = ToastType.Danger, AutoHide = true, Message = $"Error when attempting to update object with ID: {userToUpdate?.Id}" });
+                        return;
+                    }
+
+                }
+
+                // Clear the grid after updates
+                updateUsers = new List<User>();
+                StateHasChanged();
+                await genService.SaveChangesAsync();
+                await updateOffCanvas.HideAsync();
+                toastMessages.Add(new ToastMessage() { Title = "Success", Message = "Items Updated Successfully", AutoHide = true, Type = ToastType.Success });
+            }
+            else
+            {
+                toastMessages.Add(new ToastMessage() { Title = "No Property Specified", Message = "You must specify which property to update to perform this operation.", AutoHide = true, Type = ToastType.Danger });
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error during update: {ex.Message}");
+            toastMessages.Add(new ToastMessage() { Title = "Error", Message = $"Error performing the operation: {ex.Message}", Type = ToastType.Danger, AutoHide = true });
+        }
+    }
+
     #endregion
 
 
@@ -476,57 +570,6 @@
         return value?.ToString() ?? string.Empty;
     }
 
-
-
-
-
-    private async Task UpdateBatchUsers()
-    {
-        try
-        {
-            if (updateUsers == null || !updateUsers.Any())
-            {
-                _logger.LogInformation("No users to update.");
-                return;
-            }
-
-            var editableColumn = typeof(User).GetProperties().FirstOrDefault(x => x.Name == updatePropertyName);
-
-            if(editableColumn != null)
-            {
-                foreach (var user in updateUsers)
-                {
-                    if (user.Id == 0)
-                    {
-                        _logger.LogWarning($"Skipping user with invalid ID: {user}");
-                        continue;
-                    }
-
-                    var newValue = editableColumn.GetValue(user);
-                    if (newValue != null)
-                    {
-                        await genService.UpdateSinglePropertyAsync<User>(user.Id, editableColumn.Name, newValue);
-                        _logger.LogInformation($"Updated {editableColumn.Name} for user ID {user.Id} with value: {newValue}.");
-                    }
-
-                }
-
-                // Clear the grid after updates
-                updateUsers = new List<User>();
-                StateHasChanged();
-                toastMessages.Add(new ToastMessage() { Title = "Success", Message = "Items Updated Successfully", AutoHide = true });
-            }
-            else
-            {
-                toastMessages.Add(new ToastMessage() { Title = "No Property Specified", Message="You must specify which property to update to perform this operation.", AutoHide=true, Type=ToastType.Danger });
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Error during update: {ex.Message}");
-            toastMessages.Add(new ToastMessage() { Title = "Error", Message = $"Error performing the operation: {ex.Message}", Type=ToastType.Danger, AutoHide=true });
-        }
-    }
 
 
     #endregion
