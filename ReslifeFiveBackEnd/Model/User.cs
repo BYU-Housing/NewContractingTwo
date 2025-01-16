@@ -26,6 +26,7 @@ namespace ReslifeFiveBackEnd.Model
         public string CitizenshipCountry { get; set; } = string.Empty;
         public int RoleId { get; set; }
         [Ignore]
+        [ForeignKey(nameof(RoleId))]
         public virtual Role? Role { get; set; }
         [NotMapped]
         public string PreferredFullName => PreferredFirstName + " " + Surname;

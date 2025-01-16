@@ -15,7 +15,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("BlocktestConnection")),
+    options.UseNpgsql(builder.Configuration.GetConnectionString("CobraDbConnection")),
     ServiceLifetime.Scoped);
 builder.Services.AddScoped<ISamlService, SamlService>();
 builder.Services.AddScoped<IGenRepository,GenRepository>();

@@ -3,6 +3,7 @@
 @inject ITimeZoneService timeZone
 @inject ICsvService Csv
 @inject ILogger<ManageUser> _logger
+@typeparam T where T : class, new()
 
 
 
@@ -10,43 +11,189 @@
 
 
 
+<div>
+    <h1>@typeof(T).Name Manager</h1>
 
 
-<div class="border border-primary">
-    This div has a primary border.
+
+    <Grid TItem="T" DataProvider="TDataProvider"
+          Class="table table-hovor table-bordered table-striped"
+          AllowPaging="true"
+          AllowSorting="true"
+          AllowFiltering="true"
+          PageSize="@(pageSize ?? 15)"
+          Responsive="true"
+          AllowSelection="true"
+          SelectionMode="GridSelectionMode.Multiple"
+          SelectedItemsChanged="OnSelectedTItemsChanged">
+        @foreach (var prop in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+        .Where(p => p.GetMethod != null // Has a getter
+        && p.SetMethod != null // Has a setter
+        && p.GetCustomAttribute<NotMappedAttribute>() == null))
+        {
+
+            var isForeignKey = IsForeignKeyProperty(prop);
+            var isRelatedObject = IsRelatedObjectProperty(prop);
+
+            if (isForeignKey && isRelatedObject)
+            {
+                var relatedProperty = typeof(T).GetProperty(prop.Name.Replace("Id", ""));
+
+                if (relatedProperty != null)
+                {
+                    <GridColumn TItem="T" HeaderText="@relatedProperty.Name" PropertyName="@relatedProperty.Name" SortKeySelector="@(GetSortKeySelectorForRelatedObject(relatedProperty))">
+                        @{
+                            var relatedObject = context.GetType().GetProperty(relatedProperty.Name)?.GetValue(context);
+                            var displayProperty = relatedObject?.GetType().GetProperty("Name")?.GetValue(relatedObject)
+                            ?? relatedObject?.GetType().GetProperty("Id")?.GetValue(relatedObject);
+                        }
+                        @displayProperty
+                    </GridColumn>
+                   
+                }
+            }
+            else
+            {
+            <GridColumn TItem="T" HeaderText="@prop.Name" PropertyName="@prop.Name" SortKeySelector=@(GetSortKeySelectorForProperty(prop.Name)) >
+                @context.GetType().GetProperty(prop.Name)?.GetValue(context)
+                
+            </GridColumn>
+            }
+        }
+
+
+        
+    </Grid>
+
+
 </div>
+<Modal @ref="TItemModal">
+    <BodyTemplate>
+        @if(typeof(T).GetProperties().Any(x => x.Name == "Id"))
+        {
+            <h4>@selectedObject.GetType().GetProperty("Id")?.GetValue(selectedObject)</h4>
+        }
+        @foreach (var prop in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+        .Where(p => p.GetMethod != null // Has a getter
+        && p.SetMethod != null // Has a setter
+        && p.GetCustomAttribute<NotMappedAttribute>() == null // Exclude [NotMapped]
+        && p.Name != "Id")) // Exclude properties named "Id"
+        {
+            
+        }
+    </BodyTemplate>
+    <FooterTemplate>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    </FooterTemplate>
+</Modal>
 @code {
+    #region instantiations
+    [Parameter]
+    public int? pageSize { get; set; }
+
+
+
+
+    public Modal TItemModal = default!;
+    public IEnumerable<T>? TItems;
+    private HashSet<T> SelectedItems = new();
+    private bool gridUpdate = false;
+    private T selectedObject = new T();
+
+
+
+
+
+    #endregion
+
+    #region GRID
+    private async Task<GridDataProviderResult<T>> TDataProvider(GridDataProviderRequest<T> request)
+    {
+        if(TItems is null || gridUpdate == true)
+        {
+            TItems = genService.GetModel<T>();
+            gridUpdate = false;
+        }
+        return await Task.FromResult(request.ApplyTo(TItems));
+    }
+
+    private Task OnSelectedTItemsChanged(HashSet<T> items)
+    {
+        SelectedItems = items is not null && items.Any() ? items : new();
+        return Task.CompletedTask;
+    }
+    private Expression<Func<T, IComparable>> GetSortKeySelectorForProperty(string propertyName)
+    {
+        var property = typeof(T).GetProperty(propertyName);
+        if (property == null)
+        {
+            throw new InvalidOperationException($"Property '{propertyName}' not found on type {typeof(T).Name}.");
+        }
+
+        // Build the lambda expression dynamically
+        var parameter = Expression.Parameter(typeof(T), "item");
+        var propertyAccess = Expression.Property(parameter, property);
+        var convert = Expression.Convert(propertyAccess, typeof(IComparable));
+        return Expression.Lambda<Func<T, IComparable>>(convert, parameter);
+    }
+    private Expression<Func<T, IComparable>> GetSortKeySelectorForRelatedObject(PropertyInfo property)
+    {
+        // Parameter for the lambda (e.g., "item =>")
+        var parameter = Expression.Parameter(typeof(T), "item");
+
+        // Access the related object (e.g., "item.Role")
+        var relatedObject = Expression.Property(parameter, property);
+
+        // Access the "Name" or "Id" property of the related object
+        var relatedProperty = Expression.PropertyOrField(relatedObject, "Name"); // Fallback to "Id" if needed
+
+        // Ensure the property is cast to IComparable
+        var converted = Expression.Convert(relatedProperty, typeof(IComparable));
+
+        // Build the final lambda expression
+        return Expression.Lambda<Func<T, IComparable>>(converted, parameter);
+    }
+    private bool IsRelatedObjectProperty(PropertyInfo property)
+    {
+        return property.PropertyType.IsClass
+            && property.PropertyType != typeof(string)
+            && !property.PropertyType.IsValueType
+            && !property.PropertyType.IsArray
+            && !typeof(System.Collections.IEnumerable).IsAssignableFrom(property.PropertyType);
+    }
+    private bool IsForeignKeyProperty(PropertyInfo property)
+    {
+        // Foreign key detection: Check if the property name ends with "Id"
+        // and if the corresponding navigation property exists
+        var relatedPropertyName = property.Name.Replace("Id", "");
+        return typeof(T).GetProperty(relatedPropertyName) != null;
+    }
+
+    #endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
