@@ -3,6 +3,7 @@
 @inject ITimeZoneService timeZone
 @inject ICsvService Csv
 @inject ILogger<ManageUser> _logger
+@inject IJSRuntime JS
 @typeparam T where T : class, new()
 
 
@@ -14,7 +15,7 @@
 <div>
     <h1>@typeof(T).Name Manager</h1>
 
-
+    @if(_localTimeZone?.DaylightName != null && _localTimeZone.DaylightName != string.Empty){<h4>All times shown in @_localTimeZone.DaylightName</h4>}
 
     <Grid TItem="T" DataProvider="TDataProvider"
           Class="table table-hovor table-bordered table-striped"
@@ -56,9 +57,15 @@
             }
             else
             {
-            <GridColumn TItem="T" HeaderText="@prop.Name" PropertyName="@prop.Name" SortKeySelector=@(GetSortKeySelectorForProperty(prop.Name)) >
-                @context.GetType().GetProperty(prop.Name)?.GetValue(context)
-                
+            <GridColumn TItem="T" HeaderText="@prop.Name" PropertyName="@prop.Name" SortKeySelector=@(GetSortKeySelectorForProperty(prop.Name))>
+                    @if ((prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?)) && _localTimeZone?.DaylightName != null && _localTimeZone?.DaylightName != string.Empty)
+                    {
+                        <span>@timeZone.DisplayLocalTimeFromUtc((DateTime?)context.GetType().GetProperty(prop.Name)?.GetValue(context))</span>
+                    }
+                    else
+                    {
+                        @context.GetType().GetProperty(prop.Name)?.GetValue(context)
+                    }
             </GridColumn>
             }
         }
@@ -100,7 +107,7 @@
             {
                 var isChecked = (bool?)(GetValue(selectedObject, prop) ?? false);
                 <br />
-                <Select  @onchange="@(e => SetValue(selectedObject, prop, e.Value?.ToString() == "true"))">
+                <Select value="@(prop.GetValue(selectedObject)?.ToString()?.ToLower())" @onchange="@(e => SetValue(selectedObject, prop, e.Value?.ToString() == "true"))">
                     <option value="true">True</option>
                     <option value="false">False</option>
                 </Select>
@@ -110,21 +117,49 @@
             else if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
             {
                 var dateValue = (DateTime?)(GetValue(selectedObject, prop));
+                var datePart = dateValue?.Date ?? DateTime.Now.Date; // Extract the date or use today's date
+                var timePart = dateValue?.TimeOfDay ?? TimeSpan.Zero; // Extract the time or default to midnight
 
-                <DateInput TValue="DateTime?"
-                           Value="dateValue"
-                           ValueExpression="() => dateValue"
-                           ValueChanged="(value) => SetValue(selectedObject, prop, value)" />
-                           <br />
+                <DateInput TValue="DateTime"
+                           id=@($"dateid{prop.Name}")
+                           Value="datePart"
+                           ValueChanged=@(async (date) => {
+                   var newTime = await JS.InvokeAsync<string>("getTimeInputValue", new object[] { $"timeid{prop.Name}" });
+                   if (TimeSpan.TryParse(newTime, out var parsedTime))
+                   {
+                   var newDateTime = date + parsedTime;
+                   prop.SetValue(selectedObject, timeZone.ConvertLocalToUtc(newDateTime));
+                   }
+                   }) />
+                <br />
+                <TimeInput TValue="TimeSpan"
+                           id=@($"timeid{prop.Name}")
+                           Value="timePart"
+                           ValueChanged=@(async (time) => {
+                   var newDate = await JS.InvokeAsync<string>("getTimeInputValue", new object[] { $"dateid{prop.Name}" });
+                   if (DateTime.TryParse(newDate, out var parsedDate))
+                   {
+                   var newDateTime = parsedDate.Add(time);
+                   prop.SetValue(selectedObject, timeZone.ConvertLocalToUtc(newDateTime));
+                   }
+                   }) />
+                <br />
             }
 
 
         }
     </BodyTemplate>
     <FooterTemplate>
-
+        <Button Color="ButtonColor.Primary" @onclick="() => UpsertItem(selectedObject)" >Save Changes</Button>
     </FooterTemplate>
 </Modal>
+
+<script>
+    function getTimeInputValue(id) {
+        const timeInput = document.getElementById(id);
+        return timeInput ? timeInput.value : null;
+    }
+</script>
 @code {
     #region instantiations
     [Parameter]
@@ -144,6 +179,7 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         _localTimeZone = await timeZone.GetUserTimeZoneAsync();
+        StateHasChanged();
     }
 
     #endregion
@@ -158,6 +194,10 @@
         }
         return await Task.FromResult(request.ApplyTo(TItems));
     }
+
+
+
+
 
     private Task OnSelectedTItemsChanged(HashSet<T> items)
     {
@@ -262,12 +302,33 @@
             StateHasChanged();
         }
     }
-    // private async Task UpdateDateTimeProperty(PropertyInfo prop)
-    // {
-        
-    // }
-    
 
+
+
+
+    private async Task UpsertItem(T item)
+    {
+        foreach (var prop in item.GetType().GetProperties()
+                                  .Where(x => x.PropertyType == typeof(DateTime) ||
+                                            x.PropertyType == typeof(DateTime?)))
+        {
+            // Get the current value of the DateTime property
+            var value = prop.GetValue(item);
+
+            if (value is DateTime dateTimeValue)
+            {
+                // Check if the DateTime value is not in UTC
+                if (dateTimeValue.Kind != DateTimeKind.Utc)
+                {
+                    prop.SetValue(item, DateTime.SpecifyKind(dateTimeValue, DateTimeKind.Utc));
+                }
+            }
+
+        }
+
+        genService.Upsert<T>(item);
+        await TItemModal.HideAsync();
+    }
 
 
 

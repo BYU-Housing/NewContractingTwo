@@ -141,8 +141,6 @@ namespace ReslifeFiveFrontEnd.Application.Services
                 var Time = TimeZoneInfo.ConvertTimeToUtc(LocalDateTime.Value, timeZone);
                 Time = DateTime.SpecifyKind(Time, DateTimeKind.Utc);
                 return Time;
-          
-
         }
 
         public DateTime? ConvertUtcToLocal(DateTime? UtcDateTime)
