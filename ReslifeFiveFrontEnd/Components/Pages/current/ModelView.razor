@@ -24,6 +24,8 @@
           PageSize="@(pageSize ?? 15)"
           Responsive="true"
           AllowSelection="true"
+          AllowRowClick="true"
+          OnRowDoubleClick="ViewItemModal"
           SelectionMode="GridSelectionMode.Multiple"
           SelectedItemsChanged="OnSelectedTItemsChanged">
         @foreach (var prop in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
@@ -71,7 +73,9 @@
     <BodyTemplate>
         @if(typeof(T).GetProperties().Any(x => x.Name == "Id"))
         {
-            <h4>@selectedObject.GetType().GetProperty("Id")?.GetValue(selectedObject)</h4>
+            <label>Id:</label>
+            <h5>@selectedObject.GetType().GetProperty("Id")?.GetValue(selectedObject)</h5>
+            <br />
         }
         @foreach (var prop in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
         .Where(p => p.GetMethod != null // Has a getter
@@ -79,7 +83,42 @@
         && p.GetCustomAttribute<NotMappedAttribute>() == null // Exclude [NotMapped]
         && p.Name != "Id")) // Exclude properties named "Id"
         {
-            
+            <label>@prop.Name</label>
+            @if (prop.PropertyType == typeof(string))
+            {
+                <input type="text" class="form-control" value="@GetValue(selectedObject,prop)" @oninput="e => SetValue(selectedObject, prop, e.Value?.ToString())" />
+                <br />
+            }
+            else if(prop.PropertyType == typeof(int))
+            {
+                <input type="number" class="form-control"
+                       value="@GetValue(selectedObject, prop)"
+                @oninput="e => SetValue(selectedObject, prop, int.TryParse(e.Value?.ToString(), out var result) ? result : (int?)null)" />
+                <br />
+            }
+            else if (prop.PropertyType == typeof(bool) || prop.PropertyType == typeof(bool?))
+            {
+                var isChecked = (bool?)(GetValue(selectedObject, prop) ?? false);
+                <br />
+                <Select  @onchange="@(e => SetValue(selectedObject, prop, e.Value?.ToString() == "true"))">
+                    <option value="true">True</option>
+                    <option value="false">False</option>
+                </Select>
+
+                <br />
+            }
+            else if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
+            {
+                var dateValue = (DateTime?)(GetValue(selectedObject, prop));
+
+                <DateInput TValue="DateTime?"
+                           Value="dateValue"
+                           ValueExpression="() => dateValue"
+                           ValueChanged="(value) => SetValue(selectedObject, prop, value)" />
+                           <br />
+            }
+
+
         }
     </BodyTemplate>
     <FooterTemplate>
@@ -99,10 +138,13 @@
     private HashSet<T> SelectedItems = new();
     private bool gridUpdate = false;
     private T selectedObject = new T();
+    private TimeZoneInfo? _localTimeZone;
 
 
-
-
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        _localTimeZone = await timeZone.GetUserTimeZoneAsync();
+    }
 
     #endregion
 
@@ -163,15 +205,78 @@
     }
     private bool IsForeignKeyProperty(PropertyInfo property)
     {
-        // Foreign key detection: Check if the property name ends with "Id"
-        // and if the corresponding navigation property exists
         var relatedPropertyName = property.Name.Replace("Id", "");
         return typeof(T).GetProperty(relatedPropertyName) != null;
     }
 
+
+    private async Task ViewItemModal(GridRowEventArgs<T> args)
+    {
+        selectedObject = args.Item;
+        await TItemModal.ShowAsync();
+    }
+
+
     #endregion
 
+    #region Modal
 
+    private void SetValue(T selectedObject, PropertyInfo prop, object? value)
+    {
+        prop.SetValue(selectedObject, value);
+    }
+    private object? GetValue(T obj, PropertyInfo prop)
+    {
+        return prop.GetValue(obj);
+    }
+
+    private DateTime? GetDatePart(PropertyInfo prop)
+    {
+        var value = prop.GetValue(selectedObject) as DateTime?;
+        return value?.Date;
+    }
+
+    private TimeSpan? GetTimePart(PropertyInfo prop)
+    {
+        var value = prop.GetValue(selectedObject) as DateTime?;
+        return value?.TimeOfDay;
+    }
+    private async Task UpdateDateTimeProperty(PropertyInfo prop)
+    {
+        // Extract the current date and time parts
+        var currentDate = GetDatePart(prop);
+        var currentTime = GetTimePart(prop);
+
+        if (currentDate.HasValue && currentTime.HasValue)
+        {
+            // Combine the date and time parts into a full DateTime object
+            var combinedDateTime = currentDate.Value.Date + currentTime.Value;
+
+            // Convert to UTC using the TimeZoneService
+            var utcDateTime = await timeZone.ConvertLocalToUtcAsync(combinedDateTime);
+
+            // Update the selected object's DateTime property
+            prop.SetValue(selectedObject, utcDateTime);
+
+            // Refresh the UI
+            StateHasChanged();
+        }
+    }
+    // private async Task UpdateDateTimeProperty(PropertyInfo prop)
+    // {
+        
+    // }
+    
+
+
+
+
+
+
+
+
+
+    #endregion
 
 
 
