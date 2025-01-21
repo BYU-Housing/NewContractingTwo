@@ -17,7 +17,12 @@
 
     @if(_localTimeZone?.DaylightName != null && _localTimeZone.DaylightName != string.Empty){<h4>All times shown in @_localTimeZone.DaylightName</h4>}
 
-    <Grid TItem="T" DataProvider="TDataProvider"
+    @if(SelectedItems.Any())
+    {
+        <Button Color="ButtonColor.Danger" @onclick="DeleteSelectedItems">Delete Selected</Button>
+    }
+
+    <Grid @ref="TItemGrid"  TItem="T" DataProvider="TDataProvider"
           Class="table table-hovor table-bordered table-striped"
           AllowPaging="true"
           AllowSorting="true"
@@ -85,10 +90,10 @@
             <br />
         }
         @foreach (var prop in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
-        .Where(p => p.GetMethod != null // Has a getter
-        && p.SetMethod != null // Has a setter
-        && p.GetCustomAttribute<NotMappedAttribute>() == null // Exclude [NotMapped]
-        && p.Name != "Id")) // Exclude properties named "Id"
+        .Where(p => 
+        p.GetCustomAttribute<NotMappedAttribute>() == null 
+        && !p.GetMethod.IsVirtual
+        ))
         {
             <label>@prop.Name</label>
             @if (prop.PropertyType == typeof(string))
@@ -116,37 +121,17 @@
             }
             else if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
             {
-                var dateValue = (DateTime?)(GetValue(selectedObject, prop));
-                var datePart = dateValue?.Date ?? DateTime.Now.Date; // Extract the date or use today's date
-                var timePart = dateValue?.TimeOfDay ?? TimeSpan.Zero; // Extract the time or default to midnight
 
-                <DateInput TValue="DateTime"
-                           id=@($"dateid{prop.Name}")
-                           Value="datePart"
-                           ValueChanged=@(async (date) => {
-                   var newTime = await JS.InvokeAsync<string>("getTimeInputValue", new object[] { $"timeid{prop.Name}" });
-                   if (TimeSpan.TryParse(newTime, out var parsedTime))
-                   {
-                   var newDateTime = date + parsedTime;
-                   prop.SetValue(selectedObject, timeZone.ConvertLocalToUtc(newDateTime));
-                   }
-                   }) />
+                var date = timeZone.DisplayLocalTimeFromUtc((DateTime?)GetValue(selectedObject, prop));
                 <br />
-                <TimeInput TValue="TimeSpan"
-                           id=@($"timeid{prop.Name}")
-                           Value="timePart"
-                           ValueChanged=@(async (time) => {
-                   var newDate = await JS.InvokeAsync<string>("getTimeInputValue", new object[] { $"dateid{prop.Name}" });
-                   if (DateTime.TryParse(newDate, out var parsedDate))
-                   {
-                   var newDateTime = parsedDate.Add(time);
-                   prop.SetValue(selectedObject, timeZone.ConvertLocalToUtc(newDateTime));
-                   }
-                   }) />
+                <input type="datetime"
+                       value="@(date ?? @DateTime.Now)"
+                       @onchange="e => SetValue(selectedObject, prop, timeZone.ConvertLocalToUtc(DateTime.TryParse(e.Value?.ToString(), out var result) ? result : (DateTime?)null))" />
+
                 <br />
+                <br />
+              
             }
-
-
         }
     </BodyTemplate>
     <FooterTemplate>
@@ -154,12 +139,7 @@
     </FooterTemplate>
 </Modal>
 
-<script>
-    function getTimeInputValue(id) {
-        const timeInput = document.getElementById(id);
-        return timeInput ? timeInput.value : null;
-    }
-</script>
+
 @code {
     #region instantiations
     [Parameter]
@@ -167,14 +147,14 @@
 
 
 
-
+    private bool itemsSelected = false;
     public Modal TItemModal = default!;
     public IEnumerable<T>? TItems;
     private HashSet<T> SelectedItems = new();
     private bool gridUpdate = false;
     private T selectedObject = new T();
     private TimeZoneInfo? _localTimeZone;
-
+    private Grid<T> TItemGrid = default!;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -256,6 +236,16 @@
         await TItemModal.ShowAsync();
     }
 
+    private async Task DeleteSelectedItems()
+    {
+        foreach(var item in SelectedItems)
+        {
+            genService.Remove<T>(item);
+            await genService.SaveChangesAsync();
+            await TItemGrid.RefreshDataAsync();
+        }
+    }
+
 
     #endregion
 
@@ -270,38 +260,7 @@
         return prop.GetValue(obj);
     }
 
-    private DateTime? GetDatePart(PropertyInfo prop)
-    {
-        var value = prop.GetValue(selectedObject) as DateTime?;
-        return value?.Date;
-    }
-
-    private TimeSpan? GetTimePart(PropertyInfo prop)
-    {
-        var value = prop.GetValue(selectedObject) as DateTime?;
-        return value?.TimeOfDay;
-    }
-    private async Task UpdateDateTimeProperty(PropertyInfo prop)
-    {
-        // Extract the current date and time parts
-        var currentDate = GetDatePart(prop);
-        var currentTime = GetTimePart(prop);
-
-        if (currentDate.HasValue && currentTime.HasValue)
-        {
-            // Combine the date and time parts into a full DateTime object
-            var combinedDateTime = currentDate.Value.Date + currentTime.Value;
-
-            // Convert to UTC using the TimeZoneService
-            var utcDateTime = await timeZone.ConvertLocalToUtcAsync(combinedDateTime);
-
-            // Update the selected object's DateTime property
-            prop.SetValue(selectedObject, utcDateTime);
-
-            // Refresh the UI
-            StateHasChanged();
-        }
-    }
+    
 
 
 
@@ -331,35 +290,7 @@
     }
 
 
-
-
-
-
-
-
     #endregion
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }
