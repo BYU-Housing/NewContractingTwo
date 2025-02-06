@@ -1,28 +1,44 @@
-﻿@inject IGenService genService
+﻿@* Author: Johnathan Fietkau, 2025*@
+@inject IGenService genService
 @inject IJSRuntime JS
 @inject ITimeZoneService timeZone
-@inject ICsvService Csv
-@inject ILogger<ManageUser> _logger
-@inject IJSRuntime JS
-@typeparam T where T : class, new()
+
+@typeparam TItem where TItem : class, new()
+@inject ILogger<ModelView<TItem>> _logger
 
 
 
+@*  -------------- FOR FOREIGN KEY RELATIONSHIPS -----------------
+  
+In order to display objects linked with foreign key relationships you must follow a few small conventions. 
+The related object should be have the flags "public virtual". Additionally please make the based model class 
+include two additional properties: the original RelatedObjectId property which is the property that actually links
+them in SQL. and then the RelatedObjectName property which allows the filtering of the grid to work. 
+A complete model that fits these criteria and will make a related object work will look like this:
 
-
-
-
-<div>
-    <h1>@typeof(T).Name Manager</h1>
-
-    @if(_localTimeZone?.DaylightName != null && _localTimeZone.DaylightName != string.Empty){<h4>All times shown in @_localTimeZone.DaylightName</h4>}
-
-    @if(SelectedItems.Any())
+ public class User
     {
-        <Button Color="ButtonColor.Danger" @onclick="DeleteSelectedItems">Delete Selected</Button>
-    }
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public int? RelatedObjectId {  get; set; }
+        public virtual RelatedObject? RelatedObject { get; set; }
+        [NotMapped]
+        public string RelatedObjectName => RelatedObject?.Name ?? string.Empty;
+    } *@
 
-    <Grid @ref="TItemGrid"  TItem="T" DataProvider="TDataProvider"
+    
+<h1>@typeof(TItem).Name Manager</h1>
+<div class="row">
+    @if (_localTimeZone?.DaylightName != null && _localTimeZone.DaylightName != string.Empty)
+    {
+        <span>*All times shown in @_localTimeZone.DaylightName</span>
+    }
+   
+
+
+    <div class="col-11">
+
+    <Grid @ref="TItemGrid"  TItem="TItem" DataProvider="TDataProvider"
           Class="table table-hovor table-bordered table-striped"
           AllowPaging="true"
           AllowSorting="true"
@@ -34,7 +50,7 @@
           OnRowDoubleClick="ViewItemModal"
           SelectionMode="GridSelectionMode.Multiple"
           SelectedItemsChanged="OnSelectedTItemsChanged">
-        @foreach (var prop in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+        @foreach (var prop in typeof(TItem).GetProperties(BindingFlags.Public | BindingFlags.Instance)
         .Where(p => p.GetMethod != null // Has a getter
         && p.SetMethod != null // Has a setter
         && p.GetCustomAttribute<NotMappedAttribute>() == null))
@@ -45,13 +61,13 @@
 
             if (isForeignKey && isRelatedObject)
             {
-                var relatedProperty = typeof(T).GetProperty(prop.Name.Replace("Id", ""));
+                var relatedProperty = typeof(TItem).GetProperty(prop.Name.Replace("Id", ""));
 
                 if (relatedProperty != null)
                 {
-                    <GridColumn TItem="T" HeaderText="@relatedProperty.Name" PropertyName="@relatedProperty.Name" SortKeySelector="@(GetSortKeySelectorForRelatedObject(relatedProperty))">
+                        <GridColumn TItem="TItem" HeaderText="@relatedProperty.Name" PropertyName="@(relatedProperty.Name + "Name")" SortKeySelector="@(GetSortKeySelectorForRelatedObject(relatedProperty))">
                         @{
-                            var relatedObject = context.GetType().GetProperty(relatedProperty.Name)?.GetValue(context);
+                            var relatedObject = context.GetType().GetProperty(relatedProperty.Name)?.GetValue(context); // gets and displays foreign objects by name
                             var displayProperty = relatedObject?.GetType().GetProperty("Name")?.GetValue(relatedObject)
                             ?? relatedObject?.GetType().GetProperty("Id")?.GetValue(relatedObject);
                         }
@@ -62,14 +78,14 @@
             }
             else
             {
-            <GridColumn TItem="T" HeaderText="@prop.Name" PropertyName="@prop.Name" SortKeySelector=@(GetSortKeySelectorForProperty(prop.Name))>
+            <GridColumn TItem="TItem" HeaderText="@prop.Name" PropertyName="@prop.Name" SortKeySelector=@(GetSortKeySelectorForProperty(prop.Name))>
                     @if ((prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?)) && _localTimeZone?.DaylightName != null && _localTimeZone?.DaylightName != string.Empty)
                     {
-                        <span>@timeZone.DisplayLocalTimeFromUtc((DateTime?)context.GetType().GetProperty(prop.Name)?.GetValue(context))</span>
+                        <span>@timeZone.DisplayLocalTimeFromUtc((DateTime?)context.GetType().GetProperty(prop.Name)?.GetValue(context))</span> //displays times in their timezone
                     }
                     else
                     {
-                        @context.GetType().GetProperty(prop.Name)?.GetValue(context)
+                        @context.GetType().GetProperty(prop.Name)?.GetValue(context) // displays every other data type
                     }
             </GridColumn>
             }
@@ -79,29 +95,95 @@
         
     </Grid>
 
+    </div>
+    <div class="col-1">
+        <h3>Options</h3>
+        
+       <div>
+            <Button Color="ButtonColor.Primary" @onclick="CreateNewObject">New @typeof(TItem).Name</Button>
+       </div>
+        
+        @if (SelectedItems.Any())
+        {
+            <div>
+                <Button Color="ButtonColor.Danger" @onclick="DeleteSelectedItems">Delete Selected</Button>
+            </div>
+        }
+    </div>
+
 
 </div>
-<Modal @ref="TItemModal">
+<Modal @ref="TItemModal">    @* This modal is used to create new objects and edit existing objects of type TItem *@
     <BodyTemplate>
-        @if(typeof(T).GetProperties().Any(x => x.Name == "Id"))
+        @if(typeof(TItem).GetProperties().Any(x => x.Name == "Id"))
         {
             <label>Id:</label>
             <h5>@selectedObject.GetType().GetProperty("Id")?.GetValue(selectedObject)</h5>
             <br />
         }
-        @foreach (var prop in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
-        .Where(p => 
-        p.GetCustomAttribute<NotMappedAttribute>() == null 
-        && !p.GetMethod.IsVirtual
-        ))
-        {
+        @foreach (var prop in typeof(TItem).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+        .Where(p =>
+        p.GetCustomAttribute<NotMappedAttribute>() == null &&
+        p.Name != "Id"))
+        { 
             <label>@prop.Name</label>
-            @if (prop.PropertyType == typeof(string))
+            @if (prop.GetMethod.IsVirtual)
+            {
+                var propData = prop.GetValue(selectedObject);
+                var currentValueId = propData?.GetType().GetProperty("Id")?.GetValue(propData)?.ToString();
+
+                <select class="form-control"
+                value="@(currentValueId ?? null)"
+                        @onchange="e => OnRelatedObjectChange(prop, e.Value)">
+                    @{
+                        var relatedItems = GetRelatedItems(prop.Name);
+                    }
+                    @foreach (var item in relatedItems)
+                    {
+                        var itemName = item.GetType().GetProperty("Name")?.GetValue(item)?.ToString() ?? "Unknown";
+                        var itemId = item.GetType().GetProperty("Id")?.GetValue(item)?.ToString() ?? "0";
+
+                        <option value="@itemId">@itemName</option>
+                    }
+                </select>
+                
+        }
+            else if (prop.PropertyType == typeof(float) || prop.PropertyType == typeof(float?) ||
+            prop.PropertyType == typeof(double) || prop.PropertyType == typeof(double?) ||
+            prop.PropertyType == typeof(decimal) || prop.PropertyType == typeof(decimal?))
+            {
+                <input type="number" class="form-control"
+                       step="0.01"
+                       value="@GetValue(selectedObject, prop)"
+                       @oninput="e => SetValue(selectedObject, prop,
+                decimal.TryParse(e.Value?.ToString(), out var result) ? result : (decimal?)null)" />
+                <br />
+            }
+            else if (prop.PropertyType.IsEnum)
+            {
+                <Select class="form-control" @onchange="e => SetValue(selectedObject, prop, Enum.Parse(prop.PropertyType, e.Value.ToString()))">
+                    @foreach (var option in Enum.GetValues(prop.PropertyType))
+                    {
+                        <option value="@option">@option.ToString()</option>
+                    }
+                </Select>
+                <br />
+            }
+            else if (prop.PropertyType == typeof(TimeSpan) || prop.PropertyType == typeof(TimeSpan?))
+            {
+                var timeValue = GetValue(selectedObject, prop)?.ToString() ?? "";
+                <input type="time" class="form-control"
+                       value="@timeValue"
+                       @onchange="e => SetValue(selectedObject, prop, TimeSpan.TryParse(e.Value?.ToString(), out var result) ? result : (TimeSpan?)null)" />
+                <br />
+            }
+
+            else if (prop.PropertyType == typeof(string))
             {
                 <input type="text" class="form-control" value="@GetValue(selectedObject,prop)" @oninput="e => SetValue(selectedObject, prop, e.Value?.ToString())" />
                 <br />
             }
-            else if(prop.PropertyType == typeof(int))
+            else if(prop.PropertyType == typeof(int) || prop.PropertyType == typeof(int?))
             {
                 <input type="number" class="form-control"
                        value="@GetValue(selectedObject, prop)"
@@ -121,23 +203,38 @@
             }
             else if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
             {
-
                 var date = timeZone.DisplayLocalTimeFromUtc((DateTime?)GetValue(selectedObject, prop));
                 <br />
-                <input type="datetime"
-                       value="@(date ?? @DateTime.Now)"
-                       @onchange="e => SetValue(selectedObject, prop, timeZone.ConvertLocalToUtc(DateTime.TryParse(e.Value?.ToString(), out var result) ? result : (DateTime?)null))" />
-
+                <input type="datetime-local" class="form-control"
+                       value="@(date.HasValue ? date.Value.ToString("yyyy-MM-ddTHH:mm") : string.Empty)"
+                       @onchange="e => SetValue(selectedObject, prop, timeZone.ConvertLocalToUtc(DateTime.Parse(e.Value?.ToString())))" />
                 <br />
                 <br />
-              
             }
         }
     </BodyTemplate>
     <FooterTemplate>
-        <Button Color="ButtonColor.Primary" @onclick="() => UpsertItem(selectedObject)" >Save Changes</Button>
+        @{
+            var id = selectedObject?.GetType().GetProperty("Id")?.GetValue(selectedObject) as int? ?? 0;
+        }
+
+        @if (id != 0)
+        {
+            <Button Color="ButtonColor.Danger" @onclick="DeleteSelectedObject">Delete</Button>
+            @if (selectedObject != null)
+            {
+                <Button Color="ButtonColor.Primary" @onclick="() => UpsertItem(selectedObject)">Save Changes</Button>
+            }
+        }
+        else
+        {
+            <Button Color="ButtonColor.Primary" @onclick="() => UpsertNewItem(selectedObject!)">Save Changes</Button>
+        }
+
     </FooterTemplate>
 </Modal>
+<ConfirmDialog @ref="dialog" />
+<Toasts Class="p-3" Messages="toastMessages" Placement="ToastsPlacement.TopRight" />
 
 
 @code {
@@ -145,77 +242,116 @@
     [Parameter]
     public int? pageSize { get; set; }
 
-
-
+    private Dictionary<string, List<object>> _relatedItemsCache = new();
+    private List<int> deletedIds = [];
     private bool itemsSelected = false;
     public Modal TItemModal = default!;
-    public IEnumerable<T>? TItems;
-    private HashSet<T> SelectedItems = new();
+    public IEnumerable<TItem>? TItems;
+    private HashSet<TItem> SelectedItems = new();
     private bool gridUpdate = false;
-    private T selectedObject = new T();
+    private TItem selectedObject = new TItem();
     private TimeZoneInfo? _localTimeZone;
-    private Grid<T> TItemGrid = default!;
+    private Grid<TItem> TItemGrid = default!;
+    ToastsPlacement toastsPlacement = ToastsPlacement.TopRight;
+    List<ToastMessage> toastMessages = [];
+    private ConfirmDialog dialog = default!;
+
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _localTimeZone = await timeZone.GetUserTimeZoneAsync();
-        StateHasChanged();
+        _localTimeZone = await timeZone.GetUserTimeZoneAsync(); //Loads the time zone service and message
+        await InvokeAsync(StateHasChanged); //updates UI after loading time zone
     }
 
     #endregion
 
     #region GRID
-    private async Task<GridDataProviderResult<T>> TDataProvider(GridDataProviderRequest<T> request)
+    private async Task<GridDataProviderResult<TItem>> TDataProvider(GridDataProviderRequest<TItem> request)  //Provides data to the grid. 
     {
-        if(TItems is null || gridUpdate == true)
+        // If TItems is null or grid needs an update, fetch data
+        if (TItems == null || gridUpdate)
         {
-            TItems = genService.GetModel<T>();
+            TItems = genService.GetModel<TItem>();
             gridUpdate = false;
         }
+
+        // Filter out deleted items
+        TItems = TItems.Where(x =>
+        {
+            // Retrieve the "Id" property dynamically
+            var idProperty = x.GetType().GetProperty("Id");
+            if (idProperty == null)
+            {
+                throw new InvalidOperationException("The model does not have an 'Id' property.");
+            }
+
+            // Safely retrieve the "Id" value
+            var idValue = idProperty.GetValue(x) as int?;
+            if (!idValue.HasValue)
+            {
+                throw new InvalidOperationException("The 'Id' property is null or not an integer.");
+            }
+
+            // Exclude deleted items
+            return !deletedIds.Contains(idValue.Value);  //excludes deleted ids, allowing it to update the UI without making a database call if you've only deleted objects
+        }).ToList();
+
+        // Apply the request to the filtered TItems and return the result
         return await Task.FromResult(request.ApplyTo(TItems));
     }
 
-
-
-
-
-    private Task OnSelectedTItemsChanged(HashSet<T> items)
+    private Task OnSelectedTItemsChanged(HashSet<TItem> items)  //Updates the grid items with checked boxes
     {
         SelectedItems = items is not null && items.Any() ? items : new();
         return Task.CompletedTask;
     }
-    private Expression<Func<T, IComparable>> GetSortKeySelectorForProperty(string propertyName)
+    private Expression<Func<TItem, IComparable>> GetSortKeySelectorForProperty(string propertyName) //Retrieves a sort key selector for standard object properties
     {
-        var property = typeof(T).GetProperty(propertyName);
+        var property = typeof(TItem).GetProperty(propertyName);
         if (property == null)
         {
-            throw new InvalidOperationException($"Property '{propertyName}' not found on type {typeof(T).Name}.");
+            throw new InvalidOperationException($"Property '{propertyName}' not found on type {typeof(TItem).Name}.");
         }
 
         // Build the lambda expression dynamically
-        var parameter = Expression.Parameter(typeof(T), "item");
+        var parameter = Expression.Parameter(typeof(TItem), "item");
         var propertyAccess = Expression.Property(parameter, property);
         var convert = Expression.Convert(propertyAccess, typeof(IComparable));
-        return Expression.Lambda<Func<T, IComparable>>(convert, parameter);
+        return Expression.Lambda<Func<TItem, IComparable>>(convert, parameter);
     }
-    private Expression<Func<T, IComparable>> GetSortKeySelectorForRelatedObject(PropertyInfo property)
+    private Expression<Func<TItem, IComparable>> GetSortKeySelectorForRelatedObject(PropertyInfo property)  //Retrieves a sort key selector for a property
     {
         // Parameter for the lambda (e.g., "item =>")
-        var parameter = Expression.Parameter(typeof(T), "item");
+        var parameter = Expression.Parameter(typeof(TItem), "item");
 
-        // Access the related object (e.g., "item.Role")
+        // Access the related object (e.g., "item.RelatedObject")
         var relatedObject = Expression.Property(parameter, property);
 
-        // Access the "Name" or "Id" property of the related object
-        var relatedProperty = Expression.PropertyOrField(relatedObject, "Name"); // Fallback to "Id" if needed
+        // Ensure the related object is not null
+        if (property.PropertyType == null)
+        {
+            throw new InvalidOperationException($"The property {property.Name} has no valid type.");
+        }
 
-        // Ensure the property is cast to IComparable
+        // Find the property to sort by
+        var relatedPropertyInfo = property.PropertyType.GetProperty("Name") // Try "Name" first
+                                ?? property.PropertyType.GetProperty("Id") // Fallback to "Id"
+                                ?? property.PropertyType.GetProperties()
+                                    .FirstOrDefault(p => p.PropertyType == typeof(string)); // Any string property
+
+        if (relatedPropertyInfo == null)
+        {
+            throw new InvalidOperationException($"No sortable property (Name, Id, or string) found on {property.PropertyType.Name}.");
+        }
+        var relatedProperty = Expression.Property(relatedObject, relatedPropertyInfo);
+
         var converted = Expression.Convert(relatedProperty, typeof(IComparable));
 
-        // Build the final lambda expression
-        return Expression.Lambda<Func<T, IComparable>>(converted, parameter);
+        return Expression.Lambda<Func<TItem, IComparable>>(converted, parameter);
     }
-    private bool IsRelatedObjectProperty(PropertyInfo property)
+
+    private bool IsRelatedObjectProperty(PropertyInfo property)  //Checks if it is a related object
     {
         return property.PropertyType.IsClass
             && property.PropertyType != typeof(string)
@@ -223,27 +359,26 @@
             && !property.PropertyType.IsArray
             && !typeof(System.Collections.IEnumerable).IsAssignableFrom(property.PropertyType);
     }
-    private bool IsForeignKeyProperty(PropertyInfo property)
+    private bool IsForeignKeyProperty(PropertyInfo property)  //Checks whether a property is a foreign key (this is based on a convention)
     {
         var relatedPropertyName = property.Name.Replace("Id", "");
-        return typeof(T).GetProperty(relatedPropertyName) != null;
+        return typeof(TItem).GetProperty(relatedPropertyName) != null;
     }
-
-
-    private async Task ViewItemModal(GridRowEventArgs<T> args)
+    private async Task ViewItemModal(GridRowEventArgs<TItem> args)  //Shows the item modal
     {
         selectedObject = args.Item;
         await TItemModal.ShowAsync();
     }
-
-    private async Task DeleteSelectedItems()
+    private async Task DeleteSelectedItems()  //Deletes a set of multiple items selected in the grid
     {
         foreach(var item in SelectedItems)
         {
-            genService.Remove<T>(item);
-            await genService.SaveChangesAsync();
-            await TItemGrid.RefreshDataAsync();
+            deletedIds.Add((int)typeof(TItem).GetProperty("Id").GetValue(item));
+            genService.Remove<TItem>(item);
         }
+        await genService.SaveChangesAsync();
+        await TItemGrid.RefreshDataAsync();
+        toastMessages.Add(new ToastMessage(){Title="Deleted", Message="Items deleted successfully.", AutoHide=true, Type=ToastType.Danger});
     }
 
 
@@ -251,23 +386,19 @@
 
     #region Modal
 
-    private void SetValue(T selectedObject, PropertyInfo prop, object? value)
+    private void SetValue(TItem selectedObject, PropertyInfo prop, object? value) // Sets a prop value
     {
         prop.SetValue(selectedObject, value);
     }
-    private object? GetValue(T obj, PropertyInfo prop)
+    private object? GetValue(TItem obj, PropertyInfo prop) //Gets a prop value
     {
         return prop.GetValue(obj);
     }
 
-    
 
-
-
-
-    private async Task UpsertItem(T item)
+    private async Task UpsertItem(TItem item) //upserts a TItem in the database
     {
-        foreach (var prop in item.GetType().GetProperties()
+        foreach (var prop in item.GetType().GetProperties() //ensures all datetime properties have Kind.Utc so that the database doesn't get mad
                                   .Where(x => x.PropertyType == typeof(DateTime) ||
                                             x.PropertyType == typeof(DateTime?)))
         {
@@ -282,14 +413,99 @@
                     prop.SetValue(item, DateTime.SpecifyKind(dateTimeValue, DateTimeKind.Utc));
                 }
             }
-
         }
 
-        genService.Upsert<T>(item);
+        genService.Upsert<TItem>(item);
         await TItemModal.HideAsync();
+        await TItemGrid.RefreshDataAsync();
+    }
+
+    private async Task UpsertNewItem(TItem item)  //upserts a brand new item (that didn't exist in db previously)
+    {
+        await UpsertItem(item);
+        toastMessages.Add(new ToastMessage(){Title="Created", Message=$"New {typeof(TItem).Name} created.", AutoHide=true, Type=ToastType.Success});
+        gridUpdate = true;//this is the main difference here
+        await TItemGrid.RefreshDataAsync();
     }
 
 
+    private async Task CreateNewObject() //Creates an object
+    {
+        selectedObject = new TItem();
+        await TItemModal.ShowAsync();
+    }
+
+    private async Task DeleteSelectedObject() //Deletes an object
+    {
+        var options = new ConfirmDialogOptions()
+            {
+                YesButtonText = "Yes",
+                NoButtonText = "No"
+            };
+        var confirmation = await dialog.ShowAsync(
+            title: $"Delete {typeof(TItem).Name}?",
+            message1: $"Are you sure you want to delete this {typeof(TItem).Name}?",
+            confirmDialogOptions: options
+        );
+
+        if (confirmation)
+        {
+            deletedIds.Add((int)typeof(TItem).GetProperty("Id").GetValue(selectedObject));
+            genService.Remove<TItem>(selectedObject);
+            await genService.SaveChangesAsync();
+            await TItemModal.HideAsync();
+            await TItemGrid.RefreshDataAsync();
+            toastMessages.Add(new ToastMessage() { Title = "Deleted", Message = $"{typeof(TItem).Name} deleted successfully", AutoHide = true, Type = ToastType.Danger });
+        }
+    }
+
+    private List<object> GetRelatedItems(string propertyName) //Retrieves a list of type<related object> for the modal to make the <Select>
+    {
+        // If already fetched, return cached items
+        if (_relatedItemsCache.TryGetValue(propertyName, out var cachedItems))
+        {
+            return cachedItems;
+        }
+
+        // Get the assembly containing the types
+        var assembly = typeof(TItem).Assembly;
+        var modelTypes = assembly.GetTypes();
+
+        foreach (Type item in modelTypes)
+        {
+            if (item.Name == propertyName)
+            {
+                var method = typeof(IGenService).GetMethod(nameof(genService.GetModel), Type.EmptyTypes)!
+                                 .MakeGenericMethod(item);
+
+                var relatedItems = (IEnumerable<object>)method.Invoke(genService, null)!;
+
+                // Store the result in cache
+                _relatedItemsCache[propertyName] = relatedItems.ToList();
+                return relatedItems.ToList();
+            }
+        }
+
+        _logger.LogWarning($"Type '{propertyName}' not found.");
+        return new List<object>();
+    }
+
+    private void OnRelatedObjectChange(PropertyInfo prop, object? newValue)  //This method handles the update process for related objects
+    {
+        // Find the matching object in GetRelatedItems
+        var relatedItems = GetRelatedItems(prop.Name);
+        var selectedItem = relatedItems.FirstOrDefault(item =>
+            item.GetType().GetProperty("Id")?.GetValue(item)?.ToString() == newValue?.ToString());
+
+        // Set the selected item to the property
+        if (selectedItem != null)
+        {
+            prop.SetValue(selectedObject, selectedItem);
+        }
+    }
+
+
+        
     #endregion
 
 
