@@ -371,14 +371,31 @@ A complete model that fits these criteria and will make a related object work wi
     }
     private async Task DeleteSelectedItems()  //Deletes a set of multiple items selected in the grid
     {
-        foreach(var item in SelectedItems)
+        var options = new ConfirmDialogOptions()
+            {
+                YesButtonText = "Yes",
+                NoButtonText = "No"
+            };
+        var confirmation = await dialog.ShowAsync(
+            title: $"Delete Items?",
+            message1: $"Are you sure you want to delete these items?",
+            message2:"This action cannot be undone",
+            confirmDialogOptions: options
+        );
+
+        if (confirmation)
         {
-            deletedIds.Add((int)typeof(TItem).GetProperty("Id").GetValue(item));
-            genService.Remove<TItem>(item);
+            foreach (var item in SelectedItems)
+            {
+                deletedIds.Add((int)typeof(TItem).GetProperty("Id").GetValue(item));
+                genService.Remove<TItem>(item);
+            }
+            await genService.SaveChangesAsync();
+            await TItemGrid.RefreshDataAsync();
+            toastMessages.Add(new ToastMessage() { Title = "Deleted", Message = "Items deleted successfully.", AutoHide = true, Type = ToastType.Danger });
         }
-        await genService.SaveChangesAsync();
-        await TItemGrid.RefreshDataAsync();
-        toastMessages.Add(new ToastMessage(){Title="Deleted", Message="Items deleted successfully.", AutoHide=true, Type=ToastType.Danger});
+        
+       
     }
 
 
