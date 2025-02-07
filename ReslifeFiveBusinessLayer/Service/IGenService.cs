@@ -22,7 +22,6 @@ namespace ReslifeFiveBusinessLayer.Service
         void SaveChanges();
         Task SaveChangesAsync();
         Task<int> CountAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
-        Task UpdateSinglePropertyAsync<T>(int id, string propertyName, object newValue) where T : class;
 
     }
 }
